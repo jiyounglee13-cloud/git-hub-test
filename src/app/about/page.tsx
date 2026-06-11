@@ -1,11 +1,12 @@
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
-      <h1 className="text-3xl font-bold">CAR-T 세포치료란?</h1>
+      <h1 className="text-3xl font-bold">카티스템(CARTSTEM)이란?</h1>
       <p className="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-400">
-        CAR-T(Chimeric Antigen Receptor T-cell) 세포치료는 환자의 T세포를
-        유전공학적으로 변형하여 암세포를 인식하고 공격할 수 있도록 만드는
-        혁신적인 면역항암 치료법입니다.
+        카티스템(CARTSTEM)은 메디포스트가 개발한 동종 제대혈 유래
+        중간엽줄기세포(hUCB-MSC) 치료제로, 퇴행성 관절염 또는 반복적 외상으로
+        인한 무릎 관절 연골 결손을 재생하기 위해 사용됩니다. 2012년 한국
+        식약처로부터 세계 최초로 동종 줄기세포 치료제 품목허가를 받았습니다.
       </p>
 
       <section className="mt-12">
@@ -13,32 +14,33 @@ export default function AboutPage() {
         <div className="mt-6 space-y-6">
           <div className="rounded-xl border border-gray-200 p-6 dark:border-gray-800">
             <h3 className="font-semibold text-[var(--primary)]">
-              1. 키메라 항원 수용체 (CAR)
+              1. 동종 제대혈 유래 중간엽줄기세포 (hUCB-MSC)
             </h3>
             <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-400">
-              CAR는 T세포 표면에 인공적으로 부착하는 수용체입니다. 이 수용체는
-              암세포 표면의 특정 항원(예: CD19)을 인식하도록 설계되어, T세포가
-              암세포만을 정확하게 찾아 공격할 수 있게 합니다.
+              카티스템은 기증받은 제대혈(탯줄 혈액)에서 분리한 중간엽줄기세포를
+              사용합니다. 이 세포는 연골세포로 분화하는 능력이 뛰어나며,
+              면역거부반응이 낮아 타인에게도 투여할 수 있는 동종(allogeneic)
+              치료제입니다.
             </p>
           </div>
           <div className="rounded-xl border border-gray-200 p-6 dark:border-gray-800">
             <h3 className="font-semibold text-[var(--primary)]">
-              2. T세포의 재프로그래밍
+              2. 연골 분화 및 재생
             </h3>
             <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-400">
-              환자로부터 채취한 T세포에 바이러스 벡터를 이용해 CAR 유전자를
-              도입합니다. 변형된 T세포는 체외에서 대량 배양된 후 환자에게
-              재주입됩니다.
+              투여된 줄기세포는 손상된 연골 부위에서 연골세포(chondrocyte)로
+              분화하여 히알린 유사 연골(hyaline-like cartilage)을 형성합니다.
+              이를 통해 결손 부위의 연골이 재생되어 관절 기능이 회복됩니다.
             </p>
           </div>
           <div className="rounded-xl border border-gray-200 p-6 dark:border-gray-800">
             <h3 className="font-semibold text-[var(--primary)]">
-              3. 면역 기억 형성
+              3. 항염증 및 면역조절 효과
             </h3>
             <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-400">
-              주입된 CAR-T 세포는 체내에서 증식하며, 일부는 기억 T세포로
-              전환되어 장기적인 면역 감시 기능을 수행합니다. 이를 통해 암의
-              재발을 방지하는 효과가 기대됩니다.
+              중간엽줄기세포는 다양한 항염증 인자를 분비하여 관절 내 염증을
+              억제하고, 기존 연골 조직의 추가 손상을 방지하는 역할도 합니다.
+              면역조절 기능을 통해 동종 세포임에도 면역거부반응을 최소화합니다.
             </p>
           </div>
         </div>
@@ -47,15 +49,13 @@ export default function AboutPage() {
       <section className="mt-12">
         <h2 className="text-2xl font-semibold">적응증</h2>
         <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-          현재 CAR-T 세포치료가 승인된 주요 질환은 다음과 같습니다:
+          카티스템의 허가된 적응증은 다음과 같습니다:
         </p>
         <ul className="mt-4 space-y-3">
           {[
-            "재발성/불응성 B세포 급성 림프구성 백혈병 (ALL)",
-            "재발성/불응성 미만성 거대B세포 림프종 (DLBCL)",
-            "재발성/불응성 여포성 림프종 (FL)",
-            "재발성/불응성 맨틀세포 림프종 (MCL)",
-            "재발성/불응성 다발성 골수종 (MM)",
+            "퇴행성 관절염(골관절염)으로 인한 무릎 관절 연골 결손 (ICRS Grade IV)",
+            "반복적 외상으로 인한 무릎 관절 연골 결손",
+            "기존 보존적 치료(약물, 물리치료 등)에 반응하지 않는 무릎 연골 손상",
           ].map((item) => (
             <li
               key={item}
@@ -69,26 +69,64 @@ export default function AboutPage() {
       </section>
 
       <section className="mt-12">
-        <h2 className="text-2xl font-semibold">승인된 주요 CAR-T 제품</h2>
+        <h2 className="text-2xl font-semibold">제품 정보</h2>
+        <div className="mt-6 overflow-x-auto">
+          <table className="w-full text-sm">
+            <tbody className="text-gray-600 dark:text-gray-400">
+              {[
+                ["제품명", "카티스템 (CARTSTEM)"],
+                ["일반명", "동종 제대혈 유래 중간엽줄기세포"],
+                ["개발사", "메디포스트 (Medipost Co., Ltd.)"],
+                ["허가 연도", "2012년 (한국 식약처)"],
+                ["투여 경로", "관절경 수술을 통한 관절 내 투여"],
+                ["투여 횟수", "1회 투여"],
+                ["보조재", "히알루론산 하이드로겔과 함께 투여"],
+                ["보관 조건", "-196°C 이하 액체질소 보관"],
+              ].map(([label, value]) => (
+                <tr
+                  key={label}
+                  className="border-b border-gray-100 dark:border-gray-800/50"
+                >
+                  <td className="px-4 py-3 font-medium text-foreground w-40">
+                    {label}
+                  </td>
+                  <td className="px-4 py-3">{value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-2xl font-semibold">기존 치료법과의 비교</h2>
         <div className="mt-6 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200 dark:border-gray-800">
-                <th className="px-4 py-3 text-left font-semibold">제품명</th>
-                <th className="px-4 py-3 text-left font-semibold">제조사</th>
-                <th className="px-4 py-3 text-left font-semibold">표적 항원</th>
-                <th className="px-4 py-3 text-left font-semibold">승인 연도</th>
+                <th className="px-4 py-3 text-left font-semibold">치료법</th>
+                <th className="px-4 py-3 text-left font-semibold">특징</th>
+                <th className="px-4 py-3 text-left font-semibold">한계</th>
               </tr>
             </thead>
             <tbody className="text-gray-600 dark:text-gray-400">
               {[
-                ["Kymriah (킴리아)", "Novartis", "CD19", "2017"],
-                ["Yescarta (예스카타)", "Gilead/Kite", "CD19", "2017"],
-                ["Tecartus (테카르투스)", "Gilead/Kite", "CD19", "2020"],
-                ["Breyanzi (브레얀지)", "BMS/Juno", "CD19", "2021"],
-                ["Abecma (아벡마)", "BMS/2seventy", "BCMA", "2021"],
-                ["Carvykti (카빅티)", "J&J/Legend", "BCMA", "2022"],
-              ].map(([name, company, target, year]) => (
+                [
+                  "미세천공술",
+                  "골수 자극으로 섬유연골 형성",
+                  "히알린 연골이 아닌 섬유연골 생성",
+                ],
+                [
+                  "자가 연골세포 이식",
+                  "자기 연골세포 배양 후 이식",
+                  "2회 수술 필요, 공여부 손상",
+                ],
+                [
+                  "카티스템",
+                  "동종 줄기세포로 히알린 유사 연골 재생",
+                  "1회 수술, 공여부 손상 없음",
+                ],
+              ].map(([name, feature, limit]) => (
                 <tr
                   key={name}
                   className="border-b border-gray-100 dark:border-gray-800/50"
@@ -96,9 +134,8 @@ export default function AboutPage() {
                   <td className="px-4 py-3 font-medium text-foreground">
                     {name}
                   </td>
-                  <td className="px-4 py-3">{company}</td>
-                  <td className="px-4 py-3">{target}</td>
-                  <td className="px-4 py-3">{year}</td>
+                  <td className="px-4 py-3">{feature}</td>
+                  <td className="px-4 py-3">{limit}</td>
                 </tr>
               ))}
             </tbody>

@@ -14,14 +14,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "카티스템 정보 - CAR-T 세포치료 안내",
+  title: "카티스템 정보 - CARTSTEM 연골재생 줄기세포 치료제 안내",
   description:
-    "CAR-T 세포치료(카티스템)에 대한 종합 정보를 제공합니다. 치료 원리, 과정, 부작용, FAQ 등을 확인하세요.",
+    "카티스템(CARTSTEM)에 대한 종합 정보를 제공합니다. 동종 제대혈 유래 중간엽줄기세포 연골재생 치료제의 원리, 치료 과정, 부작용, FAQ 등을 확인하세요.",
 };
 
 const navLinks = [
   { href: "/", label: "홈" },
-  { href: "/about", label: "CAR-T란?" },
+  { href: "/about", label: "카티스템이란?" },
   { href: "/process", label: "치료 과정" },
   { href: "/side-effects", label: "부작용" },
   { href: "/faq", label: "FAQ" },
@@ -44,7 +44,7 @@ export default function RootLayout({
               href="/"
               className="text-xl font-bold text-[var(--primary)]"
             >
-              🧬 카티스템
+              🦴 카티스템
             </Link>
             <ul className="flex gap-6 text-sm font-medium">
               {navLinks.map((link) => (
