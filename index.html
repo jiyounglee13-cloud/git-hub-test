@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>카티스템 상담 페르소나 브리핑 v1.1</title>
+<style>
+/* ===== BASE TOKENS ===== */
+:root {
+  --clr-primary: #1a5276;
+  --clr-primary-light: #2980b9;
+  --clr-primary-bg: #eaf3fb;
+  --clr-accent: #1e8449;
+  --clr-accent-bg: #eafaf1;
+  --clr-warn: #b7770d;
+  --clr-warn-bg: #fef9e7;
+  --clr-danger: #922b21;
+  --clr-danger-bg: #fdedec;
+  --clr-neutral-50: #f8f9fa;
+  --clr-neutral-100: #e9ecef;
+  --clr-neutral-200: #dee2e6;
+  --clr-neutral-400: #868e96;
+  --clr-neutral-600: #495057;
+  --clr-neutral-800: #212529;
+  --clr-A1: #c0392b; --clr-A1-bg: #fdecea;
+  --clr-A2: #1a7abf; --clr-A2-bg: #e8f4fd;
+  --clr-A3: #7d6608; --clr-A3-bg: #fef9e7;
+  --clr-A4: #6c3483; --clr-A4-bg: #f5eef8;
+  --clr-B1: #1e8449; --clr-B1-bg: #eafaf1;
+  --clr-B2: #b7770d; --clr-B2-bg: #fef9e7;
+  --clr-B3: #1a5276; --clr-B3-bg: #eaf3fb;
+  --clr-B4: #4a235a; --clr-B4-bg: #f5eef8;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.10);
+  --shadow-hover: 0 4px 20px rgba(0,0,0,0.15);
+  --font-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', '맑은 고딕', sans-serif;
+  --touch-min: 44px;
+  --transition: 0.2s ease;
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-base);
+  background: #f0f4f8;
+  color: var(--clr-neutral-800);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+button, select, input { font-family: inherit; }
+button { cursor: pointer; border: none; background: none; }
+ul, ol { list-style: none; }
+
+/* ===== LAYOUT ===== */
+.app-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+@media (min-width: 768px) {
+  .app-wrap { padding: 24px 32px; }
+}
+
+/* ===== HEADER ===== */
+.app-header {
+  background: var(--clr-primary);
+  color: #fff;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 20px 24px 16px;
+  position: relative;
+}
+.app-header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.app-header .subtitle {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 4px;
+}
+.privacy-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  margin-top: 10px;
+  color: #fff;
+}
+.privacy-badge::before { content: '🔒'; font-size: 0.8em; }
+
+/* ===== FORM SECTION ===== */
+.form-section {
+  background: #fff;
+  padding: 24px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+.progress-bar-wrap {
+  margin-bottom: 24px;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--clr-neutral-400);
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 6px;
+  background: var(--clr-neutral-100);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--clr-primary-light);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.form-grid {
+  display: grid;
+  gap: 20px;
+}
+@media (min-width: 768px) {
+  .form-grid { grid-template-columns: 1fr 1fr; }
+  .form-grid .span2 { grid-column: 1 / -1; }
+}
+.field-group { display: flex; flex-direction: column; gap: 8px; }
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--clr-neutral-600);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.field-label .req { color: var(--clr-primary-light); font-size: 0.75rem; }
+.field-label .hint { font-weight: 400; color: var(--clr-neutral-400); font-size: 0.75rem; }
+
+/* CHIP SELECT (단일 선택) */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  padding: 8px 14px;
+  border: 1.5px solid var(--clr-neutral-200);
+  border-radius: 22px;
+  font-size: 0.82rem;
+  color: var(--clr-neutral-600);
+  background: #fff;
+  transition: all var(--transition);
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.3;
+}
+.chip:hover { border-color: var(--clr-primary-light); color: var(--clr-primary); }
+.chip.selected {
+  background: var(--clr-primary);
+  border-color: var(--clr-primary);
+  color: #fff;
+  font-weight: 600;
+}
+.chip.multi-chip.selected {
+  background: var(--clr-accent);
+  border-color: var(--clr-accent);
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.submit-wrap {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.btn-submit {
+  width: 100%;
+  max-width: 400px;
+  min-height: var(--touch-min);
+  background: var(--clr-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 14px 24px;
+  transition: background var(--transition), transform 0.1s;
+  box-shadow: 0 2px 8px rgba(26,82,118,0.3);
+}
+.btn-submit:hover { background: var(--clr-primary-light); }
+.btn-submit:active { transform: scale(0.98); }
+.btn-submit:disabled { background: var(--clr-neutral-400); cursor: not-allowed; box-shadow: none; }
+.validation-msg {
+  font-size: 0.78rem;
+  color: var(--clr-danger);
+  text-align: center;
+  min-height: 1.2em;
+}
+
+/* ===== RESULT SECTION ===== */
+.result-section { display: none; margin-top: 24px; }
+.result-section.visible { display: block; }
+
+/* AXIS CHIP BAR */
+.axis-bar {
+  background: #fff;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 16px 20px 0;
+  box-shadow: var(--shadow-card);
+}
+.axis-bar-title {
+  font-size: 0.72rem;
+  color: var(--clr-neutral-400);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.axis-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--clr-neutral-100);
+}
+.axis-row + .axis-row { border-bottom: none; padding-top: 10px; }
+.axis-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+  min-height: 36px;
+}
+.axis-chip.A1 { color: var(--clr-A1); background: var(--clr-A1-bg); border-color: var(--clr-A1); }
+.axis-chip.A2 { color: var(--clr-A2); background: var(--clr-A2-bg); border-color: var(--clr-A2); }
+.axis-chip.A3 { color: var(--clr-A3); background: var(--clr-A3-bg); border-color: var(--clr-A3); }
+.axis-chip.A4 { color: var(--clr-A4); background: var(--clr-A4-bg); border-color: var(--clr-A4); }
+.axis-chip.B1 { color: var(--clr-B1); background: var(--clr-B1-bg); border-color: var(--clr-B1); }
+.axis-chip.B2 { color: var(--clr-B2); background: var(--clr-B2-bg); border-color: var(--clr-B2); }
+.axis-chip.B3 { color: var(--clr-B3); background: var(--clr-B3-bg); border-color: var(--clr-B3); }
+.axis-chip.B4 { color: var(--clr-B4); background: var(--clr-B4-bg); border-color: var(--clr-B4); }
+.axis-chip.active { box-shadow: 0 0 0 2px currentColor; font-weight: 700; }
+.axis-chip.mixed-badge::after {
+  content: '혼합';
+  font-size: 0.65rem;
+  background: currentColor;
+  color: #fff;
+  border-radius: 8px;
+  padding: 1px 5px;
+  margin-left: 3px;
+}
+.axis-chip.secondary-highlight { opacity: 0.75; border-style: dashed; }
+
+/* BRIEF CARD */
+.brief-card {
+  background: #fff;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.card-header {
+  padding: 20px 24px 16px;
+  border-bottom: 2px solid var(--clr-neutral-100);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.card-combo-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+.combo-a-tag, .combo-b-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.combo-x { color: var(--clr-neutral-400); font-weight: 400; font-size: 0.9rem; }
+.variant-tag {
+  font-size: 0.78rem;
+  background: var(--clr-neutral-100);
+  color: var(--clr-neutral-600);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+.match-quality {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.match-badge {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.match-high { background: var(--clr-accent-bg); color: var(--clr-accent); }
+.match-mid  { background: var(--clr-warn-bg); color: var(--clr-warn); }
+
+/* CARD SECTIONS */
+.card-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+.card-section {
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  background: var(--clr-neutral-50);
+}
+.card-section.story-section { background: var(--clr-primary-bg); }
+.card-section.driver-section { background: var(--clr-accent-bg); }
+.card-section.warn-section { background: var(--clr-warn-bg); border-left: 4px solid var(--clr-warn); }
+.card-section.danger-section { background: var(--clr-danger-bg); border-left: 4px solid var(--clr-danger); }
+.card-section.check-section { background: #fff; border: 1.5px dashed var(--clr-neutral-200); }
+.section-head {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--clr-neutral-400);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-body { font-size: 0.88rem; line-height: 1.7; color: var(--clr-neutral-800); }
+.section-body p + p { margin-top: 8px; }
+.section-body .intro-cue {
+  font-style: italic;
+  color: var(--clr-primary);
+  border-left: 3px solid var(--clr-primary-light);
+  padding-left: 10px;
+  margin-top: 8px;
+}
+
+/* QUESTION LIST */
+.q-list { display: flex; flex-direction: column; gap: 10px; }
+.q-item {
+  background: #fff;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  border: 1px solid var(--clr-neutral-100);
+}
+.q-item .q-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--clr-neutral-800);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.q-item .q-text::before {
+  content: 'Q';
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--clr-primary-light);
+  color: #fff;
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.q-item .q-guide {
+  font-size: 0.78rem;
+  color: var(--clr-neutral-400);
+  margin-top: 4px;
+  padding-left: 24px;
+}
+
+/* STRATEGY SECTION */
+.strategy-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.strategy-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.strategy-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--clr-primary);
+  background: var(--clr-primary-bg);
+  border-radius: 6px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  min-width: 52px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.strategy-text { font-size: 0.85rem; line-height: 1.6; color: var(--clr-neutral-800); }
+.avoid-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.avoid-tag {
+  font-size: 0.78rem;
+  background: var(--clr-danger-bg);
+  color: var(--clr-danger);
+  border: 1px solid #f5b7b1;
+  border-radius: 12px;
+  padding: 3px 10px;
+}
+
+/* COMPLIANCE SECTION */
+.compliance-list { display: flex; flex-direction: column; gap: 8px; }
+.compliance-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 0.82rem;
+}
+.compliance-item::before {
+  content: '⚠';
+  font-size: 0.9em;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* HOSPITAL CHECK */
+.check-list { display: flex; flex-direction: column; gap: 8px; }
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.83rem;
+  padding: 8px 10px;
+  background: var(--clr-neutral-50);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--clr-neutral-100);
+}
+.check-box {
+  width: 20px; height: 20px;
+  border: 1.5px solid var(--clr-neutral-200);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.check-empty { font-size: 0.75rem; color: var(--clr-neutral-400); font-style: italic; }
+
+/* SIGNAL SECTION */
+.signal-list { display: flex; flex-direction: column; gap: 8px; }
+.signal-item {
+  font-size: 0.82rem;
+  background: #fff;
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  border-left: 3px solid var(--clr-warn);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.signal-trigger { font-weight: 600; color: var(--clr-neutral-800); }
+.signal-action { color: var(--clr-warn); font-size: 0.78rem; }
+
+/* DISCLAIMER */
+.disclaimer {
+  background: var(--clr-neutral-50);
+  border-top: 1px solid var(--clr-neutral-100);
+  padding: 14px 20px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.disclaimer p {
+  font-size: 0.72rem;
+  color: var(--clr-neutral-400);
+  line-height: 1.6;
+}
+.disclaimer .no-store {
+  font-weight: 700;
+  color: var(--clr-accent);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+}
+
+/* RESET BUTTON */
+.reset-wrap { margin-top: 20px; text-align: center; }
+.btn-reset {
+  padding: 10px 24px;
+  border: 1.5px solid var(--clr-neutral-200);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--clr-neutral-600);
+  background: #fff;
+  transition: all var(--transition);
+  min-height: var(--touch-min);
+}
+.btn-reset:hover { border-color: var(--clr-primary); color: var(--clr-primary); }
+
+/* SECTION DIVIDER */
+.section-divider {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--clr-neutral-400);
+  margin: 4px 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Scrollable card body on mobile */
+@media (max-width: 767px) {
+  .card-body { padding: 16px; }
+  .card-header { padding: 16px; }
+  .axis-bar { padding: 14px 16px 0; }
+}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <h1>카티스템 상담 페르소나 브리핑</h1>
+    <div class="subtitle">v1.1 · 2축 복합 페르소나 시스템 (손상 서사 × 의사결정 동인)</div>
+    <div class="privacy-badge">본 도구는 어떤 정보도 저장하지 않습니다</div>
+  </header>
+
+  <!-- FORM SECTION -->
+  <section class="form-section" id="formSection">
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>입력 진행률</span>
+        <span id="progressText">0 / 11</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <form id="consultForm" autocomplete="off">
+      <div class="form-grid">
+
+        <!-- 1. 연령대 -->
+        <div class="field-group">
+          <label class="field-label">
+            <span>연령대</span>
+            <span class="req">필수</span>
+          </label>
+          <div class="chip-group" data-field="ageGroup" data-type="single">
+            <button type="button" class="chip" data-value="30s_under">30대 이하</button>
+            <button type="button" class="chip" data-value="40s">40대</button>
+            <button type="button" class="chip" data-value="50s">50대</button>
+            <button type="button" class="chip" data-value="60s">60대</button>
+            <button type="button" class="chip" data-value="70s_plus">70대 이상</button>
+          </div>
+        </div>
+
+        <!-- 2. 성별 -->
+        <div class="field-group">
+          <label class="field-label">
+            <span>성별</span>
+            <span class="req">필수</span>
+          </label>
+          <div class="chip-group" data-field="gender" data-type="single">
+            <button type="button" class="chip" data-value="male">남</button>
+            <button type="button" class="chip" data-value="female">여</button>
+            <button type="button" class="chip" data-value="na">미응답</button>
+          </div>
+        </div>
+
+        <!-- 3. 손상 경위 -->
+        <div class="field-group span2">
+          <label class="field-label">
+            <span>손상 경위</span>
+            <span class="req">필수</span>
+          </label>
+          <div class="chip-group" data-field="injuryType" data-type="single">
+            <button type="button" class="chip" data-value="acute_trauma">갑작스러운 부상 (운동·사고)</button>
+            <button type="button" class="chip" data-value="sports_degenerate">운동을 즐겨왔는데 점차 악화</button>
+            <button type="button" class="chip" data-value="labor_overuse">일·가사로 무릎을 많이 써서</button>
+            <button type="button" class="chip" data-value="age_natural">특별한 계기 없이 나이 들며 서서히</button>
+            <button type="button" class="chip" data-value="unknown">모름</button>
+          </div>
+        </div>
+
+        <!-- 4. 통증 기간 -->
+        <div class="field-group">
+          <label class="field-label">
+            <span>통증 기간</span>
+            <span class="req">필수</span>
+          </label>
+          <div class="chip-group" data-field="painDuration" data-type="single">
+            <button type="button" class="chip" data-value="under6m">6개월 미만</button>
+            <button type="button" class="chip" data-value="6m_2y">6개월 ~ 2년</button>
+            <button type="button" class="chip" data-value="over2y">2년 이상</button>
+          </div>
+        </div>
+
+        <!-- 5. 활동 이력 -->
+        <div class="field-group">
+          <label class="field-label">
+            <span>활동 이력</span>
+            <span class="req">필수</span>
+          </label>
+          <div class="chip-group" data-field="activityHistory" data-type="single">
+            <button type="button" class="chip" data-value="sedentary">평생 좌식 위주</button>
+            <button type="button" class="chip" data-value="daily_activity">일상 활동 수준</button>
+            <button type="button" class="chip" data-value="past_active">과거엔 활동적·지금은 제한</button>
+            <button type="button" class="chip" data-value="current_regular">현재도 규칙적 운동</button>
+            <button type="button" class="chip" data-value="high_sports">고강도 스포츠</button>
+          </div>
+        </div>
+
+        <!-- 6. 치료 목표 (복수) -->
+        <div class="field-group span2">
+          <label class="field-label">
+            <span>치료 목표</span>
+            <span class="req">필수</span>
+            <span class="hint">복수 선택 가능</span>
+          </label>
+          <div class="chip-group" data-field="treatmentGoal" data-type="multi">
+            <button type="button" class="chip multi-chip" data-value="pain_relief">통증 완화</button>
+            <button type="button" class="chip multi-chip" data-value="sports_return">운동·취미 복귀</button>
+            <button type="button" class="chip multi-chip" data-value="avoid_arthroplasty">인공관절 지연·회피</button>
+            <button type="button" class="chip multi-chip" data-value="work_return">직업·가사 복귀</button>
+            <button type="button" class="chip multi-chip" data-value="daily_independence">일상 독립성 유지</button>
+          </div>
+        </div>
+
+        <!-- 7. 실손보험 -->
+        <div class="field-group">
+          <label class="field-label">
+            <span>실손보험 세대</span>
+            <span class="req">필수</span>
+          </label>
+          <div class="chip-group" data-field="insurance" data-type="single">
+            <button type="button" class="chip" data-value="gen1_2">1~2세대</button>
+            <button type="button" class="chip" data-value="gen3">3세대</button>
+            <button type="button" class="chip" data-value="gen4">4세대</button>
+            <button type="button" class="chip" data-value="gen5">5세대</button>
+            <button type="button" class="chip" data-value="none_unknown">없음·모름</button>
+          </div>
+        </div>
+
+        <!-- 8. 의사결정 단계 -->
+        <div class="field-group">
+          <label class="field-label">
+            <span>의사결정 단계</span>
+            <span class="req">필수</span>
+          </label>
+          <div class="chip-group" data-field="decisionStage" data-type="single">
+            <button type="button" class="chip" data-value="first_explore">첫 탐색</button>
+            <button type="button" class="chip" data-value="comparing">타 치료와 비교 중</button>
+            <button type="button" class="chip" data-value="near_decided">거의 결정·실무 확인 단계</button>
+          </div>
+        </div>
+
+        <!-- 9. 동반자 -->
+        <div class="field-group">
+          <label class="field-label">
+            <span>동반자</span>
+            <span class="req">필수</span>
+          </label>
+          <div class="chip-group" data-field="companion" data-type="single">
+            <button type="button" class="chip" data-value="alone">본인 단독</button>
+            <button type="button" class="chip" data-value="spouse">배우자</button>
+            <button type="button" class="chip" data-value="child">자녀 (보호자 역할)</button>
+            <button type="button" class="chip" data-value="other">기타</button>
+          </div>
+        </div>
+
+        <!-- 10. 사전 정보 수준 -->
+        <div class="field-group">
+          <label class="field-label">
+            <span>사전 정보 수준</span>
+            <span class="req">필수</span>
+          </label>
+          <div class="chip-group" data-field="infoLevel" data-type="single">
+            <button type="button" class="chip" data-value="know_little">거의 모름</button>
+            <button type="button" class="chip" data-value="researched">검색 다수·용어 익숙</button>
+            <button type="button" class="chip" data-value="other_hospital">타 병원 상담 경험 있음</button>
+          </div>
+        </div>
+
+        <!-- 11. 주요 우려 (복수, 최대 3개) -->
+        <div class="field-group span2">
+          <label class="field-label">
+            <span>주요 우려</span>
+            <span class="req">필수</span>
+            <span class="hint">최대 3개</span>
+          </label>
+          <div class="chip-group" data-field="mainConcern" data-type="multi" data-max="3">
+            <button type="button" class="chip multi-chip" data-value="cost">비용</button>
+            <button type="button" class="chip multi-chip" data-value="insurance_coverage">보험 보장 여부</button>
+            <button type="button" class="chip multi-chip" data-value="surgery_safety">수술 안전성·마취</button>
+            <button type="button" class="chip multi-chip" data-value="recovery_period">회복 기간</button>
+            <button type="button" class="chip multi-chip" data-value="effect_duration">효과 지속성</button>
+            <button type="button" class="chip multi-chip" data-value="vs_other_treatment">타 치료(주사·PRP 등)와 차이</button>
+          </div>
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <div class="submit-wrap">
+        <div class="validation-msg" id="validationMsg"></div>
+        <button type="submit" class="btn-submit" id="submitBtn">페르소나 브리핑 생성</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- RESULT SECTION -->
+  <section class="result-section" id="resultSection">
+    <!-- Axis chip bar: A×B 8 chips always visible -->
+    <div class="axis-bar" id="axisBar"></div>
+
+    <!-- Brief card -->
+    <div class="brief-card" id="briefCard"></div>
+
+    <!-- Reset -->
+    <div class="reset-wrap">
+      <button class="btn-reset" id="resetBtn">새 상담 시작 (입력 초기화)</button>
+    </div>
+  </section>
+
+</div><!-- /app-wrap -->
+
+<script>
+/* ===== PERSONA DATA ===== */
+
+// A축 손상 서사 페르소나
+const NARRATIVE_PERSONAS = {
+  A1: {
+    id: 'A1', emoji: '⚡', name: '급성 외상·스포츠 손상형',
+    color: 'A1',
+    base: {
+      summary: '운동이나 사고로 갑작스럽게 무릎을 다쳤습니다. "고치면 원래대로"라는 회복 기대가 강하고, 빠른 의사결정을 선호합니다.',
+      psychology: '손상 전 기능 수준으로의 완전 복귀를 기대합니다. 정보 흡수가 빠르고 치료 결정도 빠른 편입니다. 경력·직업·취미 활동에 미치는 영향을 크게 걱정합니다.',
+      introCue: '"다치셨을 때 많이 당황하셨겠어요. 정확히 어떤 상황이었는지, 지금 가장 불편한 게 무엇인지부터 여쭤볼게요."',
+      specialQuestions: [
+        { q: '미세천공술·연골이식과 카티스템의 차이가 무엇인가요?', guide: '작용기전 차이(줄기세포 유래 연골 형성)를 설명하되, 적응증 적합 여부는 영상 판독 기반 의사 판단임을 먼저 안내' },
+        { q: '직장(운동) 복귀까지 얼마나 걸리나요?', guide: '개인차가 크며, 담당 의사의 재활 프로토콜에 따라 결정됨을 안내. 구체 기간 단정 금지' },
+        { q: '관절경으로 하나요, 절개하나요?', guide: '[본원 확인] — 수술 방식은 집도의가 결정' },
+        { q: '재손상되면 어떻게 되나요?', guide: '재발 시 대응은 담당 의사 상담 사항. 위험 최소화를 위한 재활 준수 강조' },
+      ],
+      strategy: {
+        intro: '손상 경위와 당시 상황을 경청하며 충격을 공감. "빨리 낫고 싶으시겠어요"로 시작.',
+        emphasis: '치료 과정과 복귀 로드맵을 구체적 단계로 설명. 단, 복귀 시점은 개인차 강조.',
+        avoid: ['"예전 기량 그대로 돌아가실 수 있어요"', '"완치됩니다"', '"100% 회복됩니다"'],
+      },
+      complianceFlags: [
+        '복귀 수준·기간 단정 금지 — "돌아갈 수 있는 가능성"까지만',
+        '타 치료(미세천공술 등)와 비교 시 사실 단위만, 폄하 금지',
+        '재손상·실패 시 대응은 의사 상담으로 연결',
+      ],
+      mismatchSignals: [
+        { trigger: '비용·보험 질문이 3회 이상 반복', action: 'B2(비용·보험 민감형) 칩으로 전환 고려' },
+        { trigger: '"마취가 무서워요", "위험하지 않나요" 반복', action: 'B3(안전·신중형) 칩으로 전환 고려' },
+      ],
+      hospitalCheckItems: ['수술 방식 (관절경/절개) — 집도의 확인', '예상 입원 기간 — 담당팀 확인', '재활 프로그램 세부 일정 — 재활팀 확인'],
+    },
+    variants: {
+      male: {
+        summaryAppend: '축구·농구·격투기 등 접촉 스포츠 손상 가능성. "복귀 후 같은 강도로 운동 가능한가" 질문 비중이 큽니다.',
+        questionOverrides: [
+          { q: '동호회·팀 복귀까지 언제쯤 가능할까요?', guide: '개인 재활 경과에 따라 다르며, 의사·재활팀 판단 사항임을 안내' },
+        ],
+      },
+      female: {
+        summaryAppend: '러닝·스키·배드민턴 등 비접촉 손상 빈도. 인대 동반 손상 가능성은 영상 판독 사항. 재활 중 직장·육아 병행 여부 질문 빈도 높습니다.',
+        questionOverrides: [
+          { q: '재활 중 육아·직장을 병행할 수 있나요?', guide: '재활 강도별 일상 제한 개요 안내. 구체 일정은 재활팀 확인 필요' },
+        ],
+        factNotes: 'ACL 등 인대 동반 손상은 여성에서 발생 위험이 높다고 보고됨 — 동반 손상 여부는 반드시 영상 판독 사항임을 명시',
+      },
+    },
+  },
+
+  A2: {
+    id: 'A2', emoji: '🎿', name: '스포츠 애호→퇴행 전환형',
+    color: 'A2',
+    base: {
+      summary: '평생 운동을 즐겨 왔는데 무릎이 점차 나빠졌습니다. "열심히 관리했는데 왜"라는 억울함과 정체성 상실감이 핵심입니다.',
+      psychology: '운동 자체가 삶의 일부인 분입니다. 치료를 "운동 인생의 연장 수단"으로 받아들일 때 수용도가 급격히 높아집니다. "운동을 포기하라"는 메시지에 강하게 저항합니다.',
+      introCue: '"운동을 꾸준히 해오셨는데 무릎이 나빠지셔서 많이 억울하셨을 것 같아요. 지금까지 어떤 운동을 즐기셨나요?"',
+      specialQuestions: [
+        { q: '운동을 계속해도 되나요, 끊어야 하나요?', guide: '종목·강도 조정은 의사·재활 판단 영역. "금지"가 아닌 "방식 전환" 프레임으로 안내' },
+        { q: '운동을 해왔는데 왜 연골이 닳았나요?', guide: '개인 원인 단정 금지. 다양한 요인이 있으며 원인 파악은 의사 진료 사항임을 안내' },
+        { q: '치료 후 어느 강도까지 운동 가능한가요?', guide: '의사·재활팀이 판단하는 사항. 현재로선 가능성 정도만 설명' },
+        { q: '지금 무리하면 인공관절로 직행하나요?', guide: '공포 조장 금지. 의학적 진행 여부는 의사 판단 사항으로 연결' },
+      ],
+      strategy: {
+        intro: '운동 이력을 자산으로 인정: "오랫동안 관리해오셨기 때문에 근력·재활 순응도에서 유리할 수 있어요."',
+        emphasis: '"운동 금지"가 아니라 "운동 방식 전환" 프레임. 치료의 목적을 운동 지속 가능성으로 연결.',
+        avoid: ['"마라톤 다시 뛸 수 있어요"', '"이전 운동 그대로 가능합니다"', '"운동 포기 안 해도 됩니다"(단정형)'],
+      },
+      complianceFlags: [
+        '운동 복귀 수준 보장 절대 금지 — "가능성"까지만',
+        '운동이 원인이라는 단정 금지 — 개인 원인 판단은 의사 영역',
+        '인공관절 진행 여부 예측 금지',
+      ],
+      mismatchSignals: [
+        { trigger: '"그냥 약으로 버티면 안 되나요?" 반복', action: 'A4(자연 노화형) 또는 B3(안전·신중형) 전환 고려' },
+        { trigger: '비용 걱정 위주로 대화 전환', action: 'B2(비용·보험 민감형) 칩 강조' },
+      ],
+      hospitalCheckItems: ['치료 후 허용 운동 종목·강도 기준 — 재활팀 확인', '운동 복귀 프로토콜 개요 — 담당 의사 확인'],
+    },
+    variants: {
+      male_50s: {
+        summaryAppend: '마라톤·축구·테니스 동호회 활동자. 동호회 복귀 시기와 "기록·경기력" 회복 여부가 핵심 관심사.',
+        questionOverrides: [
+          { q: '동호회 대회에 다시 나갈 수 있을까요?', guide: '복귀 가능성은 의사·재활팀 판단 사항. 기간 단정 금지' },
+        ],
+      },
+      male_60s: {
+        summaryAppend: '골프·등산 등 중강도 스포츠. "이 나이에도 치료 효과가 있냐"는 의구심을 먼저 해소하는 것이 중요.',
+      },
+      female_50s: {
+        summaryAppend: '등산·배드민턴·골프 활동자. 폐경 이후 관절 변화와 겹치는 시기로 골밀도·호르몬 관련 질문이 함께 나올 수 있습니다.',
+        factNotes: '폐경 후 관절 변화는 정형외과 진료 범위와 타과(산부인과·내과) 의뢰 영역을 구분하여 안내',
+        questionOverrides: [
+          { q: '갱년기와 관절 문제가 연관이 있나요?', guide: '타과(산부인과·내분비내과) 연계 사항임을 안내. 정형외과 범위와 구분' },
+        ],
+      },
+    },
+  },
+
+  A3: {
+    id: 'A3', emoji: '🌾', name: '근면 생활 퇴행형',
+    color: 'A3',
+    base: {
+      summary: '일·가사로 무릎을 오래 혹사해 왔습니다. "열심히 산 대가"라는 서사를 가지고, 치료보다 가족·생계를 먼저 걱정하는 경향이 있습니다.',
+      psychology: '자기 몸보다 가족과 생계를 먼저 말하는 경향이 강합니다. 치료로 인한 휴업·가사 공백이 최대 걱정입니다. "이제라도 고쳐서 계속 일해야 한다"는 현실 압박이 결정 동인입니다.',
+      introCue: '"그동안 무릎이 정말 많은 일을 해왔겠어요. 지금 일이나 생활에서 제일 불편한 게 어떤 부분인가요?"',
+      specialQuestions: [
+        { q: '입원하면 일은 얼마나 쉬어야 하나요?', guide: '시술·입원 기간 개요 안내. 구체 복귀 시점은 개인차와 담당의 판단 사항' },
+        { q: '치료 중 가사·가게 공백은 얼마나 되나요?', guide: '일상 제한 구간(입원·재활 초기)을 생활 단위로 설명. 가족 지원 계획 필요성 안내' },
+        { q: '치료 후 다시 무릎 쓰는 일 해도 되나요?', guide: '복귀 가능성과 작업 방식 조정 필요성은 재활팀·의사 판단 사항으로 연결' },
+        { q: '지금 안 하면 더 나빠지나요?', guide: '공포 조장 금지. "진행 여부는 의사가 영상으로 판단한다"는 프레임 유지' },
+      ],
+      strategy: {
+        intro: '노고를 인정하는 도입: "그동안 무릎이 정말 고생 많이 했겠네요."',
+        emphasis: '회복 기간을 생활 단위(일 복귀, 시장 보기, 계단)로 설명. 구체 복귀 시점은 개인차와 의사 판단 강조.',
+        avoid: ['"지금 안 하면 큰일납니다"', '"더 늦으면 인공관절밖에 없어요"', '"빨리 결정하세요"'],
+      },
+      complianceFlags: [
+        '시급성 강조로 공포 조장 금지',
+        '구체적 휴업 기간·복귀 시점 단정 금지',
+        '가사·직업 복귀 보장 금지 — "가능성"과 "개인차" 강조',
+      ],
+      mismatchSignals: [
+        { trigger: '비용·보험 질문이 지속적으로 나올 때', action: 'B2(비용·보험 민감형) 칩 하이라이트' },
+        { trigger: '"자녀한테 부담 주기 싫어요" 반복', action: 'A4(자연 노화형) 패턴 혼합 가능성 확인' },
+      ],
+      hospitalCheckItems: ['단기 입원 시 가사 지원 연계 정보 — 사회복지팀 확인', '산업재해 해당 여부 — 별도 확인 필요', '무릎 부하 작업 복귀 기준 — 재활팀 확인'],
+    },
+    variants: {
+      male: {
+        summaryAppend: '자영업·현장직·운전직 종사자. 무릎 꿇기·중량물·계단 작업이 주 부하 요인. 휴업 기간 = 수입 공백 구도로 B2(비용 민감)와 결합 빈도 높음.',
+      },
+      female: {
+        summaryAppend: '가사노동·조리·서비스직. 쪼그려 앉기·좌식 생활이 무릎 부하 요인. 50세 이후 여성 무릎 관절염 유병률이 높다는 일반 역학 경향이 있습니다.',
+        factNotes: '역학 경향은 일반 정보로만 사용. 눈앞 환자의 개인 원인("주부라서 나빠진 것")으로 단정 절대 금지',
+        questionOverrides: [
+          { q: '가사 복귀는 얼마 만에 가능한가요?', guide: '단계별 회복 개요 설명. 구체 시점은 의사·재활팀 판단' },
+        ],
+      },
+      female_50s_plus: {
+        summaryAppend: '"엄마 무릎" 서사에 공감하되, 본인 치료를 후순위로 미루는 패턴(가족 우선)을 존중하면서 치료 시기의 의학적 의미는 의사 설명으로 연결.',
+      },
+    },
+  },
+
+  A4: {
+    id: 'A4', emoji: '🍂', name: '자연 노화 퇴행형',
+    color: 'A4',
+    base: {
+      summary: '특별한 계기 없이 나이 들며 무릎이 나빠졌습니다. "나이 들면 다 그렇지"라는 체념과 수용이 섞여 있으며, 자녀 권유로 방문한 경우가 많습니다.',
+      psychology: '치료 자체를 사치로 여기거나 체념 상태인 경우가 많습니다. 본인 의지를 직접 확인하는 것이 상담의 첫 관문입니다. 효능 수치보다 일상 언어(계단, 시장, 손주, 화장실 독립)로 접근할 때 반응이 좋습니다.',
+      introCue: '"어떤 계기로 오늘 오시게 됐는지 여쭤봐도 될까요? 직접 찾아오신 건가요, 아니면 가족분 권유로?"',
+      specialQuestions: [
+        { q: '이 나이에 해도 되나요?', guide: '연령 자체가 절대적 금기가 아님을 안내. 적응증·전신 상태 평가는 의사 판단' },
+        { q: '그냥 약 먹고 버티면 안 되나요?', guide: '선택지를 알고 결정하시라는 프레임. 시급성 판단은 의사 영역으로 연결' },
+        { q: '치료받으면 뭐가 달라지나요?', guide: '일상 언어로 설명: 계단, 시장, 산책, 화장실 독립성. 효능 수치 최소화' },
+        { q: '자식들한테 부담 안 되나요?', guide: '간병·비용 걱정 공감 후 구체 정보 안내. 보호자가 동반한 경우 보호자 시선도 배분' },
+      ],
+      strategy: {
+        intro: '체념을 정면 반박하지 않고 "선택지를 알고 결정하시라" 프레임으로 시작.',
+        emphasis: '일상 언어(계단, 시장, 손주)로 변화 가능성 설명. 적응증 해당 여부는 영상 판독 기반임을 초반에 명확히.',
+        avoid: ['"달라집니다"(단정형)', '"꼭 하셔야 해요"', '"안 하면 나중에 더 힘들어져요"(공포 조장)'],
+      },
+      complianceFlags: [
+        '체념 환자 설득 과정에서 효과 과장 위험 — "달라질 수 있다"까지만, "달라진다" 금지',
+        '적응증 비해당 가능성이 이 유형에서 상대적으로 높음 — 기대 관리 필수',
+        '자녀 동반 시 의사결정 주체 분산 — 환자 본인 의향을 직접 확인하는 절차 포함',
+      ],
+      mismatchSignals: [
+        { trigger: '환자 본인이 적극적으로 질문할 때', action: '수동적 수용형이 아님 — B4(근거 검증형) 또는 B1(인공관절 회피형) 전환 고려' },
+        { trigger: '비용 걱정을 본인이 직접 꺼낼 때', action: 'B2(비용·보험 민감형) 칩 하이라이트' },
+      ],
+      hospitalCheckItems: ['적응증 해당 여부 확인을 위한 영상(MRI) 판독 — 의사 확인 필수', '전신 마취·부분 마취 선택 기준 — 마취과·담당의 확인', '보호자 간병 지원 체계 — 사회복지팀 확인'],
+    },
+    variants: {
+      with_child_companion: {
+        summaryAppend: '자녀 동반 시 의사결정 주체가 분산될 수 있습니다. 환자 본인의 의향을 직접 확인하는 절차를 상담 초반에 포함하세요.',
+      },
+      with_spouse_companion: {
+        summaryAppend: '배우자 동반 시 간병 부담과 파트너 입장에서의 걱정이 함께 표출됩니다. 배우자의 질문도 존중하며 양쪽 시선을 배분하세요.',
+      },
+      age_70s_plus: {
+        summaryAppend: '70대 이상에서는 전신 상태·마취 위험, 재활 가능성에 대한 걱정이 커집니다. 기대 관리를 상담 초반에 명확히 하는 것이 중요합니다.',
+      },
+    },
+  },
+};
+
+// B축 의사결정 동인 페르소나
+const DRIVER_PERSONAS = {
+  B1: {
+    id: 'B1', emoji: '🦵', name: '인공관절 회피형',
+    color: 'B1',
+    base: {
+      summary: '"내 무릎을 지키고 싶다"는 것이 의사결정의 출발점입니다. 인공관절에 대한 공포가 강한 동기로 작용합니다.',
+      psychology: '내 관절을 보존하고 싶다는 욕구가 강합니다. 인공관절 회피가 치료 선택의 핵심 기준입니다.',
+      specialQuestions: [
+        { q: '이 치료를 하면 인공관절을 안 해도 되나요?', guide: '적응증 해당 여부는 의사 판단 사항. "적응증에 해당하는 경우 치료 선택지가 될 수 있다"가 한계선' },
+        { q: '제 연골 상태에도 카티스템이 가능한가요?', guide: 'ICRS Grade·결손 범위 등 적응증 기준은 의사 판단. [본원 확인] 항목으로 연결' },
+        { q: '효과는 몇 년이나 가나요?', guide: '장기 추적 데이터 범위 내에서만 설명 (Lim 2021, Park 2017 등). 출처 명시 필수' },
+        { q: '나이 제한이 있나요?', guide: '허가 사항 범위 내 안내. 개별 적용 가능 여부는 의사 판단' },
+      ],
+      strategy: {
+        intro: '인공관절 회피 욕구를 긍정적으로 수용하며 시작. "관절을 지키고 싶으신 마음 충분히 이해됩니다."',
+        emphasis: '적응증 개념을 먼저 설명하여 기대 관리. 장기 데이터는 출처와 함께만.',
+        avoid: ['"인공관절을 피할 수 있어요"(단정)', '"이걸 하면 인공관절 안 해도 됩니다"', '"완치됩니다"'],
+      },
+      complianceFlags: [
+        '"인공관절을 피할 수 있다" 단정 금지 — 적응증 해당 여부는 의사 판단',
+        '장기 데이터 인용 시 반드시 출처(Lim 2021 Phase 3 RCT, Park 2017 등) 명시',
+        '효과 기간 단정 금지 — 개인차 강조',
+      ],
+      mismatchSignals: [
+        { trigger: '비용·보험 질문이 우선순위로 올라올 때', action: 'B2(비용·보험 민감형) 칩으로 전환 고려' },
+        { trigger: '"위험하지 않나요" 반복', action: 'B3(안전·신중형) 패턴 확인' },
+      ],
+    },
+    variants: {
+      male: { summaryAppend: '남성의 경우 활동성 유지 동기(스포츠, 직업 능력)가 회피 이유로 우세한 경향.' },
+      female: { summaryAppend: '여성의 경우 대수술·마취·간병 부담에 대한 공포가 회피 이유로 우세한 경향. 같은 질문이라도 안심 포인트가 다릅니다.' },
+    },
+  },
+
+  B2: {
+    id: 'B2', emoji: '💰', name: '비용·보험 민감형',
+    color: 'B2',
+    base: {
+      summary: '"내가 감당 가능한가"가 핵심입니다. 숫자가 불명확하면 신뢰가 급락하므로, 비용 구조를 초반에 명확히 제시하는 것이 중요합니다.',
+      psychology: '비용과 보험 보장 여부가 결정의 핵심 변수입니다. 불명확한 답변에 신뢰가 즉각 떨어집니다.',
+      specialQuestions: [
+        { q: '총 비용이 어떻게 되나요? (시술+입원+재활)', guide: '비용 구조(시술비, 입원비, 재활비) 개요 안내. 구체 금액은 [본원 확인]으로' },
+        { q: '제 실손보험 세대에서 얼마나 보장되나요?', guide: '세대별 구조 개요 설명. 개별 보장 여부는 가입 약관 확인 사항임을 명시' },
+        { q: '보험사에서 거절당하면 어떻게 되나요?', guide: '거절 대응 프로세스(이의신청 등) 안내. 승인 가능성 % 표기 절대 금지' },
+        { q: '분납이 가능한가요?', guide: '[본원 확인] — 원무팀 확인 사항' },
+      ],
+      strategy: {
+        intro: '비용 구조를 초반에 먼저 제시: "총 비용 구조부터 설명해 드리고 시작할게요."',
+        emphasis: '실손 세대별 구조(5세대: 2026.5.6 출시, 비중증 비급여 50%/1,000만원 한도 등)를 기준 자료와 동일 기준으로. 개별 보장은 약관 확인 필요.',
+        avoid: ['"보험 다 됩니다"', '"보장돼요"(단정)', '"승인 확률이 ~%입니다"(% 표기 절대 금지)'],
+      },
+      complianceFlags: [
+        '보험 보장 단정 금지 — 개별 약관 확인 사항임을 반드시 명시',
+        '승소·지급·성공·매칭 가능성 % 표기 절대 금지',
+        '거절 시 대응은 사실적 프로세스 안내만',
+      ],
+      mismatchSignals: [
+        { trigger: '"위험하지 않나요" 쪽으로 대화가 흘러갈 때', action: 'B3(안전·신중형) 칩 하이라이트' },
+        { trigger: '"논문 근거가 있나요" 질문 등장', action: 'B4(근거 검증형) 패턴 확인' },
+      ],
+    },
+    variants: {},
+  },
+
+  B3: {
+    id: 'B3', emoji: '🛡️', name: '안전·신중형',
+    color: 'B3',
+    base: {
+      summary: '"탈 없이 끝나는가"가 우선입니다. 효과보다 위험 회피가 먼저이며, 젊은 환자에서도 나타날 수 있는 동인입니다.',
+      psychology: '효과보다 안전성 확인이 우선 과제입니다. 정보 과부하가 오히려 불안을 키울 수 있으므로, 한 번에 하나씩 명확하게 설명하는 것이 중요합니다.',
+      specialQuestions: [
+        { q: '마취는 어떤 방법으로 하나요?', guide: '마취 방법 개요 안내. 구체 선택은 마취과 상담 사항' },
+        { q: '부작용·합병증이 있을 수 있나요?', guide: '허가사항·공식 자료 범위 내 안내. "전혀 위험 없다" 단정 절대 금지' },
+        { q: '입원 기간과 간병은 어떻게 되나요?', guide: '입원 기간 개요와 간병 필요 구간 안내. 보호자 동반 시 양쪽 시선 배분' },
+        { q: '치료가 실패하면 어떻게 되나요?', guide: '재치료 선택지 개요 안내. 결과 보장 금지' },
+      ],
+      strategy: {
+        intro: '불안을 먼저 인정: "걱정되시는 부분부터 차근차근 설명해 드릴게요."',
+        emphasis: '안전성 정보는 허가사항 범위 내. 한 번에 한 가지. 보호자 동반 시 양쪽 시선 배분.',
+        avoid: ['"전혀 위험 없어요"', '"안전합니다"(무조건형)', '"절대 문제없어요"'],
+      },
+      complianceFlags: [
+        '"전혀 위험 없다" 단정 금지 — 불안 해소 압박이 과장으로 이어지기 가장 쉬운 동인',
+        '안전성 설명은 허가사항·공식 자료 범위로만 한정',
+        '합병증·부작용 설명 시 최소화 경향도 금지 — 사실 그대로',
+      ],
+      mismatchSignals: [
+        { trigger: '비용·보험 질문이 반복될 때', action: 'B2(비용·보험 민감형) 칩 전환 고려' },
+        { trigger: '"논문이나 데이터가 있나요?" 등장', action: 'B4(근거 검증형) 패턴 확인' },
+      ],
+    },
+    variants: {},
+  },
+
+  B4: {
+    id: 'B4', emoji: '🔍', name: '근거 검증형',
+    color: 'B4',
+    base: {
+      summary: '"증명해 보라"는 태도로 옵니다. 이미 가설을 갖고 왔으며, 검증 질문으로 상담원의 전문성을 시험합니다.',
+      psychology: '이미 사전 조사를 마치고 가설을 검증하러 옵니다. 모르는 것을 정직하게 인정하는 것이 오히려 신뢰를 높입니다.',
+      specialQuestions: [
+        { q: '줄기세포 주사(자가PRP, 골수 등)와 카티스템의 차이가 뭔가요?', guide: '작용기전·임상 근거 차이를 사실 단위로. 타 치료 폄하 금지' },
+        { q: '임상 논문 근거가 있나요?', guide: '출처 있는 데이터만 인용 (Lim 2021 등). 출처 불명 수치는 [데이터 확인 필요] 표기' },
+        { q: '타 병원에서는 이렇게 말하던데, 여기는 어떻게 생각하세요?', guide: '타 병원 비방 금지. 자원 내 사실 단위 응답만' },
+        { q: '장기 데이터가 있나요?', guide: 'Park 2017 등 장기 추적 데이터를 출처와 함께. 데이터 한계도 솔직히 안내' },
+      ],
+      strategy: {
+        intro: '전문성 인정으로 시작: "많이 공부하셨네요. 궁금한 부분부터 하나씩 짚어볼게요."',
+        emphasis: '모르는 것은 [본원 확인]으로 넘기는 정직함이 신뢰 전략. 근거는 출처와 함께만.',
+        avoid: ['"다 됩니다"(근거 없는 단언)', '타 병원·타 치료 비방', '"그 병원이 틀렸어요"'],
+      },
+      complianceFlags: [
+        '타 병원·타 치료 비방 절대 금지 — 사실 단위 대응만',
+        '출처 불명 수치 인용 금지 — [데이터 확인 필요]로 처리',
+        '근거 압박에 밀려 과장된 수치 제시 위험 경계',
+      ],
+      mismatchSignals: [
+        { trigger: '비용·보험 쪽으로 관심이 이동할 때', action: 'B2(비용·보험 민감형) 칩 하이라이트' },
+        { trigger: '"그냥 궁금한 게 아니라 정말 무서워요" 발언', action: 'B3(안전·신중형) 패턴 확인' },
+      ],
+    },
+    variants: {},
+  },
+};
+
+// 공통 질문 Top 5
+const COMMON_QUESTIONS = [
+  { q: '총 비용(시술+입원+재활) 범위가 어떻게 되나요?', guide: '비용 구조 개요 안내 후 [본원 확인]으로 구체 금액 연결' },
+  { q: '입원 기간은 얼마나 되나요?', guide: '일반적 입원 기간 개요 안내. 개인차 있으며 담당의 판단 사항' },
+  { q: '시술 과정이 어떻게 되나요?', guide: '허가 사항 기반 시술 과정 개요 설명' },
+  { q: '보험 적용 구조가 어떻게 되나요?', guide: '실손 세대별 구조 개요. 개별 보장은 약관 확인 필수' },
+  { q: '회복·재활 과정은 어떻게 되나요?', guide: '재활 일정 개요. 구체 프로그램은 재활팀 확인 연결' },
+];
+
+// 금칙어 상수 (v1.1 확장본)
+const FORBIDDEN_PATTERNS = [
+  '완치', '재생됩니다', '100%', '안전합니다', '보험 다 됩니다',
+  '지금 안 하면', '다시 뛸 수 있습니다', '예전 기량 그대로',
+  '달라집니다', '인공관절 안 해도 됩니다', '보장됩니다',
+  '~% 확률', '승소', '지급 가능성'
+];
+
+/* ===== MATCHING ENGINE ===== */
+
+function scoreNarratives(inputs) {
+  const scores = { A1: 0, A2: 0, A3: 0, A4: 0 };
+
+  // 손상 경위 ×4
+  const injuryMap = {
+    acute_trauma: { A1: 4 },
+    sports_degenerate: { A2: 4 },
+    labor_overuse: { A3: 4 },
+    age_natural: { A4: 4 },
+    unknown: { A4: 1 },
+  };
+  const ij = injuryMap[inputs.injuryType] || {};
+  Object.entries(ij).forEach(([k, v]) => { scores[k] += v; });
+
+  // 활동 이력 ×2
+  const activityMap = {
+    high_sports: { A1: 2, A2: 1 },
+    current_regular: { A2: 2, A1: 1 },
+    past_active: { A2: 2, A1: 1 },
+    daily_activity: { A3: 1, A4: 1 },
+    sedentary: { A3: 1, A4: 2 },
+  };
+  const am = activityMap[inputs.activityHistory] || {};
+  Object.entries(am).forEach(([k, v]) => { scores[k] += v; });
+
+  // 통증 기간 ×1
+  const painMap = {
+    under6m: { A1: 1 },
+    '6m_2y': { A2: 1, A3: 1 },
+    over2y: { A4: 1, A3: 1 },
+  };
+  const pm = painMap[inputs.painDuration] || {};
+  Object.entries(pm).forEach(([k, v]) => { scores[k] += v; });
+
+  // 연령대 ×1
+  const ageMap = {
+    '30s_under': { A1: 1 },
+    '40s': { A1: 1, A2: 1 },
+    '50s': { A2: 1, A3: 1 },
+    '60s': { A3: 1, A4: 1 },
+    '70s_plus': { A4: 1 },
+  };
+  const agm = ageMap[inputs.ageGroup] || {};
+  Object.entries(agm).forEach(([k, v]) => { scores[k] += v; });
+
+  return scores;
+}
+
+function scoreDrivers(inputs) {
+  const scores = { B1: 0, B2: 0, B3: 0, B4: 0 };
+
+  // 주요 우려 ×3
+  const concernMap = {
+    cost: { B2: 3 },
+    insurance_coverage: { B2: 3 },
+    surgery_safety: { B3: 3 },
+    recovery_period: { B3: 2, B1: 1 },
+    effect_duration: { B1: 3 },
+    vs_other_treatment: { B4: 3 },
+  };
+  (inputs.mainConcern || []).forEach(c => {
+    const cm = concernMap[c] || {};
+    Object.entries(cm).forEach(([k, v]) => { scores[k] += v; });
+  });
+
+  // 치료 목표 ×3
+  const goalMap = {
+    pain_relief: { B3: 1, B2: 1 },
+    sports_return: { B1: 3 },
+    avoid_arthroplasty: { B1: 3 },
+    work_return: { B2: 2, B3: 1 },
+    daily_independence: { B3: 2, B4: 1 },
+  };
+  (inputs.treatmentGoal || []).forEach(g => {
+    const gm = goalMap[g] || {};
+    Object.entries(gm).forEach(([k, v]) => { scores[k] += v; });
+  });
+
+  // 의사결정 단계 ×2
+  const stageMap = {
+    first_explore: { B3: 2, B4: 1 },
+    comparing: { B4: 2, B1: 1 },
+    near_decided: { B2: 2, B1: 1 },
+  };
+  const sm = stageMap[inputs.decisionStage] || {};
+  Object.entries(sm).forEach(([k, v]) => { scores[k] += v; });
+
+  // 사전 정보 수준 ×2
+  const infoMap = {
+    know_little: { B3: 2 },
+    researched: { B4: 2 },
+    other_hospital: { B4: 2, B1: 1 },
+  };
+  const im = infoMap[inputs.infoLevel] || {};
+  Object.entries(im).forEach(([k, v]) => { scores[k] += v; });
+
+  // 실손 세대 ×1
+  if (inputs.insurance && inputs.insurance !== 'none_unknown') {
+    scores['B2'] += 1;
+  }
+
+  // 동반자 ×1
+  const companionMap = {
+    alone: { B4: 1 },
+    spouse: { B3: 1 },
+    child: { B3: 1 },
+    other: {},
+  };
+  const coMap = companionMap[inputs.companion] || {};
+  Object.entries(coMap).forEach(([k, v]) => { scores[k] += v; });
+
+  return scores;
+}
+
+function getTopTwo(scores) {
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const first = sorted[0];
+  const second = sorted[1];
+  const gap = first[1] > 0 ? (first[1] - second[1]) / first[1] : 1;
+  const isMixed = gap <= 0.15;
+  return { first: first[0], second: second[0], isMixed, scores };
+}
+
+function resolveVariant(narrativeId, inputs) {
+  const persona = NARRATIVE_PERSONAS[narrativeId];
+  const g = inputs.gender;
+  const a = inputs.ageGroup;
+  const companion = inputs.companion;
+
+  // Build ordered variant keys to check
+  const keysToCheck = [];
+  if (g === 'male' && (a === '50s')) keysToCheck.push('male_50s');
+  if (g === 'male' && (a === '60s')) keysToCheck.push('male_60s');
+  if (g === 'female' && (a === '50s')) keysToCheck.push('female_50s');
+  if (g === 'female' && (a === '50s' || a === '60s')) keysToCheck.push('female_50s_plus');
+  if (g === 'male') keysToCheck.push('male');
+  if (g === 'female') keysToCheck.push('female');
+  if (a === '70s_plus') keysToCheck.push('age_70s_plus');
+  if (companion === 'child') keysToCheck.push('with_child_companion');
+  if (companion === 'spouse') keysToCheck.push('with_spouse_companion');
+
+  const appliedVariants = keysToCheck
+    .filter(k => persona.variants && persona.variants[k])
+    .map(k => persona.variants[k]);
+
+  return appliedVariants;
+}
+
+function resolveDriverVariant(driverId, inputs) {
+  const persona = DRIVER_PERSONAS[driverId];
+  const g = inputs.gender;
+  const keysToCheck = [];
+  if (g === 'male') keysToCheck.push('male');
+  if (g === 'female') keysToCheck.push('female');
+
+  const appliedVariants = keysToCheck
+    .filter(k => persona.variants && persona.variants[k])
+    .map(k => persona.variants[k]);
+
+  return appliedVariants;
+}
+
+function matchPersona(inputs) {
+  const narrativeScores = scoreNarratives(inputs);
+  const driverScores = scoreDrivers(inputs);
+  const narrativeResult = getTopTwo(narrativeScores);
+  const driverResult = getTopTwo(driverScores);
+
+  const narrative = NARRATIVE_PERSONAS[narrativeResult.first];
+  const driver = DRIVER_PERSONAS[driverResult.first];
+  const narrativeSecond = NARRATIVE_PERSONAS[narrativeResult.second];
+  const driverSecond = DRIVER_PERSONAS[driverResult.second];
+
+  const narrativeVariants = resolveVariant(narrativeResult.first, inputs);
+  const driverVariants = resolveDriverVariant(driverResult.first, inputs);
+
+  return {
+    narrative, driver,
+    narrativeSecond, driverSecond,
+    narrativeResult, driverResult,
+    narrativeVariants, driverVariants,
+    inputs,
+  };
+}
+
+/* ===== RENDERING ===== */
+
+function getMatchLabel(scores, id) {
+  const vals = Object.values(scores);
+  const max = Math.max(...vals);
+  const total = vals.reduce((a, b) => a + b, 0);
+  if (total === 0) return 'mid';
+  const ratio = scores[id] / total;
+  return ratio >= 0.40 ? 'high' : 'mid';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function labelForAge(a) {
+  const map = { '30s_under':'30대 이하', '40s':'40대', '50s':'50대', '60s':'60대', '70s_plus':'70대 이상' };
+  return map[a] || '';
+}
+
+function labelForGender(g) {
+  const map = { male:'남성', female:'여성', na:'미응답' };
+  return map[g] || '';
+}
+
+function buildVariantLabel(inputs) {
+  const parts = [];
+  const gl = labelForGender(inputs.gender);
+  const al = labelForAge(inputs.ageGroup);
+  if (gl && gl !== '미응답') parts.push(gl);
+  if (al) parts.push(al);
+  return parts.length ? parts.join(' · ') + ' 변형' : '';
+}
+
+function renderQList(questions, colorClass) {
+  return questions.map(item => `
+    <div class="q-item">
+      <div class="q-text">${escapeHtml(item.q)}</div>
+      <div class="q-guide">${escapeHtml(item.guide)}</div>
+    </div>`).join('');
+}
+
+function renderAvoidTags(avoidArr) {
+  return `<div class="avoid-list">${avoidArr.map(s => `<span class="avoid-tag">🚫 ${escapeHtml(s)}</span>`).join('')}</div>`;
+}
+
+function collectVariantAppend(variants) {
+  return variants.map(v => v.summaryAppend).filter(Boolean);
+}
+
+function collectVariantQuestions(variants) {
+  const qs = [];
+  variants.forEach(v => { if (v.questionOverrides) qs.push(...v.questionOverrides); });
+  return qs;
+}
+
+function renderCard(result) {
+  const { narrative, driver, narrativeSecond, driverSecond, narrativeResult, driverResult, narrativeVariants, driverVariants, inputs } = result;
+
+  const variantLabel = buildVariantLabel(inputs);
+  const aMatchLabel = getMatchLabel(narrativeResult.scores, narrative.id);
+  const bMatchLabel = getMatchLabel(driverResult.scores, driver.id);
+
+  const narrativeAppends = collectVariantAppend(narrativeVariants);
+  const driverAppends = collectVariantAppend(driverVariants);
+  const variantSpecialQs = collectVariantQuestions([...narrativeVariants, ...driverVariants]);
+
+  const aColor = narrative.color;
+  const bColor = driver.color;
+
+  // Compliance union
+  const complianceUnion = [...(narrative.base.complianceFlags || []), ...(driver.base.complianceFlags || [])];
+
+  // Hospital check union
+  const hospitalItems = narrative.base.hospitalCheckItems || [];
+
+  // Mismatch signals
+  const allSignals = [...(narrative.base.mismatchSignals || []), ...(driver.base.mismatchSignals || [])];
+
+  // Variant questions combined
+  const allSpecialQs = [...narrative.base.specialQuestions, ...variantSpecialQs].slice(0, 6);
+  const driverQs = driver.base.specialQuestions;
+
+  // factNotes from variants
+  const factNotes = narrativeVariants.map(v => v.factNotes).filter(Boolean);
+  const driverFactNotes = driverVariants.map(v => v.factNotes).filter(Boolean);
+
+  return `
+    <div class="card-header">
+      <div class="card-combo-title">
+        <span class="combo-a-tag" style="background:var(--clr-${aColor}-bg);color:var(--clr-${aColor});">${narrative.emoji} ${escapeHtml(narrative.name)}</span>
+        <span class="combo-x">×</span>
+        <span class="combo-b-tag" style="background:var(--clr-${bColor}-bg);color:var(--clr-${bColor});">${driver.emoji} ${escapeHtml(driver.name)}</span>
+        ${variantLabel ? `<span class="variant-tag">${escapeHtml(variantLabel)}</span>` : ''}
+      </div>
+      <div class="match-quality">
+        <span class="match-badge ${aMatchLabel === 'high' ? 'match-high' : 'match-mid'}">A축 ${aMatchLabel === 'high' ? '高' : '中'}</span>
+        <span class="match-badge ${bMatchLabel === 'high' ? 'match-high' : 'match-mid'}">B축 ${bMatchLabel === 'high' ? '高' : '中'}</span>
+        ${narrativeResult.isMixed ? `<span class="match-badge" style="background:#f0f0f0;color:#555;">A 혼합 포함 (${narrativeSecond.emoji}${escapeHtml(narrativeSecond.name)})</span>` : ''}
+        ${driverResult.isMixed ? `<span class="match-badge" style="background:#f0f0f0;color:#555;">B 혼합 포함 (${driverSecond.emoji}${escapeHtml(driverSecond.name)})</span>` : ''}
+      </div>
+    </div>
+
+    <div class="card-body">
+
+      <!-- 환자의 이야기 (A축) -->
+      <div class="card-section story-section">
+        <div class="section-head" style="color:var(--clr-${aColor});">▌ 환자의 이야기 ${narrative.emoji}</div>
+        <div class="section-body">
+          <p>${escapeHtml(narrative.base.summary)}</p>
+          <p>${escapeHtml(narrative.base.psychology)}</p>
+          ${narrativeAppends.map(a => `<p>${escapeHtml(a)}</p>`).join('')}
+          ${factNotes.length ? `<p style="font-size:0.78rem;color:var(--clr-warn);margin-top:6px;">ℹ️ ${factNotes.map(escapeHtml).join(' / ')}</p>` : ''}
+          <div class="intro-cue">${escapeHtml(narrative.base.introCue)}</div>
+        </div>
+      </div>
+
+      <!-- 의사결정의 열쇠 (B축) -->
+      <div class="card-section driver-section">
+        <div class="section-head" style="color:var(--clr-${bColor});">▌ 의사결정의 열쇠 ${driver.emoji}</div>
+        <div class="section-body">
+          <p>${escapeHtml(driver.base.summary)}</p>
+          <p>${escapeHtml(driver.base.psychology)}</p>
+          ${driverAppends.map(a => `<p>${escapeHtml(a)}</p>`).join('')}
+        </div>
+      </div>
+
+      <!-- 공통 질문 Top 5 -->
+      <div class="card-section">
+        <div class="section-head">▌ 공통 질문 Top 5</div>
+        <div class="section-body">
+          <div class="q-list">${renderQList(COMMON_QUESTIONS)}</div>
+        </div>
+      </div>
+
+      <!-- 이 환자가 물어볼 질문 -->
+      <div class="card-section">
+        <div class="section-head">▌ 이 환자가 물어볼 가능성 높은 질문</div>
+        <div class="section-body">
+          <div class="section-divider">A축 특화 — ${narrative.emoji} ${escapeHtml(narrative.name)}</div>
+          <div class="q-list" style="margin-bottom:12px;">${renderQList(allSpecialQs)}</div>
+          <div class="section-divider">B축 특화 — ${driver.emoji} ${escapeHtml(driver.name)}</div>
+          <div class="q-list">${renderQList(driverQs)}</div>
+        </div>
+      </div>
+
+      <!-- 상담 전략 -->
+      <div class="card-section">
+        <div class="section-head">▌ 상담 전략</div>
+        <div class="section-body">
+          <div class="strategy-grid">
+            <div class="strategy-item">
+              <span class="strategy-label">도입</span>
+              <span class="strategy-text">${escapeHtml(narrative.base.strategy.intro)}</span>
+            </div>
+            <div class="strategy-item">
+              <span class="strategy-label">강조</span>
+              <span class="strategy-text">${escapeHtml(driver.base.strategy.emphasis)}</span>
+            </div>
+            <div class="strategy-item" style="flex-direction:column;gap:6px;">
+              <div style="display:flex;gap:10px;align-items:center;">
+                <span class="strategy-label" style="background:var(--clr-danger-bg);color:var(--clr-danger);">금지 표현</span>
+              </div>
+              ${renderAvoidTags([...narrative.base.strategy.avoid, ...driver.base.strategy.avoid])}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 컴플라이언스 주의 -->
+      <div class="card-section danger-section">
+        <div class="section-head" style="color:var(--clr-danger);">▌ ⚠️ 컴플라이언스 주의</div>
+        <div class="section-body">
+          <div class="compliance-list">
+            ${complianceUnion.map(c => `<div class="compliance-item">${escapeHtml(c)}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- 본원 확인 -->
+      <div class="card-section check-section">
+        <div class="section-head">▌ 📋 [본원 확인] 필요 항목</div>
+        <div class="section-body">
+          <p style="font-size:0.75rem;color:var(--clr-neutral-400);margin-bottom:10px;">아래 항목은 자동 채움 금지 — 수기로 확인 후 기입</p>
+          <div class="check-list">
+            ${hospitalItems.map(item => `
+              <div class="check-item">
+                <div class="check-box"></div>
+                <span>${escapeHtml(item)}</span>
+                <span class="check-empty">[ 확인 전 ]</span>
+              </div>`).join('')}
+            <div class="check-item">
+              <div class="check-box"></div>
+              <span>보험 세대별 보장 범위 (입력: ${escapeHtml(labelForInsurance(inputs.insurance))})</span>
+              <span class="check-empty">[ 원무팀 확인 ]</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 불일치 신호 -->
+      <div class="card-section warn-section">
+        <div class="section-head" style="color:var(--clr-warn);">▌ 🔄 불일치 신호 & 전환 힌트</div>
+        <div class="section-body">
+          <div class="signal-list">
+            ${allSignals.map(s => `
+              <div class="signal-item">
+                <div class="signal-trigger">🔎 ${escapeHtml(s.trigger)}</div>
+                <div class="signal-action">→ ${escapeHtml(s.action)}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /card-body -->
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      <div class="no-store">🔒 본 도구는 어떤 정보도 저장하지 않습니다</div>
+      <p>※ 본 자료는 상담 준비를 위한 내부 참고용입니다.</p>
+      <p>※ 카티스템은 전문의약품으로 치료 적합성은 담당 의사가 판단합니다.</p>
+      <p>※ 개별 환자의 경과와 보험 보장 여부는 다를 수 있습니다.</p>
+      <p style="margin-top:4px;font-style:italic;">페르소나는 상담 준비 참고 도구입니다. 실제 관심사는 대화 속에서 확인하고, 불일치 신호가 보이면 즉시 전환하세요.</p>
+    </div>
+  `;
+}
+
+function labelForInsurance(v) {
+  const m = { gen1_2:'1~2세대', gen3:'3세대', gen4:'4세대', gen5:'5세대', none_unknown:'없음·모름' };
+  return m[v] || '미입력';
+}
+
+function renderAxisBar(result) {
+  const { narrative, driver, narrativeSecond, driverSecond, narrativeResult, driverResult } = result;
+  const allA = Object.values(NARRATIVE_PERSONAS);
+  const allB = Object.values(DRIVER_PERSONAS);
+
+  const aChips = allA.map(p => {
+    const isActive = p.id === narrative.id;
+    const isSecond = p.id === narrativeSecond.id && narrativeResult.isMixed;
+    let cls = `axis-chip ${p.color}`;
+    if (isActive) cls += ' active';
+    if (narrativeResult.isMixed && isActive) cls += ' mixed-badge';
+    if (isSecond) cls += ' secondary-highlight';
+    return `<button type="button" class="${cls}" data-switch-a="${p.id}" title="이 서사 유형으로 전환">${p.emoji} ${p.name}</button>`;
+  }).join('');
+
+  const bChips = allB.map(p => {
+    const isActive = p.id === driver.id;
+    const isSecond = p.id === driverSecond.id && driverResult.isMixed;
+    let cls = `axis-chip ${p.color}`;
+    if (isActive) cls += ' active';
+    if (driverResult.isMixed && isActive) cls += ' mixed-badge';
+    if (isSecond) cls += ' secondary-highlight';
+    return `<button type="button" class="${cls}" data-switch-b="${p.id}" title="이 동인 유형으로 전환">${p.emoji} ${p.name}</button>`;
+  }).join('');
+
+  return `
+    <div class="axis-bar-title">A축 — 손상 서사 (상담 도입 기준)</div>
+    <div class="axis-row">${aChips}</div>
+    <div class="axis-bar-title" style="margin-top:10px;">B축 — 의사결정 동인 (설명 순서 기준)</div>
+    <div class="axis-row">${bChips}</div>
+  `;
+}
+
+/* ===== APP STATE & EVENTS ===== */
+
+const state = {
+  selections: {},
+  lastResult: null,
+  currentNarrative: null,
+  currentDriver: null,
+};
+
+function getFieldValues() {
+  const values = {};
+  document.querySelectorAll('[data-field]').forEach(group => {
+    const field = group.dataset.field;
+    const type = group.dataset.type;
+    if (type === 'single') {
+      const selected = group.querySelector('.chip.selected');
+      values[field] = selected ? selected.dataset.value : null;
+    } else {
+      const selected = group.querySelectorAll('.chip.selected');
+      values[field] = Array.from(selected).map(c => c.dataset.value);
+    }
+  });
+  return values;
+}
+
+function countFilled(values) {
+  let n = 0;
+  Object.entries(values).forEach(([k, v]) => {
+    if (Array.isArray(v) ? v.length > 0 : v != null) n++;
+  });
+  return n;
+}
+
+function updateProgress() {
+  const vals = getFieldValues();
+  const filled = countFilled(vals);
+  const total = 11;
+  document.getElementById('progressText').textContent = `${filled} / ${total}`;
+  document.getElementById('progressFill').style.width = `${Math.round(filled / total * 100)}%`;
+}
+
+function validateForm(values) {
+  const required = ['ageGroup','gender','injuryType','painDuration','activityHistory','treatmentGoal','insurance','decisionStage','companion','infoLevel','mainConcern'];
+  const missing = required.filter(f => {
+    const v = values[f];
+    return Array.isArray(v) ? v.length === 0 : !v;
+  });
+  return missing;
+}
+
+// Chip click handler
+document.querySelectorAll('[data-field]').forEach(group => {
+  const type = group.dataset.type;
+  const maxSel = group.dataset.max ? parseInt(group.dataset.max) : Infinity;
+
+  group.addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+
+    if (type === 'single') {
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+    } else {
+      if (chip.classList.contains('selected')) {
+        chip.classList.remove('selected');
+      } else {
+        const current = group.querySelectorAll('.chip.selected').length;
+        if (current < maxSel) chip.classList.add('selected');
+      }
+    }
+    updateProgress();
+  });
+});
+
+// Form submit
+document.getElementById('consultForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const values = getFieldValues();
+  const missing = validateForm(values);
+  const msgEl = document.getElementById('validationMsg');
+
+  if (missing.length > 0) {
+    msgEl.textContent = `아직 선택하지 않은 항목이 ${missing.length}개 있습니다. 모두 선택 후 생성해 주세요.`;
+    return;
+  }
+  msgEl.textContent = '';
+
+  const result = matchPersona(values);
+  state.lastResult = result;
+  state.currentNarrative = result.narrative.id;
+  state.currentDriver = result.driver.id;
+
+  document.getElementById('axisBar').innerHTML = renderAxisBar(result);
+  document.getElementById('briefCard').innerHTML = renderCard(result);
+  document.getElementById('resultSection').classList.add('visible');
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Axis chip switch listeners
+  attachAxisSwitchListeners();
+});
+
+function attachAxisSwitchListeners() {
+  document.querySelectorAll('[data-switch-a]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newAId = btn.dataset.switchA;
+      state.currentNarrative = newAId;
+      rerenderWithOverride();
+    });
+  });
+  document.querySelectorAll('[data-switch-b]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newBId = btn.dataset.switchB;
+      state.currentDriver = newBId;
+      rerenderWithOverride();
+    });
+  });
+}
+
+function rerenderWithOverride() {
+  const result = state.lastResult;
+  const overrideNarrative = NARRATIVE_PERSONAS[state.currentNarrative];
+  const overrideDriver = DRIVER_PERSONAS[state.currentDriver];
+  const inputs = result.inputs;
+
+  const narrativeVariants = resolveVariant(state.currentNarrative, inputs);
+  const driverVariants = resolveDriverVariant(state.currentDriver, inputs);
+
+  const overrideResult = {
+    ...result,
+    narrative: overrideNarrative,
+    driver: overrideDriver,
+    narrativeVariants,
+    driverVariants,
+  };
+
+  document.getElementById('axisBar').innerHTML = renderAxisBar({
+    ...overrideResult,
+    narrative: overrideNarrative,
+    driver: overrideDriver,
+  });
+  document.getElementById('briefCard').innerHTML = renderCard(overrideResult);
+  attachAxisSwitchListeners();
+}
+
+// Reset
+document.getElementById('resetBtn').addEventListener('click', () => {
+  document.querySelectorAll('.chip.selected').forEach(c => c.classList.remove('selected'));
+  updateProgress();
+  document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('briefCard').innerHTML = '';
+  document.getElementById('axisBar').innerHTML = '';
+  state.lastResult = null;
+  state.currentNarrative = null;
+  state.currentDriver = null;
+  document.getElementById('formSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+// Initial progress render
+updateProgress();
+
+// TODO(법무검토 후): logging
+</script>
+</body>
+</html>
