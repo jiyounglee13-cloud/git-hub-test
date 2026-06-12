@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0c3a4f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="카티스템 의료진">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230c3a4f'/><path d='M32 12v40M12 32h40' stroke='%237fd1e8' stroke-width='7' stroke-linecap='round'/></svg>">
+<title>카티스템 의료진 레퍼런스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ffffff; --bg:#eef2f4; --ink:#142532; --sub:#566472; --faint:#8a96a2; --line:#e2e8ed;
+    --a:#0d6e8c; --a-soft:#e6f3f7; --a-bar:#127a99;
+    --b:#b46512; --b-soft:#fbf3e6; --b-bar:#d18020;
+    --e:#5a4bd4; --e-soft:#ecebfb; --e-bar:#6f60e0;
+    --ok:#138a55; --ok-soft:#e6f5ee;
+    --no:#c93636; --no-soft:#fcebeb;
+    --warn:#b5450e; --warn-soft:#fdecdd;
+    --note:#946712; --note-soft:#fbf2dc;
+    --radius:18px;
+    --shadow:0 1px 2px rgba(12,40,60,.06),0 8px 24px rgba(12,40,60,.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'IBM Plex Sans KR',sans-serif;
+    background:radial-gradient(circle at 10% -5%,#eef6f9 0%,transparent 45%),radial-gradient(circle at 100% 0%,#e7eef3 0%,transparent 42%),var(--bg);
+    color:var(--ink); line-height:1.62; -webkit-font-smoothing:antialiased; padding:0 0 84px;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:820px;margin:0 auto;}
+
+  header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:14px 20px 11px;}
+  .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:11px;}
+  .brand h1{font-size:17px;font-weight:700;letter-spacing:-.01em;}
+  .brand .tag{font-size:11px;font-weight:600;color:#fff;background:var(--a);border-radius:999px;padding:3px 11px;}
+  .brand .ver{font-size:11px;color:var(--faint);margin-left:auto;}
+  .tools{display:flex;gap:6px;align-self:center;}
+  .tbtn{font-family:inherit;font-size:12.5px;font-weight:500;border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:9px;padding:5px 9px;cursor:pointer;line-height:1;white-space:nowrap;text-decoration:none;display:inline-block;}
+  .tbtn:hover{background:#f1f5f7;color:var(--ink);}
+  .tbtn.alt{border-color:var(--a);color:var(--a);background:var(--a-soft);font-weight:600;}
+  .search{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:11px 15px;transition:border-color .15s,box-shadow .15s;}
+  .search:focus-within{border-color:var(--a);box-shadow:0 0 0 4px rgba(13,110,140,.12);}
+  .search svg{flex:none;color:var(--faint);}
+  .search input{border:0;outline:0;font:inherit;font-size:15px;width:100%;background:transparent;color:var(--ink);}
+  .search input::placeholder{color:var(--faint);}
+  .search .clr{cursor:pointer;color:var(--faint);font-size:18px;line-height:1;padding:0 2px;display:none;}
+
+  #view{max-width:820px;margin:18px auto 0;padding:0 20px;}
+  .panel{display:none;} .panel.active{display:block;}
+  .modehint{font-size:12.5px;color:var(--sub);margin:0 0 16px;line-height:1.6;}
+  .modehint b{color:var(--ink);}
+
+  .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));}
+  .tabbar button{flex:1;border:0;background:transparent;padding:7px 2px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--faint);font:inherit;font-size:10.5px;font-weight:600;cursor:pointer;transition:color .15s;}
+  .tabbar button .ic{font-size:18px;line-height:1;}
+  .tabbar button .tsub{font-size:8px;font-weight:500;line-height:1;opacity:.8;}
+  .tabbar button[data-active="true"]{color:var(--a);}
+  @media(max-width:400px){.tabbar button{font-size:9.5px;} .tabbar button .ic{font-size:16px;} .tabbar button .tsub{display:none;}}
+
+  .hero{color:#fff;border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow);}
+  .hero.teal{background:linear-gradient(135deg,#0a2f40,#0e5670);}
+  .hero.green{background:linear-gradient(135deg,#103a2c,#14784e);}
+  .hero.amber{background:linear-gradient(135deg,#5a3a0f,#a8650f);}
+  .hero.indigo{background:linear-gradient(135deg,#23215a,#4a3fae);}
+  .hero.slate{background:linear-gradient(135deg,#1b2433,#33485c);}
+  .hero .pb{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:3px 10px;margin-bottom:9px;}
+  .hero h2{font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.35;}
+  .hero p{font-size:12.5px;color:rgba(255,255,255,.82);margin-top:7px;line-height:1.6;}
+
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px;}
+  @media(max-width:540px){.facts{grid-template-columns:1fr;}}
+  .fact{background:#fff;border:1px solid var(--line);border-left:4px solid var(--a);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow);}
+  .fact .fl{font-size:10.5px;font-weight:700;color:var(--a);letter-spacing:.02em;}
+  .fact .fv{font-size:13.5px;font-weight:500;color:var(--ink);margin-top:3px;line-height:1.5;}
+  .fact .fv b{color:var(--a);font-weight:700;}
+
+  .acc{background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden;}
+  .acc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 16px;font-size:14.5px;font-weight:700;}
+  .acc>summary::-webkit-details-marker{display:none;}
+  .acc>summary .pi{font-size:17px;}
+  .acc>summary .ar{margin-left:auto;font-size:12px;color:var(--faint);transition:transform .2s;}
+  .acc[open]>summary .ar{transform:rotate(90deg);}
+  .acc .pin{padding:2px 16px 15px;}
+  .acc .row{font-size:13px;color:#3a4651;line-height:1.62;padding:7px 0 7px 15px;position:relative;border-top:1px dashed #eef2f6;}
+  .acc .row:first-child{border-top:0;}
+  .acc .row::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:50%;background:var(--a);}
+  .acc .row b{color:var(--ink);font-weight:600;}
+  .acc .row .k{display:inline-block;min-width:92px;color:var(--faint);font-weight:600;}
+
+  .dosetbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px;}
+  .dosetbl th{background:var(--a-soft);color:var(--a);font-weight:700;text-align:left;padding:7px 9px;font-size:11.5px;border-bottom:1px solid var(--line);}
+  .dosetbl td{padding:7px 9px;border-bottom:1px solid var(--line);color:#3a4651;}
+  .dosetbl tr:last-child td{border-bottom:0;}
+  .dosetbl .v{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--a);}
+
+  .sec{display:flex;align-items:center;gap:10px;margin:26px 0 13px;}
+  .sec .bar{width:4px;height:18px;border-radius:3px;background:var(--a-bar);}
+  .sec.g .bar{background:var(--ok);} .sec.r .bar{background:var(--no);} .sec.w .bar{background:var(--warn);} .sec.b .bar{background:var(--b-bar);}
+  .sec h3{font-size:15px;font-weight:700;letter-spacing:-.01em;}
+
+  .callout{border-radius:13px;padding:13px 15px;margin-bottom:14px;font-size:13px;line-height:1.62;border:1px solid var(--line);}
+  .callout .ch{font-size:12px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:7px;}
+  .callout.info{background:var(--a-soft);border-color:#cae6ee;color:#0c4456;} .callout.info .ch{color:var(--a);}
+  .callout.ok{background:var(--ok-soft);border-color:#cce9da;color:#0f4631;} .callout.ok .ch{color:var(--ok);}
+  .callout.warn{background:var(--warn-soft);border-color:#f6d3b3;color:#7a3a0e;} .callout.warn .ch{color:var(--warn);}
+  .callout.no{background:var(--no-soft);border-color:#f3d2d2;color:#7c2a2a;} .callout.no .ch{color:var(--no);}
+  .callout.note{background:var(--note-soft);border-color:#efe0b6;color:#6a4d12;} .callout.note .ch{color:var(--note);}
+  .callout b{font-weight:700;}
+
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:16px;}
+  @media(max-width:520px){.duo{grid-template-columns:1fr;}}
+  .duocard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 15px;box-shadow:var(--shadow);}
+  .duocard.safe{border-top:4px solid var(--ok);} .duocard.risk{border-top:4px solid var(--no);}
+  .duocard .dt{font-size:14px;font-weight:700;margin-bottom:5px;}
+  .duocard.safe .dt{color:var(--ok);} .duocard.risk .dt{color:var(--no);}
+  .duocard .dd{font-size:12.5px;color:#46535f;line-height:1.6;}
+
+  .principles{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:16px;}
+  @media(max-width:640px){.principles{grid-template-columns:repeat(2,1fr);}}
+  .pr{background:#fff;border:1px solid var(--line);border-top:4px solid var(--a);border-radius:13px;padding:12px 11px;box-shadow:var(--shadow);}
+  .pr .pn{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:11px;color:var(--a);}
+  .pr .pt{font-size:13px;font-weight:700;margin:4px 0 5px;line-height:1.35;}
+  .pr .pd{font-size:11.5px;color:var(--sub);line-height:1.5;}
+  .pr.warnp{border-top-color:var(--no);} .pr.warnp .pn,.pr.warnp .pt{color:var(--no);}
+
+  .ctbl{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:12.5px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
+  .ctbl th{background:#f2f6f8;color:var(--sub);font-weight:700;text-align:left;padding:9px 11px;font-size:11.5px;border-bottom:1px solid var(--line);}
+  .ctbl th.hl{background:var(--a-soft);color:var(--a);}
+  .ctbl td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;color:#3a4651;}
+  .ctbl tr:last-child td{border-bottom:0;}
+  .ctbl td.hl{background:#f4fafc;color:var(--ink);font-weight:600;}
+  .ctbl .em{color:var(--no);font-weight:700;}
+
+  .flags{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;}
+  @media(max-width:520px){.flags{grid-template-columns:1fr;}}
+  .flag{display:flex;gap:10px;background:var(--no-soft);border:1px solid #f3d2d2;border-radius:12px;padding:11px 13px;}
+  .flag .fi{font-size:18px;flex:none;}
+  .flag .ft{font-size:12.5px;color:#7c2a2a;line-height:1.5;}
+  .flag .ft b{color:#a02323;font-weight:700;}
+
+  .phases{display:flex;flex-direction:column;gap:11px;margin-bottom:16px;}
+  .phase{background:#fff;border:1px solid var(--line);border-left:5px solid var(--cc,var(--a));border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);}
+  .phase .ph{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:6px;}
+  .phase .pl{font-size:15px;font-weight:800;letter-spacing:-.01em;color:var(--cc,var(--a));}
+  .phase .pp{font-size:11.5px;font-family:'IBM Plex Mono',monospace;color:var(--faint);}
+  .phase .pb2{font-size:12.5px;color:#46535f;line-height:1.62;}
+  .phase ul{list-style:none;margin-top:7px;display:grid;gap:5px;}
+  .phase li{font-size:12.5px;color:#3a4651;padding-left:15px;position:relative;line-height:1.55;}
+  .phase li::before{content:"\25B8";position:absolute;left:0;color:var(--cc,var(--a));}
+  .phase li b{color:var(--ink);}
+
+  .ladder{display:grid;gap:7px;margin:8px 0 0;}
+  .lstep{display:flex;align-items:center;gap:11px;background:#f4fafc;border:1px solid #d8ecf2;border-radius:10px;padding:8px 12px;}
+  .lstep .lw{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:11.5px;color:var(--a);flex:none;width:54px;}
+  .lstep .ld{font-size:12.5px;color:#3a4651;}
+  .lstep .ld b{color:var(--ink);}
+
+  .triage{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  @media(max-width:640px){.triage{grid-template-columns:1fr;}}
+  .tcol{border-radius:13px;padding:12px 13px;border:1px solid var(--line);}
+  .tcol.early{background:var(--ok-soft);border-color:#cce9da;}
+  .tcol.delay{background:var(--note-soft);border-color:#efe0b6;}
+  .tcol.avoid{background:var(--no-soft);border-color:#f3d2d2;}
+  .tcol .tch{font-size:12.5px;font-weight:700;margin-bottom:8px;}
+  .tcol.early .tch{color:var(--ok);} .tcol.delay .tch{color:var(--note);} .tcol.avoid .tch{color:var(--no);}
+  .tcol .ti{background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:9px;padding:8px 10px;margin-bottom:7px;font-size:12px;line-height:1.5;color:#3a4651;}
+  .tcol .ti:last-child{margin-bottom:0;}
+  .tcol .ti b{color:var(--ink);}
+
+  .terms{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+  .term{background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 13px;box-shadow:var(--shadow);}
+  .term .tt{font-size:13px;font-weight:700;color:var(--a);}
+  .term .tt span{font-weight:500;color:var(--faint);font-size:11.5px;}
+  .term .td{font-size:12.5px;color:var(--sub);line-height:1.56;margin-top:3px;}
+
+  /* 재활 트랙 토글 */
+  .rtrack{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .rtile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;box-shadow:var(--shadow);transition:all .18s;font-family:inherit;}
+  .rtile .iti{font-size:20px;}
+  .rtile .itt{font-size:14px;font-weight:700;color:var(--ink);}
+  .rtile .its{font-size:11px;color:var(--faint);line-height:1.4;}
+  .rtile.active{border-color:var(--ok);background:var(--ok-soft);box-shadow:0 4px 14px -6px var(--ok);}
+  .rtile.active .itt{color:var(--ok);}
+  .rtile.mfc.active{border-color:var(--a);background:var(--a-soft);box-shadow:0 4px 14px -6px var(--a);}
+  .rtile.mfc.active .itt{color:var(--a);}
+  .rview{display:none;} .rview.active{display:block;animation:rise .35s cubic-bezier(.2,.7,.3,1) both;}
+  @keyframes rise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+  /* PDF 이미지 갤러리 */
+  .pdfgal{display:grid;gap:12px;margin-bottom:14px;}
+  .pdfslide{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;}
+  .pdfslide img{width:100%;display:block;}
+  .pdfslide .cap{font-size:11.5px;color:var(--faint);padding:8px 13px;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;}
+  .lightnote{background:#f7f9fb;border:1px dashed var(--line);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:14px;}
+  .lightnote b{color:var(--ink);}
+
+  /* 실손 세대/슬롯 */
+  .genc{background:#fff;border:1px solid var(--line);border-left:5px solid var(--cc);border-radius:14px;padding:13px 15px;box-shadow:var(--shadow);margin-bottom:10px;}
+  .genc .gh{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+  .genc .gg{font-size:16px;font-weight:800;letter-spacing:-.01em;}
+  .genc .gp{font-size:11.5px;color:var(--faint);font-family:'IBM Plex Mono',monospace;}
+  .genc .gn{font-size:12.5px;font-weight:600;color:var(--sub);margin:1px 0 8px;}
+  .genc .grow{display:flex;gap:8px;font-size:12.5px;padding:4px 0;border-top:1px dashed #eef2f6;}
+  .genc .gl{flex:none;width:80px;color:var(--faint);font-weight:600;}
+  .genc .gv{flex:1;color:var(--ink);line-height:1.5;}
+
+  .slot{background:#fff;border:1px solid var(--line);border-left:5px solid var(--b-bar);border-radius:15px;box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden;}
+  .slot>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;}
+  .slot>summary::-webkit-details-marker{display:none;}
+  .slot .sc{flex:1;min-width:0;}
+  .slot .stag{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:var(--b);}
+  .slot .stitle{font-size:14.5px;font-weight:700;line-height:1.4;margin-top:3px;}
+  .slot .ssub{font-size:12px;color:var(--sub);margin-top:4px;line-height:1.45;}
+  .slot .car{flex:none;color:var(--faint);font-size:14px;margin-top:4px;transition:transform .2s;}
+  .slot[open] .car{transform:rotate(90deg);}
+  .slot .sbody{padding:2px 16px 16px;}
+  .slot .reason{background:var(--no-soft);border:1px solid #f3d2d2;border-radius:10px;padding:10px 12px;margin:6px 0 10px;font-size:12.5px;color:#7c2a2a;line-height:1.55;}
+  .slot .reason b{color:var(--no);}
+  .slot .rebut{background:var(--a-soft);border:1px solid #cae6ee;border-radius:10px;padding:11px 13px;font-size:13px;color:#0c4456;line-height:1.64;}
+  .slot .rebut b{color:var(--a);font-weight:700;}
+  .slot .feas{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-top:9px;}
+  .slot .feas.hi{background:var(--ok-soft);color:var(--ok);}
+  .slot .feas.mid{background:var(--note-soft);color:var(--note);}
+  .slot .feas.lo{background:var(--no-soft);color:var(--no);}
+
+  /* 논문 */
+  .pfilter,.qfilter{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+  .chip{font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--sub);border-radius:999px;padding:6px 13px;transition:all .15s;user-select:none;}
+  .chip:hover{border-color:#c4d2da;}
+  .chip[data-active="true"]{background:var(--a);color:#fff;border-color:var(--a);}
+  .paper{background:#fff;border:1px solid var(--line);border-left:5px solid var(--cc,var(--a));border-radius:14px;box-shadow:var(--shadow);margin-bottom:11px;overflow:hidden;}
+  .paper>summary{list-style:none;cursor:pointer;padding:13px 15px;display:flex;gap:11px;align-items:flex-start;}
+  .paper>summary::-webkit-details-marker{display:none;}
+  .paper .pcat{flex:none;font-size:10px;font-weight:700;color:#fff;background:var(--cc,var(--a));border-radius:7px;padding:4px 7px;line-height:1.2;text-align:center;min-width:46px;margin-top:2px;}
+  .paper .pmain{flex:1;min-width:0;}
+  .paper .ptitle{font-size:14px;font-weight:600;line-height:1.42;letter-spacing:-.01em;}
+  .paper .pmeta{font-size:11.5px;color:var(--faint);margin-top:5px;font-family:'IBM Plex Mono',monospace;display:flex;flex-wrap:wrap;gap:5px 10px;}
+  .paper .pmeta b{color:var(--sub);}
+  .paper .pmeta.au{text-transform:none;}
+  .paper .car{flex:none;color:var(--faint);font-size:13px;margin-top:4px;transition:transform .2s;}
+  .paper[open] .car{transform:rotate(90deg);}
+  .paper .pbody{border-top:1px solid #eef2f7;padding:12px 15px 14px;}
+  .paper .pkey{font-size:13px;color:#33424f;line-height:1.66;}
+  .paper .pkey b{color:var(--ink);font-weight:600;}
+  .paper .ptags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .paper .ptags span{font-size:11px;color:#46535f;background:#f2f6f8;border:1px solid var(--line);border-radius:8px;padding:3px 8px;}
+  .paper .plink{display:inline-flex;align-items:center;gap:6px;margin-top:11px;margin-right:8px;font-size:12px;font-weight:600;color:var(--a);text-decoration:none;border:1px solid #cae6ee;background:var(--a-soft);border-radius:9px;padding:7px 12px;}
+  .paper .plink.pdf{color:var(--no);border-color:#f3d2d2;background:var(--no-soft);}
+  .paper .pdfembed{margin-top:11px;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .paper .pdfembed iframe{width:100%;height:520px;border:0;display:block;}
+
+  /* 상담자료 / 환자 시각자료 (원본 스타일 차용) */
+  .pmintro{background:linear-gradient(#ecf8f1,#fff);border:1px solid #cfe9da;border-left:5px solid var(--ok);border-radius:14px;padding:14px 16px;margin-bottom:12px;}
+  .pmintro .pmh{font-size:13px;font-weight:700;color:var(--ok);margin-bottom:6px;display:flex;align-items:center;gap:7px;}
+  .pmintro .pmb{font-size:13px;color:#28453a;line-height:1.66;}
+  .pmintro .pmb b{color:#13352a;font-weight:600;}
+  .pmgrid{display:grid;gap:13px;margin-bottom:18px;}
+  .pmcard{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid #e6ecf2;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;transition:transform .15s,box-shadow .15s,border-color .15s;cursor:pointer;}
+  .pmcard:hover{transform:translateY(-2px);border-color:#bfe3cf;box-shadow:0 10px 26px -10px rgba(19,138,85,.4);}
+  .pmthumb{height:120px;background-size:cover;background-position:center;position:relative;border-bottom:1px solid #eef2f6;background-color:#dfe8ee;}
+  .pmthumb .pmnum{position:absolute;left:12px;top:12px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:#fff;background:rgba(20,32,46,.62);backdrop-filter:blur(3px);padding:4px 10px;border-radius:999px;}
+  .pmthumb .pmtag{position:absolute;right:12px;top:12px;font-size:10.5px;font-weight:700;color:#fff;background:rgba(19,138,85,.92);padding:4px 10px;border-radius:999px;}
+  .pmbody{padding:13px 16px 15px;}
+  .pmtitle{font-size:16px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;}
+  .pmtitle .arr{margin-left:auto;color:var(--ok);font-size:15px;}
+  .pmdesc{font-size:12.5px;color:var(--sub);line-height:1.6;margin-top:6px;}
+  .pmmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .pmmeta span{font-size:11px;color:#46505c;background:#f3f6f9;border:1px solid var(--line);border-radius:8px;padding:4px 9px;}
+
+  .matgrid{display:grid;gap:11px;margin-bottom:8px;}
+  .mat{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;}
+  .mat>summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:flex-start;padding:14px 16px;}
+  .mat>summary::-webkit-details-marker{display:none;}
+  .mat .mi{font-size:22px;flex:none;}
+  .mat .mm{flex:1;min-width:0;}
+  .mat .mt{font-size:14.5px;font-weight:700;}
+  .mat .ms{font-size:12px;color:var(--sub);margin-top:3px;line-height:1.5;}
+  .mat .car{flex:none;color:var(--faint);font-size:13px;margin-top:4px;transition:transform .2s;}
+  .mat[open] .car{transform:rotate(90deg);}
+  .mat .mbody{border-top:1px solid #eef2f7;padding:13px 16px 15px;}
+  .mat .point{font-size:13px;color:#33424f;line-height:1.66;padding:6px 0 6px 16px;position:relative;}
+  .mat .point::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:50%;background:var(--a);}
+  .mat .point b{color:var(--ink);font-weight:600;}
+  .mat .copy{margin-top:11px;border:1px solid var(--a);background:var(--a-soft);color:var(--a);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;}
+  .mat .copy:active{transform:scale(.97);}
+
+  /* Q&A */
+  .faq{background:#fff;border:1px solid var(--line);border-left:5px solid var(--cc,var(--a));border-radius:15px;box-shadow:var(--shadow);margin-bottom:11px;overflow:hidden;}
+  .faq>summary{list-style:none;display:flex;gap:11px;align-items:flex-start;padding:14px 16px;cursor:pointer;}
+  .faq>summary::-webkit-details-marker{display:none;}
+  .faq .num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--a-soft);color:var(--a);display:grid;place-items:center;font-weight:700;font-size:13px;font-family:'IBM Plex Mono',monospace;margin-top:1px;}
+  .faq .qt{flex:1;min-width:0;}
+  .faq .ctag{display:inline-block;font-size:10.5px;font-weight:700;color:var(--a);background:var(--a-soft);border-radius:999px;padding:2px 8px;margin-bottom:5px;}
+  .faq .qx{font-size:15px;font-weight:600;line-height:1.45;letter-spacing:-.01em;}
+  .faq .car{flex:none;color:var(--faint);font-size:13px;margin-top:5px;transition:transform .2s;}
+  .faq[open] .car{transform:rotate(90deg);}
+  .faq .ans{border-top:1px solid #eef2f7;padding:14px 16px 6px;color:#33424f;font-size:14px;line-height:1.66;}
+  .faq .ans p{margin:0 0 10px;} .faq .ans b{color:#0e3346;font-weight:600;}
+  .faq .clin{margin:0 16px 14px;background:var(--a-soft);border:1px solid #cae6ee;border-radius:11px;padding:11px 13px;}
+  .faq .clin .cl{font-size:10.5px;font-weight:700;color:var(--a);letter-spacing:.02em;margin-bottom:4px;}
+  .faq .clin p{font-size:12.5px;color:#0c4456;line-height:1.6;margin:0;}
+
+  .searchres{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font:inherit;box-shadow:var(--shadow);}
+  .searchres .srt{font-size:14px;font-weight:600;line-height:1.4;color:var(--ink);}
+  .searchres .srs{font-size:12px;color:var(--faint);margin-top:4px;}
+  .empty{text-align:center;color:var(--faint);font-size:14px;padding:42px 0;}
+  .toast{position:fixed;left:16px;right:16px;bottom:96px;z-index:60;background:var(--ink);color:#fff;border-radius:14px;padding:13px;text-align:center;font-weight:700;font-size:14px;opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s;max-width:480px;margin:0 auto;}
+  .toast.show{opacity:1;transform:none;}
+
+  footer{max-width:820px;margin:24px auto 0;padding:0 20px;}
+  .disc{font-size:11.5px;color:var(--faint);line-height:1.7;border-top:1px solid var(--line);padding-top:16px;}
+  .disc b{color:var(--sub);}
+
+  @media print{
+    header .search,.tools,nav.tabbar,.toast{display:none !important;}
+    header{position:static;backdrop-filter:none;}
+    .panel:not(.active){display:none;}
+    details>*{display:block !important;}
+    .acc,.paper,.faq,.slot,.phase,.genc,.pmcard{break-inside:avoid;box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <h1>카티스템<sup style="font-size:9px">®</sup> 의료진 레퍼런스</h1>
+      <span class="tag" id="tagLabel">의료진 전용</span>
+      <span class="ver mono" id="verLabel">v2.0</span>
+      <div class="tools">
+        <a class="tbtn alt" id="modeSwitch" href="#">버전</a>
+        <button id="fontBtn" class="tbtn" title="글자 크기">가＋</button>
+        <button id="printBtn" class="tbtn" title="인쇄">🖨</button>
+      </div>
+    </div>
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="gsearch" type="search" placeholder="논문·Q&amp;A·재활·실손 통합검색 (예: HTO, BMAC, 신전지연, 소멸시효)">
+      <span class="clr" id="gclr">×</span>
+    </div>
+  </div>
+</header>
+
+<main id="view">
+  <section class="panel active" id="panel-product"></section>
+  <section class="panel" id="panel-rehab"></section>
+  <section class="panel" id="panel-insurance"></section>
+  <section class="panel" id="panel-consult"></section>
+  <section class="panel" id="panel-papers"></section>
+  <section class="panel" id="panel-qna"></section>
+  <section class="panel" id="panel-search"></section>
+</main>
+
+<nav class="tabbar">
+  <button data-tab="product" data-active="true"><span class="ic">🧬</span>제품정보<span class="tsub">모노그래프</span></button>
+  <button data-tab="rehab"><span class="ic">🦵</span>재활<span class="tsub">MFC·PF</span></button>
+  <button data-tab="insurance"><span class="ic">🛡️</span>실손정보<span class="tsub">소견서 근거</span></button>
+  <button data-tab="consult"><span class="ic">🗂️</span>상담자료<span class="tsub">시각자료</span></button>
+  <button data-tab="papers"><span class="ic">📚</span>논문<span class="tsub">근거자료</span></button>
+  <button data-tab="qna"><span class="ic">💬</span>환자Q&amp;A</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div class="disc wrap">
+    <b>※ 의료진 전용 참고자료</b> — 본 앱은 메디포스트㈜ 공식 제품정보·설명자료, 카티스템® 슬개대퇴/대퇴골과 재활 프로토콜, 동료심사 학술논문, 실손보험 자료를 의료진의 임상적 판단·환자 설명을 돕기 위해 정리한 내부 레퍼런스입니다.
+    임상 수치는 해당 연구 결과로 모든 환자에게 동일하게 적용되지 않으며, 적응증·용량·재활·예후의 최종 판단은 담당 의료진에게 있습니다. 본 자료는 제품 광고·환자 유인 목적이 아닙니다.
+  </div>
+</footer>
+
+
+
+<script>
+/* ============================================================
+   카티스템 의료진 전용 레퍼런스 v2.0 — light 버전
+   ============================================================ */
+var MODE='light';
+var REHAB_IMG=[];
+var PAPER_PDF={};
+var PTMAT=[
+  {num:'01', file:'material-mechanism.html', thumb:'', tag:'작용 기전',
+   title:'카티스템® 작용 기전',
+   desc:'골관절염으로 손상된 연골에 제대혈 줄기세포가 어떻게 작용하는지 — 연골 재생 촉진·분해 억제·항염증을 그림으로 설명합니다.',
+   meta:['골관절염 vs 치료 효능','중간엽줄기세포','3분 설명']},
+  {num:'02', file:'material-production.html', thumb:'', tag:'생산 과정',
+   title:'GMP 생산 과정 & 일정',
+   desc:'제대혈 채취부터 완제품까지 GMP 생산 단계와, 발주~수술 일정(8일·화/목)·유효기간을 한눈에 보여줍니다.',
+   meta:['7단계 공정','발주·수술 일정','주성분/첨부물']},
+  {num:'03', file:'material-cases.html', thumb:'', tag:'임상 사례',
+   title:'임상 사례 & 5년 결과',
+   desc:'시술 전·후 관절경/MRI/조직검사 비교 사례와 임상 3상 5년 추적 결과를 정리한 의료진 설명용 자료입니다.',
+   meta:['Pre/Post 비교','조직학적 재생','5년 추적']},
+  {num:'04', file:'material-insurance-playbook.html', thumb:'', tag:'실손 전술',
+   title:'실손보험 상담 전술 플레이북',
+   desc:'"실손 안 된다"는 전화 안내에 흔들리는 환자 응대용. 3대 반론 대응 스크립트·환자용 안심 로드맵·컴플라이언스 가이드라인.',
+   meta:['상담실무자용','3대 반론 대응','금감원 분쟁조정']}
+];
+
+/* ---------- 1. 제품 정보 ---------- */
+function buildProduct(){
+  var h='';
+  h+=hero('teal','📑 메디포스트 공식 제품정보','카티스템<sup style="font-size:11px">®</sup><br>세계 최초 동종 제대혈유래 줄기세포 연골치료제',
+    '퇴행성·외상성 골관절염으로 인한 무릎 연골결손(ICRS Grade IV)을 재생하는 식약처 허가 전문의약품. 아래는 임상 의사결정에 필요한 핵심 정보와 제조사 공식 설명자료입니다.');
+
+  h+='<div class="facts">'+
+    fact('적응증','퇴행성·반복적 외상성 <b>골관절염(ICRS Grade IV)</b>으로 인한 무릎 연골결손')+
+    fact('성분','<b>동종 제대혈유래 중간엽줄기세포(hUCB-MSC)</b> + 히알루론산나트륨 4% 복합제')+
+    fact('허가','식약처 품목허가 <b>2012.1.18</b> · 전문의약품 · 비급여 (국내 2번째 줄기세포치료제)')+
+    fact('적용 범위','결손 <b>2㎠~9㎠</b> · K&amp;L Grade I~III · OA/OCD · <b>연령 제한 없음</b>')+
+  '</div>';
+
+  // 공식 전체 설명자료 (원본 deck 44p) — 변경 없이 그대로 이용
+  h+=deckBtn();
+
+  h+=acc('🧬','작용 기전 (Mechanism)', true,
+    row('세포 특성','중간엽줄기세포(MSC) — 부착성·특이 표면항원 발현·다능성 분화능(ISCT 기준)')+
+    row('면역 특성','면역 활성 인자 발현이 낮고 면역조절능 보유 → <b>동종이식에 적합</b>, HLA 매칭 불필요')+
+    row('핵심 기전','직접 분화보다 <b>파라크라인(paracrine) 효과</b>가 주력 — 분비 단백질·성장인자로 주변 환경 조절')+
+    row('4대 효과','① 연골 재생 촉진 ② 연골 분해 억제 ③ 항염증 ④ 면역조절')+
+    row('제대혈 MSC','출산 시 폐기되는 제대혈 기반 → 비교적 \'어린\' 세포로 재생능 우수, 윤리적 부담 낮음')
+  );
+  h+=acc('💉','용량 · 용법 (결손 면적 기준)', false,
+    row('적용 원칙','병변 debridement 후 실측 결손 면적에 따라 유효 세포수(바이알 수) 결정')+
+    '<table class="dosetbl"><thead><tr><th>결손 면적</th><th>투여량(도포)</th></tr></thead><tbody>'+
+    '<tr><td>2㎠ 이상 ~ 3㎠ 미만</td><td class="v">1.0 ~ 1.5 mL</td></tr>'+
+    '<tr><td>3㎠ 이상 ~ 4㎠ 미만</td><td class="v">1.5 ~ 2.0 mL</td></tr>'+
+    '<tr><td>4㎠ 이상 ~ 5㎠ 미만</td><td class="v">2.0 ~ 2.5 mL</td></tr>'+
+    '<tr><td>5㎠ 이상 ~ 6㎠ 미만</td><td class="v">2.5 ~ 3.0 mL</td></tr>'+
+    '<tr><td>6㎠ 이상 ~ 7㎠ 미만</td><td class="v">3.0 ~ 3.5 mL</td></tr>'+
+    '</tbody></table>'+
+    row('비고','결손 면적 측정 정확도가 용량을 좌우 — MRI는 연골결손 등급을 과소평가하는 경향(논문 탭), 관절경 실측 병행 권장')
+  );
+  h+=acc('🔪','수술 술기 (Surgical Technique)', false,
+    row('기본 절차','병변 정리(debridement) → 석회화 연골·손상 연골 제거 → subchondral bone 노출 → <b>드릴링(4–5mm, K-강선)</b>으로 골수강 출혈 유도 → 카티스템 도포')+
+    row('원리','드릴링으로 골수 유래 세포·출혈을 유도하고, 그 위에 hUCB-MSC-HA 복합제를 도포해 뼈·연골 동반 재생을 유도')+
+    row('접근법','전통적 관절절개(para-patellar arthrotomy) 또는 <b>관절경 보조 이식(dry arthroscopy)</b> — 관절경법은 가동범위 조기 회복·반흔 감소 이점 (Kwon 2021, Lee 2023, Cha 2023)')+
+    row('병행 술기','내반 변형 동반 내측 구획 OA에서 <b>고위경골절골술(HTO)</b> 병행이 흔함 — 역학 정렬 교정 + 연골 재생 (Seon·Kim 그룹 다수)')
+  );
+  h+=acc('🏭','생산 · 품질관리 · 발주 (GMP)', false,
+    row('생산 단계','제대혈 채취 → 공여자 적격성 검사 → 세포 분리 → 반복 계대배양 → 동결 저장 → (주문 시) 해동·배양 → 완제품')+
+    row('발주·일정','발주 매주 <b>화·목</b> · 생산 약 8일 · <b>유효기간 48시간</b>(수·금 18:00까지 사용)')+
+    row('품질규격','성상·무균·마이코플라스마 부정시험 · 엔도톡신 &lt;2 EU/mL · 총세포수 측정 등')+
+    row('상세 자료','▸ 아래 \'GMP 생산 과정 & 발주 일정\' 설명자료(원본)에서 도식 확인')
+  );
+  h+=acc('🔬','비임상 안전성', false,
+    row('유효성 모델','Mouse·Rat·Rabbit·Micro-pig·Goat 연골결손 모델에서 병변당 최적 세포농도 확인')+
+    row('독성/PK','단회투여독성·국소면역독성·분포시험에서 대조군과 유사, 면역적 안전성 확인')+
+    row('종양원성','투여 6개월 후 종양 미관찰 — <b>비종양원성</b> (BioReliance, USA)')
+  );
+  h+=acc('📊','임상 핵심 결과 (요약)', false,
+    row('Phase 3 RCT','vs 미세천공술 무작위배정 다기관 — 48주 ICRS overall repair 유의 개선(p=0.0008), 5년 추적 VAS·IKDC·WOMAC 유의 우수 (Lim 2021)')+
+    row('Phase 1/2a','7년 장기추적에서 안전성·연골 재생 유지 (Park 2016, Stem Cells Transl Med)')+
+    row('메타분석','체계적 고찰·메타분석에서 임상·영상학적 개선 확인 (Lee/Kim 2022)')+
+    row('자세히','▸ 하단 \'논문\' 탭에서 전체 근거자료 31편 확인')
+  );
+  h+=acc('🪜','치료 단계 내 포지셔닝', false,
+    row('1단계','약물·미세천공술(Microfracture) — 경미한 손상')+
+    row('2단계','수술적 복원술 — 자가연골이식(OATS)·자가연골세포배양이식(ACI) 등')+
+    row('카티스템','ICRS Grade IV 연골결손에서 미세천공술 대비 재생 효과가 RCT로 확인된 동종 1회 이식 옵션')+
+    row('3단계','인공관절 부분/전치환술(UKA/TKA) — 말기, 1~2단계 효과 부족 시')+
+    row('프레임','경쟁이 아닌 \'관절 보존 단계의 선택지\' — 인공관절은 \'관절 치환 단계\'로 단계가 다름')
+  );
+  h+=acc('🏢','제조사 — 메디포스트㈜', false,
+    row('회사','MEDIPOST Co., Ltd. · 설립 2000.6.26 · 상장사')+
+    row('R&amp;D','국내외 특허 다수 · 제대혈은행 운영 · 줄기세포 전문 바이오기업')
+  );
+
+  // 관련 환자 설명자료(원본) 바로가기
+  h+=secHead('','관련 공식 설명자료 (원본)');
+  h+=matLinks(['mechanism','production','cases']);
+
+  document.getElementById('panel-product').innerHTML=h;
+}
+function deckBtn(){
+  if(MODE==='full'){
+    return '<a class="pmcard" href="product-deck.html" style="margin-bottom:16px;border-left:5px solid var(--a)"><div class="pmbody" style="padding:15px 17px"><div class="pmtitle" style="font-size:15px">📑 공식 제품 설명자료 전체보기<span class="arr">→</span></div><div class="pmdesc">회사·과학·생산·임상·사례 원본 슬라이드 44p (메디포스트 공식자료, 변경 없음)</div></div></a>';
+  }
+  return '<div class="lightnote">📑 <b>공식 제품 설명자료 전체보기(44p)</b> 는 용량이 큰 시각자료라 <b>Full 버전</b>(cartistem-md-full.html)에 포함되어 있습니다. 상단 \'버전\' 버튼으로 전환하세요.</div>';
+}
+
+/* ---------- 2. 재활 (MFC / PF 두 트랙) ---------- */
+function buildRehab(){
+  var h='';
+  h+=hero('green','🦵 카티스템® 재활 프로토콜','병변 위치에 따라 재활이 다릅니다',
+    '연골결손의 위치에 따라 재활 원칙이 달라집니다. 일반 <b>대퇴골 과(MFC)</b> 병변과 <b>슬개대퇴(Patella-Groove, PF)</b> 병변 두 트랙으로 구성했습니다 — 혼동 주의.');
+  h+='<div class="rtrack">'+
+    '<button class="rtile mfc" data-rt="mfc"><span class="iti">🦴</span><span class="itt">대퇴골 과 (MFC)</span><span class="its">일반 무릎 연골 수술 기준</span></button>'+
+    '<button class="rtile active" data-rt="pf"><span class="iti">🦵</span><span class="itt">슬개대퇴 (PF)</span><span class="its">단일 슬개골–활차 병변 전용 · 시각 PDF</span></button>'+
+  '</div>';
+  h+='<div class="rview" id="rv-mfc">'+rehabMFC()+'</div>';
+  h+='<div class="rview active" id="rv-pf">'+rehabPF()+'</div>';
+  document.getElementById('panel-rehab').innerHTML=h;
+}
+function rehabMFC(){
+  var h='';
+  h+=callout('info','🦴 대퇴골 과(MFC/condyle) 병변 — 일반 기준',
+    '대퇴골 과(체중을 직접 받는 부위) 연골결손의 표준 재활. PF와 달리 <b>체중부하는 보수적으로(6주에 걸쳐 점진), 가동범위·개방형 운동은 비교적 빨리</b> 진행합니다. 아래는 본원 프로토콜·환자 상태에 맞춰 조정해야 하는 기준값입니다.');
+  h+=secHead('','MFC 트랙 핵심 기준 (제공 PDF 비교표 기준)');
+  h+='<table class="ctbl"><thead><tr><th>항목</th><th class="hl">대퇴골 과 (MFC)</th><th>슬개대퇴 (PF) — 참고</th></tr></thead><tbody>'+
+    '<tr><td>체중부하 시점</td><td class="hl">6주 차에 100% (초기 부분/보호 체중부하 후 점진)</td><td>수술 직후 즉시 100% (신전 잠금 시)</td></tr>'+
+    '<tr><td>보조기 기간</td><td class="hl">1~2주</td><td>6주 필수</td></tr>'+
+    '<tr><td>초기 굴곡 각도</td><td class="hl">0~40°</td><td>0~30°</td></tr>'+
+    '<tr><td>개방형 운동(OKC)</td><td class="hl">4~6개월 안전 범위</td><td>12주까지 금지</td></tr>'+
+  '</tbody></table>';
+  h+=callout('info','핵심 원리 — 왜 반대인가',
+    'MFC는 <b>체중을 직접 받는 면</b>이라 이식 세포 보호를 위해 초기 체중부하를 제한합니다. 반면 슬개대퇴(PF)는 무릎을 편 상태에서 활차 접촉이 거의 없어 체중부하는 빠르되, 구부릴 때 접촉 스트레스가 커 가동·개방형 운동을 늦춥니다.');
+  h+=secHead('g','MFC 단계별 진행 (일반)');
+  h+='<div class="phases">'+
+    phase('#0e5670','Phase 1','보호기','0 ~ 6주','이식 세포 보호 — 체중부하 제한, 조기 ROM·CPM 시작.',
+      ['보조기 1~2주 후 점진 해제 · 체중부하는 6주에 걸쳐 0→100% 점진',
+       'CPM·수동 ROM 조기 시작(부종·통증 범위 내), 초기 굴곡 0~40°에서 점차 확대',
+       'SLR·발목 펌프(DVT 예방)·대퇴사두근 등척성 운동'])+
+    phase('#127a99','Phase 2','회복기','6주 ~ 4개월','완전 체중부하·완전 가동범위 회복, 폐쇄형 근력 운동.',
+      ['6주 100% 체중부하 도달 후 정상 보행 복귀','완전 ROM 회복, 고정식 자전거·미니 스쿼트 등 CKC','수영·평지 걷기 등 저충격 유산소'])+
+    phase('#1f7a4e','Phase 3','강화·복귀기','4개월 ~ 12개월+','OKC 도입, 근력 최대화, 단계적 스포츠 복귀.',
+      ['<b>4~6개월</b> 개방형 운동(OKC) 안전 범위 도입','달리기·기능 운동은 영상·기능 평가 후','피벗·고충격 스포츠는 LSI ≥ 90% 및 의료진 판단'])+
+  '</div>';
+  h+=callout('note','⚠️ 주의','MFC 트랙은 제공된 프로토콜 PDF의 비교표(체중부하·보조기·각도·OKC) 기준값에 일반 미세천공/연골재생 재활 단계를 결합한 것입니다. 절골술(HTO/DFO) 병행 여부, 결손 위치·크기에 따라 본원 프로토콜로 개별 조정이 필요합니다.');
+  return h;
+}
+function rehabPF(){
+  var h='';
+  h+=callout('info','🔑 PF 재활의 생체역학적 핵심',
+    '<b>무릎 신전(0°)</b>에서는 슬개골이 활차(trochlea)와 거의 접촉하지 않아 <b>체중을 실어도 안전</b>. 반면 <b>굴곡 >45°</b>에서는 슬개대퇴 관절(PFJ) 접촉 스트레스가 급증 → 초기 가동범위·개방형 운동(OKC) 제한이 필수.');
+
+  // 시각 PDF (원본 제공 자료)
+  h+=secHead('','📖 슬개대퇴 재활 마스터플랜 — 시각 자료 (원본 PDF)');
+  h+=rehabGallery();
+
+  h+=secHead('','슬개대퇴(PF) 재활의 5가지 절대 원칙');
+  h+='<div class="principles">'+
+    pr('','원칙 1','신전 시 체중부하 (즉시)','무릎을 완전히 편 상태에서는 100% 체중부하 허용',false)+
+    pr('','원칙 2','굴곡 시 ROM 제한','관절 스트레스 방지 위해 굴곡 각도를 천천히 늘림',false)+
+    pr('','원칙 3','OKC 12주까지 금지','허공에서 다리 펴는 개방형 운동은 12주까지 절대 금지',true)+
+    pr('','원칙 4','CKC 8주부터','발 딛고 하는 미니 스쿼트(0~30°)는 8주부터 시작',false)+
+    pr('','원칙 5','깊은 스쿼트 6개월 회피','무릎 90° 이상 깊은 굴곡은 6개월까지 회피',true)+
+  '</div>';
+
+  h+=secHead('r','즉시 병원 방문이 필요한 6가지 이상 징후 (Red Flags)');
+  h+='<div class="flags">'+
+    flag('⚡','<b>1. 통증 증가</b> — VAS 4점 이상의 통증이 지속될 때')+
+    flag('🌡️','<b>2. 부종·발열</b> — 무릎 붓기가 급증하거나 열이 날 때')+
+    flag('🔒','<b>3. 슬개골 이상</b> — 무릎이 걸려서 안 움직이는 잠김(Locking)')+
+    flag('☣️','<b>4. 감염 의심</b> — 수술 부위 붉어짐, 진물, 악취')+
+    flag('🩸','<b>5. DVT 의심</b> — 수술 부위가 아닌 종아리·발가락 부종/통증')+
+    flag('🦵','<b>6. 신전 지연(Extension lag)</b> — 다리 들어올릴 때 무릎이 다 펴지지 않는 현상 지속')+
+  '</div>';
+
+  h+=secHead('g','재활 마스터 로드맵 — 12개월의 여정');
+  h+='<div class="phases">'+
+    phase('#0e5670','Phase 1','보호 및 적응기','0 ~ 6주','신전 잠금 보조기 24시간 착용. 체중부하 시작 및 점진적 각도 확보.',
+      ['보조기: 보행 시 24시간 신전(무릎 펴짐) 잠금 유지 (운동·CPM 시에만 해제)',
+       '<b>SLR</b>(보조기 차고 다리 곧게 펴 들기) — 하지직거상 운동',
+       '<b>발목 펌프 운동</b>으로 DVT 예방',
+       'CPM 단계별 진행(Step-Ladder) — 아래 사다리 참고'])+
+    phase('#127a99','Phase 2','가동 및 기능 회복기','6주 ~ 4개월','보조기 해제, 일상 보행 복귀, 미니 스쿼트 등 폐쇄형 운동(CKC) 시작.',
+      ['보조기 해제: 6주 SLR 신전지연 테스트 통과 후 목발/보조기 없이 일상 보행',
+       '<b>9주 차~</b> 본격 걷기 운동 — 주 3회, 30분 평지 걷기',
+       '<b>8주 차~</b> 미니 스쿼트(굴곡 0~30°) 도입 — PFJ 스트레스가 가장 낮은 구간',
+       'OKC는 여전히 금지 (12주까지)'])+
+    phase('#1f7a4e','Phase 3','강화 및 복귀기','4개월 ~ 12개월+','근력 최대화, 달리기, 스포츠 복귀를 단계적으로.',
+      ['<b>4개월~</b> 수정된 OKC 안전 범위 90~45° 내에서만 / 한쪽 다리 스쿼트(0~60°)',
+       '<b>6개월~</b> 중력 제어 달리기 평가, 깊은 스쿼트(&gt;90°) 점진적 도입 시도',
+       '<b>10~12개월</b> 조깅·달리기 시작 (기능 테스트 통과 후)',
+       '<b>12개월+</b> 피벗 스포츠 복귀 — LSI ≥ 90% 및 의료진 최종 판단'])+
+  '</div>';
+
+  h+=secHead('','Phase 1 상세 — CPM 단계별 진행 (Step-Ladder)');
+  h+='<div class="ladder">'+
+    lstep('0~1주','굴곡 0~30° · CPM 하루 6시간')+
+    lstep('1~2주','굴곡 0~45°')+
+    lstep('2~4주','굴곡 0~60°')+
+    lstep('4~6주','굴곡 0~90° 도달 — 보조기 해제 준비')+
+  '</div>';
+  h+=callout('note','🧭 6주 차 보조기 해제의 유일한 기준 — 신전 지연(Extension Lag) 테스트',
+    '"6주가 지났다"고 무조건 보조기를 벗지 않습니다. <b>다리를 들어 올릴 때(SLR) 무릎이 완전히 펴진 상태를 스스로 유지</b>할 수 있어야 최종 해제 가능.<br>'+
+    '<b>PASS</b> = 대퇴사두근 제어 완료 → 해제 / <b>FAIL</b> = 신전 지연 발생 → 해제 연기, 의료진 보고.');
+
+  h+=secHead('','무릎 운동 안전도 분류 (PFJ 스트레스 기준)');
+  h+='<div class="triage">'+
+    '<div class="tcol early"><div class="tch">🟢 조기 허용 (Safe Early)</div>'+
+      '<div class="ti"><b>잠금 상태 SLR</b> — 0주 차부터 24시간 (스트레스 0)</div>'+
+      '<div class="ti"><b>미니 스쿼트 0~30°</b> — 8주 차부터 (초기 스트레스 최저)</div></div>'+
+    '<div class="tcol delay"><div class="tch">🟡 지연 도입 (Delayed)</div>'+
+      '<div class="ti"><b>OKC Leg Extension</b> — 12주까지 절대 금지. 4개월 이후 90°~45° 구간에서만 제한적 허용</div></div>'+
+    '<div class="tcol avoid"><div class="tch">🔴 장기 금지/주의 (Avoided)</div>'+
+      '<div class="ti"><b>깊은 스쿼트(&gt;90°)</b> — 6개월까지 철저히 회피 (90°에서 슬개대퇴 스트레스 정점)</div>'+
+      '<div class="ti"><b>평영 발차기(Breaststroke kick)</b> — 관절 비틀림 유발로 회피</div></div>'+
+  '</div>';
+
+  h+=secHead('','환자 필수 3대 수칙 & 재활 용어');
+  h+=callout('ok','✅ 환자에게 강조할 3대 수칙',
+    '<b>① 초기 6주</b> — 걷거나 서 있을 때 무조건 보조기 신전 잠금 유지<br>'+
+    '<b>② 각도 욕심 버리기</b> — CPM 각도는 주차별 지침을 절대 넘지 않기<br>'+
+    '<b>③ 이상 신호 보고</b> — 통증(VAS 4↑)·붓기·신전 지연 발생 시 즉시 병원 연락');
+  h+='<div class="terms">'+
+    term('FWB','Full Weight-Bearing','완전 체중 부하.')+
+    term('ROM','Range of Motion','관절이 구부러지고 펴지는 가동 범위.')+
+    term('SLR','Straight Leg Raise','보조기를 차고 다리를 곧게 편 채 들어 올리는 운동.')+
+    term('OKC','Open Kinetic Chain','발이 바닥에서 떨어진 상태로 다리를 가동(예: leg extension). PF 환자에게 가장 치명적.')+
+    term('CKC','Closed Kinetic Chain','발을 딛고 하는 폐쇄형 운동(예: 미니 스쿼트). PF 환자에 권장.')+
+    term('LSI','Limb Symmetry Index','양측 하지 대칭 지수 — 스포츠 복귀 판단 기준(≥90%).')+
+  '</div>';
+  return h;
+}
+var REHAB_CAPS=['표지 — 슬개대퇴 재활 마스터플랜','재활의 대원칙: 체중부하는 빠르게, 가동·개방형 운동은 천천히','신전(0°) vs 굴곡(>45°) — PFJ 접촉 스트레스','5가지 절대 원칙','MFC vs PF 차이 비교표','즉시 병원 방문이 필요한 6가지 Red Flags','재활 마스터 로드맵 (12개월)','Phase 1 — 보호와 관절 가동 (CPM 사다리)','6주 보조기 해제 기준 — 신전 지연 테스트','Phase 2 — 일상 보행과 폐쇄형 운동','Phase 3 — 장기 강화 및 스포츠 복귀','무릎 운동 안전도 분류 (PFJ 기준)','환자 필수 체크리스트 & 재활 용어 사전'];
+function rehabGallery(){
+  if(MODE!=='full'||!REHAB_IMG.length){
+    return '<div class="lightnote">📖 <b>슬개대퇴 재활 마스터플랜 시각 PDF(13p)</b> 는 <b>Full 버전</b>(cartistem-md-full.html)에 이미지로 포함되어 있습니다. 상단 \'버전\' 버튼으로 전환하세요. (아래 텍스트 프로토콜은 두 버전 동일)</div>';
+  }
+  return '<div class="pdfgal">'+REHAB_IMG.map(function(src,i){
+    return '<div class="pdfslide"><img loading="lazy" src="'+src+'" alt="재활 슬라이드 '+(i+1)+'"><div class="cap">PDF p.'+(i+1)+' — '+(REHAB_CAPS[i]||'')+'</div></div>';
+  }).join('')+'</div>';
+}
+
+/* ---------- 3. 실손 정보 ---------- */
+var GENERATIONS=[
+  {g:'1세대',color:'#0d6e8c',period:'~2009.9 가입',name:'구(舊)실손 · 표준화 이전',rows:[['자기부담','거의 없음 (손보 0% · 생보 20%)'],['비급여','거의 100% 보장'],['특징','비급여 보장 가장 넓음 — 카티스템 청구 여지 가장 큼']]},
+  {g:'2세대',color:'#127a99',period:'2009.10~2017.3',name:'표준화 실손',rows:[['자기부담','급여 10~20% · 비급여 20%'],['비급여','대체로 보장(약관별)'],['특징','자기부담 도입, 그래도 비급여 포괄 보장형 다수']]},
+  {g:'3세대',color:'#b46512',period:'2017.4~2021.6',name:'착한실손',rows:[['자기부담','급여 10~20% · 비급여 20~30%'],['비급여','기본형 제외 — <b>비급여주사료 등 특약 가입 시</b>만 보상'],['특징','비급여 일부가 특약으로 분리 — 가입 특약 확인 필수']]},
+  {g:'4세대',color:'#c93636',period:'2021.7~',name:'신(新)실손',rows:[['자기부담','급여 20% · 비급여 30%'],['비급여','급여/비급여 분리 — <b>3대 비급여 특약</b> 등 가입 시 보상'],['특징','비급여 보장 가장 제한적, 갱신·할증 구조']]}
+];
+var SLOTS=[
+  {tag:'S1',title:'치료목적·의학적 필요성 미인정',feas:'mid',feasL:'소견서 보완 여지 있음',
+   reason:'"질병 치료를 직접 목적으로 하지 않음 / 의학적 필요성 미인정 / 중증도 기준 미충족"',
+   rebut:'카티스템은 식약처 허가 적응증(퇴행성·외상성 골관절염 무릎 연골결손, <b>ICRS Grade IV</b>)이 명확한 전문의약품. <b>소견서·의무기록에 적응증 충족 근거</b>(MRI/관절경 소견, K&amp;L·ICRS 등급, 보존적 치료력)를 구체적으로 기재해 재검토 요청. \'미용·예방\'이 아닌 \'질병 치료\'임을 명확히.'},
+  {tag:'S2',title:'가입담보·특약 범위 밖',feas:'lo',feasL:'보완 여지 거의 없음',
+   reason:'"약관상 보장하지 않는 비급여 / 해당 특약 미가입 / 가입시점 담보 제외"',
+   rebut:'가입 상품의 <b>담보 범위 문제</b>로 의무기록 보완으로 바뀌지 않는 영역. 2017.4 이후 3·4세대는 비급여 특약 가입 시에만 보상. 환자에게 정확히 안내하고 \'보완하면 된다\'는 이행 불가 약속을 하지 않는 것이 신뢰 유지. → 가입 보험사 확인으로 일원화.'},
+  {tag:'S3',title:'입원 적정성 불인정 (통원 재산정)',feas:'mid',feasL:'의무기록으로 보완 가능',
+   reason:'"입원의 의학적 필요성 불인정 / 통원 기준 적용"',
+   rebut:'카티스템은 절개/관절경 수술 + 회복기 관찰이 필요한 시술(단순 외래 주사와 다름). <b>수술 침습도·마취·체중부하 제한·합병증 관찰 필요성</b>을 의무기록에 구체화해 입원 적정성을 입증. 보험사들은 줄기세포 시술의 일률적 입원 처리를 강하게 심사하므로 개별 의학적 근거가 핵심.'},
+  {tag:'S4',title:'비급여 항목 적정성·금액 삭감 (일부지급)',feas:'mid',feasL:'항목 근거로 일부 재검토',
+   reason:'"비급여 진료비 적정성 미인정 / 일부 항목 삭감"',
+   rebut:'카티스템은 고가 비급여로 약제비·치료재료비·수술료 적정성이 핵심 쟁점. <b>공시 비급여 가격·실제 사용 약제/재료 내역·산정 근거</b>를 항목별로 정리해 제출. 결과를 약속할 수 없음을 환자에게 전제.'},
+  {tag:'S5',title:'진단·청구내역 불일치',feas:'mid',feasL:'기재오류 vs 사실관계 구분',
+   reason:'"진단·시술 내역과 청구 불일치 / 사실관계 확인 필요"',
+   rebut:'불일치를 ① 단순 기재오류(정정 가능) ② 사실관계 쟁점(의무기록 일치 확인)으로 구분. <b>진단·시술 기록은 진료 내용 그대로 작성한다는 원칙을 고수.</b> ⚠️ 보장에 유리하게 진단명·코드를 변경 유도하는 것은 보험사기방지특별법 리스크 — 절대 금지.'},
+  {tag:'S6',title:'서류 미비·소멸시효',feas:'hi',feasL:'가장 해결 쉬움',
+   reason:'"구비서류 미비 / 청구권 소멸시효 경과"',
+   rebut:'6슬롯 중 가장 해결이 쉬움. 누락 서류(영수증·세부내역서·진단서/소견서·시술기록)를 원무과에서 발급 보완. <b>실손 청구권 소멸시효는 보험금 청구사유 발생일로부터 3년(상법 제662조)</b> → 시효 임박 건 우선 처리.'}
+];
+var INS_TERMS=[
+  {t:'급여 / 비급여',en:'',d:'급여=건강보험이 일부 부담. 비급여=건강보험 미적용으로 환자 전액 부담(카티스템이 해당).'},
+  {t:'자기부담금',en:'',d:'보험금 청구 시 가입자가 부담하는 비율·금액. 세대·항목별로 다름(예: 4세대 비급여 30%).'},
+  {t:'세부내역서',en:'진료비 세부산정내역서',d:'항목별 비급여 진료비 내역. 비급여 청구·적정성 심사의 핵심 서류.'},
+  {t:'소멸시효',en:'상법 제662조',d:'보험금 청구권은 청구사유 발생일로부터 3년. 경과 시 청구 불가 — 임박 건 우선 처리.'},
+  {t:'손해사정',en:'',d:'보험사고의 손해액·보험금을 조사·산정하는 절차. 거절·삭감의 근거가 됨.'},
+  {t:'분쟁조정',en:'금융감독원',d:'보험사와 분쟁 시 금감원 금융분쟁조정위원회에 조정 신청 가능(소송 전 단계).'}
+];
+function buildInsurance(){
+  var h='';
+  h+=hero('amber','🛡️ 실손보험 — 의료진 관점','거절 사유별 소견서·의무기록 근거',
+    '실손 보장 여부는 가입 상품·약관·시점에 따라 다르며 결과는 보장할 수 없습니다. 의료진의 역할은 <b>의학적 사실에 부합하는 정확한 기록·소견서</b> 제공입니다. (코드·진단명을 보장 목적으로 변경하지 않습니다.)');
+
+  h+=callout('info','📌 먼저 구분 — 카티스템 ≠ 무릎 줄기세포 \'주사\'',
+    '언론·금감원 경보의 \'무릎 줄기세포 주사\'는 대부분 <b>2023 신의료기술 자가 골수흡인물 주사(BMAC)</b>로, 2012년 허가된 전문의약품 카티스템(동종 제대혈 MSC 이식)과 별개입니다. 분쟁·심사 대응 시 이 구분을 명확히.');
+
+  // 실손 상담 전술 플레이북(원본 자료) 링크
+  h+=matLinks(['insurance']);
+
+  h+=secHead('','실손 세대별 비급여 보장 구조');
+  h+=GENERATIONS.map(genHTML).join('');
+  h+=callout('note','💡 세대 빠른 판별','가입 시점으로 세대를 추정: ~2009.9(1세대) / 2009.10~2017.3(2세대) / 2017.4~2021.6(3세대) / 2021.7~(4세대). 정확한 담보는 가입 보험사·증권 확인. 3·4세대는 <b>비급여 특약 가입 여부</b>가 카티스템 보장의 갈림길.');
+
+  h+=secHead('b','실손 거절 6슬롯 — 사유별 대응 근거');
+  h+=callout('note','사용법','거절 안내문의 \'사유\'를 아래 6슬롯으로 분류 → 해당 슬롯의 의무기록·소견서 보완 포인트 확인. 보완 가능성(높음/중간/낮음)을 환자에게 정직하게 전달.');
+  h+=SLOTS.map(slotHTML).join('');
+
+  h+=secHead('','청구 절차 & 분쟁 대응');
+  h+=acc('📄','청구 기본 서류',true,
+    row('기본','진료비 영수증 · 진료비 세부내역서 · 진단서/소견서 · (필요 시) 시술기록')+
+    row('핵심','비급여 청구는 <b>세부내역서 + 의학적 필요성 입증(소견서)</b>가 관건 — 처음부터 소견서를 잘 챙기는 것이 분쟁 예방')+
+    row('주의','보험사마다 요구 서류가 달라 가입 보험사 요구 목록 먼저 확인')
+  );
+  h+=acc('⚖️','거절 시 단계별 대응',false,
+    row('STEP 1','서면 거절 사유서 수령 → 정확한 약관 조항·사유 확인 (6슬롯 분류)')+
+    row('STEP 2','병원 서류 일체 발급(세부내역서·소견서·시술기록)으로 보완')+
+    row('STEP 3','보험사 재심사 요청 → 불수용 시 <b>금감원 금융분쟁조정</b> 신청(소송 전 단계)')+
+    row('원칙','결과를 약속하지 않음 · 진단/코드는 진료 내용대로 기재 고수')
+  );
+  h+=acc('💰','비용-효과 근거 (논문)',false,
+    row('근거','미세천공술 대비 비용효과성 분석 — Appl Health Econ Health Policy 2023 (Suh, PMID 36136263)')+
+    row('활용','고가 비급여 적정성 심사·환자 상담 시 \'비용 대비 임상적 가치\' 근거로 제시 가능')+
+    row('참고','▸ 논문 탭 \'비용·측정\' 카테고리에서 확인')
+  );
+
+  h+=secHead('','실손 용어 미니사전');
+  h+='<div class="terms">'+INS_TERMS.map(function(t){return term(t.t,t.en,t.d);}).join('')+'</div>';
+
+  document.getElementById('panel-insurance').innerHTML=h;
+}
+function genHTML(x){
+  return '<div class="genc" style="--cc:'+x.color+'"><div class="gh"><span class="gg" style="color:'+x.color+'">'+x.g+'</span><span class="gp">'+x.period+'</span></div>'+
+    '<div class="gn">'+x.name+'</div>'+
+    x.rows.map(function(r){return '<div class="grow"><span class="gl">'+r[0]+'</span><span class="gv">'+r[1]+'</span></div>';}).join('')+'</div>';
+}
+function slotHTML(s){
+  return '<details class="slot"><summary><div class="sc"><span class="stag">'+s.tag+'</span>'+
+    '<div class="stitle">'+s.title+'</div><div class="ssub">'+s.reason+'</div></div><span class="car">▶</span></summary>'+
+    '<div class="sbody"><div class="reason"><b>거절 사유:</b> '+s.reason+'</div>'+
+    '<div class="rebut"><b>의료진 대응 근거 →</b> '+s.rebut+'</div>'+
+    '<span class="feas '+s.feas+'">보완 가능성: '+s.feasL+'</span></div></details>';
+}
+
+/* ---------- 4. 상담자료 (환자 시각자료 + 설명 포인트) ---------- */
+var MATERIALS=[
+  {ic:'🌱',t:'작용 기전 — 환자 1분 설명',s:'연골 재생 원리를 환자 눈높이로',
+   points:['<b>"손상된 연골 위에 어린 줄기세포를 도포</b>해서, 세포가 내보내는 물질이 연골 재생을 돕고 염증을 줄이도록 유도하는 치료입니다."',
+           '<b>"제 세포가 직접 연골로 바뀐다기보다,</b> 주변 환경을 좋게 만들어 재생을 촉진(파라크라인)하는 것이 핵심입니다."',
+           '<b>"제대혈 줄기세포라 거부반응 우려가 낮아</b> 남의 세포로도 한 번에 시술할 수 있습니다."'],
+   copy:'손상된 연골 위에 제대혈 줄기세포를 도포해 연골 재생을 돕고 염증을 줄이는 치료입니다. 세포가 직접 연골로 바뀐다기보다 주변 환경을 개선해 재생을 촉진하며, 거부반응 우려가 낮아 한 번에 시술합니다.'},
+  {ic:'⚖️',t:'인공관절과의 차이 — 단계 프레임',s:'우열이 아닌 단계의 차이',
+   points:['<b>"카티스템은 본인 관절을 보존</b>하며 남은 연골 재생을 유도하는 \'관절 보존 단계\' 치료입니다."',
+           '<b>"인공관절은 손상이 심해진 관절을 인공물로 바꾸는</b> \'관절 치환 단계\' 수술로, 단계가 다릅니다."',
+           '⚠️ \'인공관절을 영구히 피한다\'고 단정하지 않기 — 진행 정도에 따라 결과가 다름.'],
+   copy:'카티스템은 본인 관절을 보존하며 연골 재생을 유도하는 관절 보존 단계 치료이고, 인공관절은 관절을 인공물로 바꾸는 치환 단계 수술입니다. 우열이 아니라 단계에 맞는 선택이며, 인공관절을 영구히 피한다고 단정할 수는 없습니다.'},
+  {ic:'💉',t:'주사형 줄기세포(BMAC)와의 차이',s:'침습도·목적이 다른 별개 옵션',
+   points:['<b>"흔히 말하는 무릎 줄기세포 \'주사\'(골수흡인농축물·BMAC)는</b> 통증·염증 환경 개선이 주 목적입니다."',
+           '<b>"카티스템은 연골결손 부위에 직접 적용하는 시술적 치료</b>로, 목적과 침습도가 다른 별개 옵션입니다."',
+           '근거: 동종 hUCB-MSC가 BMAC보다 연골 재생에 우수했다는 비교연구 다수(논문 탭 BMAC 비교).'],
+   copy:'무릎 줄기세포 주사(BMAC)는 통증·염증 환경 개선이 주 목적이고, 카티스템은 연골결손 부위에 직접 적용하는 시술적 치료로 목적과 침습도가 다른 별개의 옵션입니다.'},
+  {ic:'🦵',t:'재활 중요성 — 결과의 일부',s:'순응도가 효과를 좌우',
+   points:['<b>"이식한 세포가 자리 잡는 초기 보호 기간이 결과를 좌우</b>합니다 — 재활 순응도가 치료 효과의 일부입니다."',
+           '슬개대퇴(PF) 병변은 <b>신전 시 즉시 체중부하, 굴곡·개방형 운동은 천천히</b>가 원칙(재활 탭 참고).',
+           '구체적 일정·각도는 본원 프로토콜과 환자 상태에 맞춰 의료진/물리치료사가 처방.'],
+   copy:'이식한 세포가 자리 잡는 초기 보호 기간이 결과를 좌우하므로 재활 순응도가 치료 효과의 일부입니다. 구체적 일정과 운동 각도는 환자 상태에 맞춰 의료진이 안내합니다.'},
+  {ic:'📈',t:'효과·근거 — 정직한 설명',s:'겸손한 정직이 신뢰를 만든다',
+   points:['<b>"2012년 식약처 허가 후 장기 데이터가 쌓인 치료제</b>입니다 — 5년·7년 추적 연구 존재(논문 탭)."',
+           '<b>"다만 효과엔 개인차가 있어</b> \'무조건 좋아진다\'고 단정하지 않습니다."',
+           '⚠️ 과장·수치 단정·"후회 안 한다" 금지 — 단정하지 않는 태도 자체가 설득력.'],
+   copy:'카티스템은 2012년 허가 후 5년·7년 장기 추적 데이터가 쌓인 치료제입니다. 다만 효과에는 개인차가 있어 무조건 좋아진다고 단정하지는 않습니다.'},
+  {ic:'🛡️',t:'실손 문의 응대 — 의사용 가이드',s:'결과를 약속하지 않는다',
+   points:['<b>"보장 여부는 가입 상품·약관·시점에 따라 달라</b> 가입 보험사 확인이 가장 정확합니다."',
+           '의료진은 <b>진료 내용에 부합하는 정확한 소견서·기록</b>을 제공 — 코드/진단명을 보장 목적으로 바꾸지 않음.',
+           '거절 시 사유를 6슬롯으로 분류해 보완 포인트 확인(실손 탭 참고).'],
+   copy:'실손 보장 여부는 가입 상품과 약관, 가입 시점에 따라 달라 가입 보험사 확인이 가장 정확합니다. 저희는 진료 내용에 부합하는 정확한 소견서와 기록을 제공해 드립니다.'}
+];
+function buildConsult(){
+  var h='';
+  h+=hero('indigo','🗂️ 상담자료 모음','환자 시각자료(원본) + 진료실 설명 포인트',
+    '환자에게 보여주며 설명하는 <b>시각 설명자료</b>(작용 기전·생산·임상 사례·실손 플레이북)와, 진료 중 바로 쓰는 의사용 talking points. 시각자료는 카드 클릭 시 전체화면으로 열립니다.');
+
+  // 환자 시각자료 (원본 PTMAT — 변경 없이 이용)
+  h+=secHead('','📌 환자 설명용 시각자료 (메디포스트/원본)');
+  h+='<div class="pmintro"><div class="pmh">📌 사용 안내</div><div class="pmb">카드를 누르면 전체화면 설명자료가 열립니다. <b>효과·완치를 단정하지 않고</b>, 개인차가 있음을 함께 안내하세요. (임상 사례 자료에는 시술 전·후 환자 영상·조직검사 사진이 포함됩니다.)</div></div>';
+  h+=ptmatGrid();
+
+  h+=secHead('','💬 진료실 설명 포인트 & 복사 스크립트');
+  h+='<div class="matgrid">'+MATERIALS.map(matHTML).join('')+'</div>';
+
+  h+=callout('note','💡 공통 컴플라이언스 원칙',
+    '① 효과·완치 단정 금지 (개인차 명시) · ② 실손 결과·금액 약속 금지 · ③ 진단명/코드 보장 목적 변경 금지 · ④ 타 치료 폄하·환자 유인(공포·할인) 금지');
+  document.getElementById('panel-consult').innerHTML=h;
+}
+function ptmatGrid(){
+  if(typeof PTMAT==='undefined'||!PTMAT.length){return '<div class="lightnote">시각자료를 불러올 수 없습니다.</div>';}
+  return '<div class="pmgrid">'+PTMAT.map(function(m){
+    var thumb=(MODE==='full'&&m.thumb)?'style="background-image:url('+m.thumb+')"':'';
+    var note=(MODE==='full')?'':'<div class="pmdesc" style="color:var(--warn)">⚠ 시각 이미지는 Full 버전에서 표시됩니다.</div>';
+    return '<a class="pmcard" href="'+m.file+'"><div class="pmthumb" '+thumb+'><span class="pmnum">'+m.num+'</span><span class="pmtag">'+m.tag+'</span></div>'+
+      '<div class="pmbody"><div class="pmtitle">'+m.title+'<span class="arr">→</span></div>'+
+      '<div class="pmdesc">'+m.desc+'</div>'+note+
+      '<div class="pmmeta">'+m.meta.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div></div></a>';
+  }).join('')+'</div>';
+}
+function matHTML(m,i){
+  return '<details class="mat"'+(i===0?' open':'')+'><summary><span class="mi">'+m.ic+'</span><div class="mm"><div class="mt">'+m.t+'</div><div class="ms">'+m.s+'</div></div><span class="car">▶</span></summary>'+
+    '<div class="mbody">'+m.points.map(function(p){return '<div class="point">'+p+'</div>';}).join('')+
+    '<button class="copy" data-copy="'+escAttr(m.copy)+'">📋 환자 설명 멘트 복사</button></div></details>';
+}
+// 제품/실손 탭에서 원본 설명자료 링크 카드
+var MAT_INFO={
+  mechanism:{file:'material-mechanism.html',ic:'🌱',t:'작용 기전 설명자료',s:'연골 재생 원리 환자용 그림'},
+  production:{file:'material-production.html',ic:'🏭',t:'GMP 생산 과정 & 발주 일정',s:'제조 7단계·발주(화/목)·유효기간'},
+  cases:{file:'material-cases.html',ic:'📈',t:'임상 사례 & 5년 결과',s:'Pre/Post 환자 영상·조직검사'},
+  insurance:{file:'material-insurance-playbook.html',ic:'🛡️',t:'실손보험 상담 전술 플레이북',s:'3대 반론 대응·환자 안심 로드맵'}
+};
+function matLinks(keys){
+  return '<div class="matgrid">'+keys.map(function(k){
+    var m=MAT_INFO[k];
+    if(MODE==='full'){
+      return '<a class="mat" style="display:block;text-decoration:none;color:inherit" href="'+m.file+'"><div style="padding:14px 16px;display:flex;gap:12px;align-items:center"><span class="mi">'+m.ic+'</span><div class="mm"><div class="mt">'+m.t+' <span style="font-size:11px;color:var(--a)">전체화면 →</span></div><div class="ms">'+m.s+'</div></div></div></a>';
+    }
+    return '<div class="mat"><div style="padding:14px 16px;display:flex;gap:12px;align-items:center"><span class="mi">'+m.ic+'</span><div class="mm"><div class="mt">'+m.t+'</div><div class="ms">'+m.s+' · <span style="color:var(--warn)">Full 버전에서 열람</span></div></div></div></div>';
+  }).join('')+'</div>';
+}
+
+/* ---------- 5. 논문 ---------- */
+var PCAT={
+  rct:{label:'핵심 RCT',color:'#0d6e8c'},
+  bmac:{label:'BMAC 비교',color:'#b46512'},
+  hto:{label:'HTO 병행',color:'#127a99'},
+  safety:{label:'안전성·장기',color:'#138a55'},
+  review:{label:'고찰·메타',color:'#5a4bd4'},
+  tech:{label:'수술 술기',color:'#0e7490'},
+  cost:{label:'비용·측정',color:'#566472'}
+};
+var PAPERS=[
+  {cat:'rct',pdf:'lim2021',title:'Allogeneic UCB-MSC Implantation vs Microfracture for Large, Full-Thickness Cartilage Defects in Older Patients — Multicenter RCT & 5-Year Follow-up',
+   authors:'Lim HC, Park YB, Ha CW, Cole BJ 외',journal:'Am J Sports Med / 카티스템 임상 3상',year:'2021',ifv:'',pmid:'',
+   key:'<b>카티스템의 등록 근거가 된 핵심 무작위배정 다기관 임상.</b> 미세천공술 대비 48주 ICRS overall repair 유의 개선(p=0.0008), 5년 추적 VAS·IKDC·WOMAC에서 유의하게 우수. 고령·대형 전층 결손에서 효과 입증.',
+   tags:['RCT','5년 추적','vs Microfracture','다기관']},
+  {cat:'safety',title:'Cartilage Regeneration in OA Patients by hUCB-MSC + Hyaluronate Hydrogel — Safety & Proof-of-Concept with 7-Year Extended Follow-up',
+   authors:'Park YB, Ha CW, Lee CH 외',journal:'Stem Cells Transl Med',year:'2016',ifv:'5.962',pmid:'28191757',
+   key:'<b>Phase 1/2a 장기 안전성 연구.</b> 7년 추적에서 종양·이상반응 없이 안전성 유지, 연골 재생 개념 입증. 동종 제대혈 MSC-HA 복합제의 장기 안전성 핵심 근거.',
+   tags:['Phase 1/2a','7년 추적','안전성','IF 5.962']},
+  {cat:'safety',title:'Restoration of a Large Osteochondral Defect of the Knee Using hUCB-MSC + HA Hydrogel — Case Report with 5-Year Follow-up',
+   authors:'Park YB, Ha CW, Lee CH, Park YG',journal:'BMC Musculoskelet Disord',year:'2017',ifv:'2.002',pmid:'28148266',
+   key:'대형 골연골 결손에서 연골하골 동반 재생을 5년간 추적한 증례. 큰 결손에서도 뼈·연골 동반 회복 가능성 시사.',
+   tags:['증례','대형 결손','5년','골연골']},
+  {cat:'hto',title:'Cartilage Regeneration with Distal Femoral Osteotomy + Intra-lesional hUCB-MSC Implantation — Two Cases',
+   authors:'Song JS, Kim SJ 외',journal:'The Knee',year:'2019',ifv:'1.762',pmid:'31443940',
+   key:'외반 변형 동반 외측 구획에 원위대퇴절골술(DFO)과 병행 적용한 증례 — 정렬 교정 + 연골 재생 병행 전략.',
+   tags:['DFO','정렬 교정','증례']},
+  {cat:'review',title:'hUCB-MSC for Knee Cartilage/OA — Review',
+   authors:'(World Journal of Stem Cells)',journal:'World J Stem Cells',year:'2020',ifv:'3.534',pmid:'32742568',
+   key:'동종 제대혈 MSC의 무릎 연골/골관절염 적용을 정리한 종설 — 기전·임상 근거 개괄.',
+   tags:['종설','기전','IF 3.534']},
+  {cat:'safety',title:'hUCB-MSC Implantation Improves Knee OA Outcomes — Two-Year Follow-up',
+   authors:'Song JS, Hong KT, Kim NM, Kim SJ 외',journal:'Regenerative Therapy',year:'2020',ifv:'1.420',pmid:'31988992',
+   key:'무릎 골관절염에서 2년 추적 임상 개선 보고 — 중기 결과 근거.',
+   tags:['2년 추적','임상 개선']},
+  {cat:'safety',title:'hUCB-MSC Implantation for Osteoarthritis of the Knee',
+   authors:'Song JS, Hong KT, Kim NM, Park HS, Choi NH',journal:'Arch Orthop Trauma Surg',year:'2020',ifv:'1.97',pmid:'31980879',
+   key:'무릎 OA 환자에서 hUCB-MSC 이식의 임상 결과 — 단일기관 시리즈.',
+   tags:['OA','임상 결과']},
+  {cat:'safety',title:'hUCB-MSC Implantation for Juvenile Osteochondritis Dissecans of the Knee',
+   authors:'Song JS, Kim SJ, Shetty AA 외',journal:'J Clin Orthop Trauma',year:'2019',ifv:'0.81',pmid:'31700204',
+   key:'소아·청소년 박리성 골연골염(OCD)에 적용한 결과 — 젊은 환자 적응 확장 근거.',
+   tags:['OCD','소아청소년']},
+  {cat:'hto',title:'hUCB-MSC Combined with High Tibial Osteotomy — Retrospective Study on Safety & Early Results',
+   authors:'Chung YW, Yang HY, Seon JK 외',journal:'Int Orthop',year:'2021',ifv:'2.854',pmid:'33068146',
+   key:'내측 구획 OA에서 HTO와 병행한 단일단계 연골 복원의 안전성·초기 결과 — 정렬 교정 병행 전략의 근거.',
+   tags:['HTO','내측 OA','단일단계']},
+  {cat:'bmac',title:'Comparison of BMAC vs Allogenic hUCB-MSC Implantation on Chondral Defect of Knee — Clinical & MRI Assessment',
+   authors:'Kim MK 외',journal:'Cell Transplantation',year:'2020',ifv:'3.341',pmid:'32713192',
+   key:'<b>자가 골수흡인농축물(BMAC) vs 동종 hUCB-MSC 직접 비교.</b> 임상·MRI 평가에서 두 시술을 대조 — \'주사형 BMAC과 카티스템은 다르다\'는 핵심 근거.',
+   tags:['BMAC 비교','MRI','임상']},
+  {cat:'bmac',title:'Allogenic hUCB-MSC Is More Effective Than BMAC for Cartilage Regeneration After HTO in Medial Unicompartmental OA',
+   authors:'Lee NH, Na SM, Seon JK, Song EK 외',journal:'Arthroscopy',year:'2021',ifv:'4.325',pmid:'33621649',
+   key:'<b>HTO 병행 시 hUCB-MSC가 BMAC보다 연골 재생에 더 효과적.</b> 젊고 활동적인 내측 단일구획 OA 환자 대상 비교.',
+   tags:['BMAC 비교','HTO','IF 4.325']},
+  {cat:'bmac',title:'Allogenic UCB-MSC Implantation Superior to BMAC Augmentation for Cartilage Regeneration Despite Similar Clinical Outcomes',
+   authors:'Yang HY, Song EK, Seon JK 외',journal:'Knee Surg Sports Traumatol Arthrosc',year:'2022',ifv:'3.210',pmid:'33492407',
+   key:'2차 관절경(second-look) 소견에서 hUCB-MSC가 BMAC보다 연골 재생 우수 — 임상 점수는 유사하나 영상·관절경적 재생에서 차이.',
+   tags:['BMAC 비교','2차 관절경','KSSTA']},
+  {cat:'tech',title:'Dry Arthroscopy with a Simple Retraction Technique for Knee Cartilage Repair Using hUCB-MSC',
+   authors:'Oh SM, Kwon HN',journal:'Arthroscopy Techniques',year:'2021',ifv:'1.2',pmid:'35004157',
+   key:'<b>관절경 보조 이식 술기(Technical Note).</b> 개방 절개 대비 가동범위 조기 회복·반흔 감소 — 특수 장비 없이 작업 공간 확보하는 dry arthroscopy 기법.',
+   tags:['수술 술기','관절경','Technical Note']},
+  {cat:'tech',pdf:'cha2023',title:'Safety & Effectiveness of Arthroscopic-Assisted Implantation of hUCB-MSC (Cartistem®) during medial owHTO',
+   authors:'Cha DH, Kim DH, Kook JM',journal:'Arthrosc Orthop Sports Med',year:'2023',ifv:'',pmid:'',
+   key:'K&L II~III 내측 구획 OA에서 owHTO 중 관절경 보조 카티스템 이식의 안전성·유효성(영상·임상) — 실제 진료 세팅 결과. (국내 저널, PubMed 미색인 → PDF 제공)',
+   tags:['수술 술기','owHTO','K&L II-III']},
+  {cat:'safety',pdf:'cole2022',title:'Safety of an Allogeneic hUCB-MSC–4% Hyaluronate Composite for Cartilage Repair in the Knee',
+   authors:'Cole BJ, Kaiser JT, Wagner KR, Gomoll AH',journal:'J Cartilage Joint Preservation',year:'2022',ifv:'2.961',pmid:'',
+   key:'<b>미국 연구진(Cole 등) 안전성 연구.</b> 제대혈 MSC-4% HA 복합제의 안전성을 국제적으로 확인 — 글로벌 근거 확장. (PDF 제공)',
+   tags:['안전성','미국','국제 근거']},
+  {cat:'hto',title:'hUCB-MSC Improves Clinical Outcome and Joint Space Width After High Tibial Osteotomy',
+   authors:'Suh DW, Han SB, Kyung BS 외',journal:'The Knee',year:'2021',ifv:'2.423',pmid:'34536766',
+   key:'HTO 후 hUCB-MSC가 임상 점수뿐 아니라 <b>관절 간격(JSW)</b>까지 개선 — 구조적 호전 시사.',
+   tags:['HTO','관절간격(JSW)']},
+  {cat:'review',title:'Cartilage Regeneration Using hUCB-MSC — A Systematic Review and Meta-Analysis',
+   authors:'Lee DH, Kim SA, Song JS, Shetty AA, Kim SJ 외',journal:'Medicina (Kaunas)',year:'2022',ifv:'2.43',pmid:'36557003',
+   key:'<b>체계적 고찰 + 메타분석.</b> 다수 연구를 통합해 hUCB-MSC의 연골 재생·임상 개선 효과를 정량적으로 종합 — 최상위 근거 단계.',
+   tags:['메타분석','체계적 고찰','최상위 근거']},
+  {cat:'review',title:'(Clinical Review) hUCB-MSC for Knee Cartilage',
+   authors:'Kim SJ 외',journal:'World J Clin Cases',year:'2022',ifv:'1.15',pmid:'36579106',
+   key:'임상 적용·결과를 정리한 고찰성 자료(슬개골 case 리뷰 포함).',
+   tags:['고찰','임상']},
+  {cat:'hto',title:'Allogeneic UCB-MSC + Hyaluronate Composite Combined with HTO for Medial Knee OA with Full-Thickness Cartilage Defects',
+   authors:'Park YB, Lee HJ, Nam HC, Park JG',journal:'Medicina (Kaunas)',year:'2023',ifv:'2.43',pmid:'36676772',
+   key:'전층 연골결손 동반 내측 무릎 OA에서 HTO 병행 결과 — 정렬 교정 + 재생 복합 전략의 최신 근거.',
+   tags:['HTO','전층 결손','2023']},
+  {cat:'cost',title:'Cost Effectiveness of Allogeneic UCB-MSC in Patients with Knee Osteoarthritis',
+   authors:'Suh K, Cole BJ, Gomoll A, Ha CW, Lim HC, Kim MK, Suh DC 외',journal:'Appl Health Econ Health Policy',year:'2023',ifv:'3.686',pmid:'36136263',
+   key:'<b>미세천공술 대비 비용-효과 분석.</b> 고가 비급여의 적정성·가치를 경제성 평가로 뒷받침 — 실손 적정성 심사·환자 상담 근거.',
+   tags:['비용효과','경제성','vs Microfracture']},
+  {cat:'cost',pdf:'krakowski2021',title:'Knee MRI Underestimates the Grade of Cartilage Lesions',
+   authors:'Krakowski P, Karpiński R 외',journal:'Applied Sciences',year:'2021',ifv:'',pmid:'',
+   key:'MRI가 실제 연골결손 등급을 과소평가하는 경향 — <b>관절경 실측 병행·용량 산정 정확도</b>의 근거. (PDF 제공)',
+   tags:['MRI 한계','측정','등급 평가']},
+  {cat:'cost',pdf:'robert2011',title:'Arthroscopic Measurement of Cartilage Lesions of the Knee Condyle — Principles & Experimental Validation',
+   authors:'Robert H, Lambotte JC, Flicoteaux R',journal:'Cartilage',year:'2011',ifv:'',pmid:'',
+   key:'관절경상 연골 병변 면적·위치 측정법 — debridement 후 결손 면적 산정(용량 결정)의 방법론적 근거. (PDF 제공)',
+   tags:['병변 측정','면적 산정','방법론']},
+  {cat:'tech',title:'Dry Arthroscopic Cartilage Repair of the Knee Joint Using Umbilical Cord MSC — Kelly Clamp Technique',
+   authors:'Lee TJ, Jeong CD, Lee TH',journal:'Arthroscopy Techniques',year:'2023',ifv:'1.9',pmid:'37654868',
+   key:'<b>Dry arthroscopy 이식 술기(Technical Note).</b> Kelly clamp으로 작업 공간 확보·세포 washout 방지하는 더 쉬운 관절경 이식법.',
+   tags:['수술 술기','관절경','Kelly clamp']},
+  {cat:'review',title:'BMAC vs hUCB-MSC for Combined Cartilage Regeneration in Patients Undergoing HTO — Systematic Review & Meta-Analysis',
+   authors:'Park D, Choi YH, Kang SH, Koh HS, In Y',journal:'Medicina (Kaunas)',year:'2023',ifv:'2.6',pmid:'36984635',
+   key:'<b>HTO 병행 시 BMAC vs 동종 hUCB-MSC를 비교한 체계적 고찰·메타분석.</b> 두 세포원의 연골 재생·임상 결과를 정량 통합.',
+   tags:['메타분석','BMAC 비교','HTO']},
+  {cat:'safety',title:'Clinical & MRI Outcomes After hUCB-MSC Implantation for Chondral Defects of the Knee',
+   authors:'Song JS, Hong KT, Kim NM, Choi NH 외',journal:'Orthop J Sports Med',year:'2023',ifv:'2.6',pmid:'37123990',
+   key:'40~70세, 내측 대퇴골과 grade 3~4·결손 &gt;4㎠ 환자에서 UCB-MSC 이식 후 임상·MRI 결과를 보고한 증례 시리즈.',
+   tags:['MRI 결과','대형 결손','증례 시리즈']},
+  {cat:'review',title:'Effects of Concurrent Cartilage Procedures on Cartilage Regeneration in HTO — Systematic Review',
+   authors:'Han JH, Jung M, Chung K, Choi CH, Kim SH 외',journal:'Knee Surg Relat Res',year:'2024',ifv:'4.1',pmid:'38549124',
+   key:'HTO에 병행하는 연골 재생술이 연골 재생에 미치는 효과를 PRISMA 기준으로 종합한 체계적 고찰.',
+   tags:['체계적 고찰','HTO 병행','PRISMA','IF 4.1']},
+  {cat:'hto',title:'Allogeneic hUCB-MSC Implantation vs Microdrilling Combined with HTO for Cartilage Regeneration',
+   authors:'Jung SH, Nam BJ, Choi CH, Jung M, Kim SH 외',journal:'Scientific Reports',year:'2024',ifv:'4.6',pmid:'38336978',
+   key:'<b>hUCB-MSC vs 미세드릴링 + HTO 비교 임상.</b> 60무릎 대상 6·12·24개월 통증·기능 점수 개선을 비교 — 고품질 비교 근거(IF 4.6).',
+   tags:['vs Microdrilling','HTO','24개월','IF 4.6']},
+  {cat:'hto',title:'Implantation of hUCB-MSCs Generates Greater Hyaline-Type Cartilage than Microdrilling Combined with HTO',
+   authors:'Jung SH, Park H, Jung M, Choi CH, Kim SH 외',journal:'Knee Surg Sports Traumatol Arthrosc',year:'2024',ifv:'3.3',pmid:'38426617',
+   key:'<b>재생 연골의 \'질\'에 주목.</b> hUCB-MSC가 미세드릴링+HTO보다 더 많은 <b>초자연골(hyaline-type)</b> 생성 — 섬유연골이 아닌 양질의 연골 재생 근거.',
+   tags:['초자연골','vs Microdrilling','HTO']},
+  {cat:'hto',title:'Effect of Preoperative Medial Meniscus Status on Outcomes of HTO with hUCB-MSC Cartilage Regeneration',
+   authors:'Lee DW, Hong SW, Cho SI, Moon SG, Kang JH',journal:'Orthop Traumatol Surg Res',year:'2025',ifv:'2.3',pmid:'39900334',
+   key:'수술 전 <b>내측 반월상연골 상태</b>가 HTO + UCB-MSC 연골 재생 결과에 미치는 영향 — 예후 인자 근거.',
+   tags:['반월상연골','HTO','예후 인자']},
+  {cat:'hto',title:'HTO + Allogeneic hUCB-MSC Combined with Hyaluronate Hydrogel Composite for Osteoarthritic Knee',
+   authors:'Bae BS, Jung JW, Jo GO, Kim SA, Shetty AA, Kim SJ 외',journal:'Stem Cell Research & Therapy',year:'2025',ifv:'7.1',pmid:'40296133',
+   key:'<b>최고 IF(7.1) 근거.</b> 중등도~중증 OA 중년 환자에서 인공관절 지연을 목표로 HTO + hUCB-MSC-HA 복합제 연골 재생 평가 — TKA 지연 전략 최신 근거.',
+   tags:['HTO','TKA 지연','IF 7.1','2025']},
+  {cat:'safety',pdf:'rts2022',title:'Return to Sports & Work After Distraction Arthroplasty + Lateral MAT Combined with Cartilage Repair in Advanced Lateral OA',
+   authors:'Lee DW, Lee DR, Kim MA, Cho SI, Lee JK, Kim JG',journal:'Knee Surg Sports Traumatol Arthrosc',year:'2022',ifv:'',pmid:'',
+   key:'진행성 외측 OA에서 신연관절성형술(DA)+외측 반월상연골 동종이식(MAT)+연골 복원 병행 후 스포츠·직장 복귀 결과 — 관절보존술 인접 근거(직접 카티스템 연구는 아님). (PDF 제공)',
+   tags:['관절 보존','스포츠 복귀','외측 OA','인접 근거']}
+];
+function buildPapers(filter){
+  var box=document.getElementById('panel-papers');
+  if(!box.dataset.init){
+    var hh=hero('slate','📚 카티스템 근거자료 라이브러리','동료심사 학술논문 '+PAPERS.length+'편 · 카테고리별',
+      'RCT·BMAC 비교·HTO 병행·안전성·메타분석·술기·비용까지. 카드를 눌러 핵심 결과를 확인하고, PMID는 PubMed로, PubMed 미색인 논문은 PDF로 제공합니다.');
+    var chips='<div class="pfilter" id="pfilter"><span class="chip" data-pf="all" data-active="true">전체 '+PAPERS.length+'</span>';
+    Object.keys(PCAT).forEach(function(k){
+      var n=PAPERS.filter(function(p){return p.cat===k;}).length;
+      if(n)chips+='<span class="chip" data-pf="'+k+'">'+PCAT[k].label+' '+n+'</span>';
+    });
+    chips+='</div>';
+    box.innerHTML=hh+chips+'<div id="plist"></div>';
+    box.dataset.init='1';
+  }
+  var f=filter||'all';
+  var list=PAPERS.filter(function(p){return f==='all'||p.cat===f;});
+  document.getElementById('plist').innerHTML=list.map(paperHTML).join('');
+}
+function paperHTML(p){
+  var c=PCAT[p.cat];
+  var meta=['<b>'+p.journal+'</b>',p.year];
+  if(p.ifv)meta.push('IF '+p.ifv);
+  if(p.pmid)meta.push('PMID '+p.pmid);
+  var links='';
+  if(p.pmid)links+='<a class="plink" href="https://pubmed.ncbi.nlm.nih.gov/'+p.pmid+'/" target="_blank" rel="noopener">🔗 PubMed (PMID '+p.pmid+')</a>';
+  var embed='';
+  if(p.pdf){
+    if(MODE==='full'&&PAPER_PDF[p.pdf]){
+      links+='<a class="plink pdf" href="'+PAPER_PDF[p.pdf]+'" download="'+p.pdf+'.pdf">⬇ PDF 다운로드</a>';
+      embed='<div class="pdfembed"><iframe loading="lazy" src="'+PAPER_PDF[p.pdf]+'#view=FitH" title="'+p.pdf+'"></iframe></div>';
+    }else{
+      links+='<span class="plink pdf">📄 PDF는 Full 버전에서 제공</span>';
+    }
+  }
+  return '<details class="paper" style="--cc:'+c.color+'"><summary><span class="pcat" style="background:'+c.color+'">'+c.label+'</span>'+
+    '<div class="pmain"><div class="ptitle">'+p.title+'</div><div class="pmeta">'+meta.join(' · ')+'</div>'+
+    (p.authors?'<div class="pmeta au">'+p.authors+'</div>':'')+'</div><span class="car">▶</span></summary>'+
+    '<div class="pbody"><div class="pkey">'+p.key+'</div>'+
+    '<div class="ptags">'+p.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+links+embed+'</div></details>';
+}
+
+/* ---------- 6. 환자 Q&A ---------- */
+var QCAT={basic:'기본·원리', disease:'관절염·적응', compare:'치료 비교', rehab:'재활·회복', safety:'안전성·부작용', insurance:'실손·비용'};
+var QNA=[
+  {cat:'basic',q:'줄기세포가 뭐고, 카티스템엔 어떤 게 쓰이나요?',
+   a:'<p>줄기세포는 여러 조직으로 분화할 수 있는 기본 세포입니다. 카티스템에는 <b>제대혈에서 얻은 동종 중간엽줄기세포(hUCB-MSC)</b>가 쓰입니다 — 본인 세포를 떼지 않고 한 번에 시술합니다.</p>',
+   clin:'중간엽줄기세포(MSC)는 면역원성이 낮아 동종 이식이 가능. 제대혈 MSC는 비교적 어린 세포로 재생능이 좋고 출산 시 폐기되는 자원이라 윤리 부담이 적음. 작용은 직접 분화보다 파라크라인 효과가 주력.'},
+  {cat:'basic',q:'남의 세포인데 거부반응은 없나요?',
+   a:'<p>제대혈 유래 중간엽줄기세포는 면역 거부반응이 상대적으로 낮은 것으로 알려져 동종으로 사용됩니다. 다만 부작용 가능성을 0으로 단정할 수는 없어 시술 전 안전성을 충분히 설명드립니다.</p>',
+   clin:'면역원성이 \'낮다\'와 \'없다\'는 다름 — 환자에겐 항상 \'낮은 편\'까지만. 본인 면역질환·알레르기 이력은 사전 확인.'},
+  {cat:'basic',q:'카티스템은 어떻게 만들어지나요? 안전한가요?',
+   a:'<p>기증받은 제대혈에서 줄기세포를 분리·배양해 <b>GMP(우수의약품제조관리기준) 시설</b>에서 생산하는 식약처 허가 의약품입니다. 무균·세포수 등 품질검사를 거치며, 비임상에서 종양원성도 관찰되지 않았습니다.</p>',
+   clin:'발주 화·목, 생산 약 8일, 유효기간 48시간. 품질규격: 무균·마이코플라스마 부정·엔도톡신<2EU/mL. 종양원성 시험 음성(BioReliance). 상세는 제품정보 탭 GMP 자료.'},
+  {cat:'disease',q:'제 무릎이 카티스템 받을 수 있는 단계인가요?',
+   a:'<p>카티스템은 <b>퇴행성·외상성 골관절염으로 인한 무릎 연골결손</b>에 허가된 치료제입니다. 적합 여부는 영상검사(MRI 등)와 진료로 의사가 판단합니다.</p>',
+   clin:'허가 적응증은 ICRS Grade IV 연골결손, K&L Grade I~III, 결손 2~9㎠. MRI는 연골결손 등급을 과소평가할 수 있어 관절경 실측 병행 권장. 등급을 환자가 자가 판정하도록 두지 않음.'},
+  {cat:'disease',q:'연세가 많은데(또는 적은데) 받을 수 있나요?',
+   a:'<p>나이만으로 가능/불가능이 정해지진 않습니다. 카티스템은 나이보다 <b>연골 손상 정도와 전반적 상태</b>를 보고 판단하는 편이라 검사 후 의사가 결정합니다.</p>',
+   clin:'\'연령 제한 없음\'은 \'나이 무관\'이 아니라 \'연골 상태 중심 판단\'을 의미. 소아·청소년 OCD 적용 근거도 존재(논문 탭).'},
+  {cat:'disease',q:'O자 다리(내반)인데 카티스템만 하면 되나요?',
+   a:'<p>다리가 휜 변형(내반)이 있으면 한쪽 연골에 하중이 집중되어, 연골 치료만으로는 재손상 위험이 있습니다. 이런 경우 <b>뼈 정렬을 교정하는 절골술(휜다리 교정술, HTO)</b>을 함께 고려할 수 있습니다.</p>',
+   clin:'내측 구획 OA + 내반 변형 시 HTO 병행이 표준 전략 — 역학적 하중 재분배 + 연골 재생. 다수 비교연구에서 HTO+UCB-MSC가 미세드릴링/BMAC 대비 우수(논문 탭 HTO 카테고리).'},
+  {cat:'compare',q:'인공관절이랑 뭐가 다른가요?',
+   a:'<p>가장 큰 차이는 <b>내 관절을 보존하느냐</b>입니다. 카티스템은 남은 연골을 살려 재생을 유도하고, 인공관절은 손상이 심한 관절을 인공물로 바꾸는 수술입니다. 단계가 다른 선택지입니다.</p>',
+   clin:'카티스템 = 경증~중등증 \'관절 보존\' 단계 / 인공관절(TKA·UKA) = 말기 \'관절 치환\' 단계. \'인공관절 영구 회피\'는 보장 아님 — 기대치 관리가 분쟁 예방의 핵심.'},
+  {cat:'compare',q:'카티라이프·골수주사(BMAC)랑은요?',
+   a:'<p>카티라이프는 본인 연골세포를 채취·배양해 2회 시술하고, 카티스템은 동종 제대혈 줄기세포를 1회 시술합니다. 골수주사(BMAC)는 통증·염증 환경 개선이 주 목적으로 침습도·원리가 다릅니다.</p>',
+   clin:'동종 hUCB-MSC가 BMAC보다 연골 재생에 우수했다는 비교연구 다수(Arthroscopy 2021, KSSTA 2022, Cell Transpl 2020). \'무릎 줄기세포 주사\'(BMAC)와 카티스템 혼동 주의.'},
+  {cat:'safety',q:'정말 연골이 재생되나요? 효과가 있나요?',
+   a:'<p>2012년 허가 후 장기 데이터가 쌓인 치료제로, 미세천공술과 비교한 임상에서 연골 재생·증상 개선이 확인되었습니다. 다만 <b>효과엔 개인차가 있어</b> 무조건 좋아진다고 단정하진 않습니다.</p>',
+   clin:'Phase 3 RCT 48주 ICRS repair 유의 개선(p=0.0008), 5년 우수(Lim 2021). Phase 1/2a 7년 안전성(Park 2016). 메타분석으로도 효과 확인(Medicina 2022). KSSTA 2024: 미세드릴링보다 초자연골 우수.'},
+  {cat:'safety',q:'시술 후 부작용이나 합병증은 없나요?',
+   a:'<p>수술적 시술이므로 일반적인 무릎 수술의 합병증(부종, 통증, 드물게 감염·혈전 등) 가능성이 있습니다. 그래서 시술 후 <b>이상 신호(통증 급증·붓기·열감·종아리 통증)가 있으면 즉시 알려주시도록</b> 안내합니다.</p>',
+   clin:'장기 추적에서 종양원성·중대 이상반응 보고 없음(7년). 재활 탭 Red Flags 6징후(VAS4↑·부종발열·잠김·감염·DVT·신전지연) 환자 교육 필수.'},
+  {cat:'rehab',q:'수술하고 얼마나 입원하고, 언제 걸어요?',
+   a:'<p>재활이 중요한 치료입니다. 슬개대퇴 병변은 <b>무릎을 편 상태에서 보조기를 차고 수술 직후부터 체중을 실을 수 있지만</b>, 구부리는 동작·본격 운동은 단계적으로 늘립니다. 대퇴골 과 병변은 체중부하를 더 보수적으로 진행합니다. 정확한 일정은 본원 프로토콜로 안내합니다.</p>',
+   clin:'PF: 신전 잠금 보조기 6주, 신전 시 즉시 100% WB. MFC: 6주에 걸쳐 점진 WB. 병변 위치로 재활이 갈림 — 재활 탭 두 트랙 참고.'},
+  {cat:'rehab',q:'재활은 어떻게 하고, 운동·음주는 언제부터요?',
+   a:'<p>보호기 → 가동범위 회복 → 근력 강화의 단계로 진행하며, 물리치료와 가정 운동을 병행합니다. 운동·음주·생활 수칙 재개 시점은 회복 단계에 따라 달라 의료진이 개인별로 안내합니다.</p>',
+   clin:'초기 보호기 과부하·낙상은 결과를 해침. (PF 기준) 깊은 스쿼트>90°는 6개월 회피, 평영 발차기 회피, OKC는 12주 이후 제한적. 개인별 처방은 의료진/물리치료사 영역.'},
+  {cat:'rehab',q:'보조기는 꼭 차야 하나요? 언제 벗어요?',
+   a:'<p>슬개대퇴 병변의 경우 초기 6주간 보조기를 무릎을 편 채 잠가서 착용합니다. <b>6주가 지났다고 무조건 벗는 게 아니라</b>, 다리를 들어 올릴 때 무릎이 완전히 펴진 상태를 유지할 수 있는지 확인 후 의료진이 해제를 결정합니다.</p>',
+   clin:'6주 해제 기준 = SLR 신전지연(Extension Lag) 테스트 통과(대퇴사두근 제어 완료). FAIL 시 해제 연기·보고. MFC 트랙은 보조기 1~2주.'},
+  {cat:'safety',q:'수술이 무서워요. 잘못되면 어떡하죠?',
+   a:'<p>걱정되시는 게 당연합니다. 그래서 시술 전에 안전성과 주의사항을 충분히 설명드리고 궁금한 점을 모두 확인하실 수 있게 합니다. 가장 걱정되는 부분을 말씀해 주세요.</p>',
+   clin:'\'걱정 마세요, 안전해요\'식 부작용 부정 금지. \'안심시키기\'보다 \'함께 확인할 경로 제시\'가 더 안전. 7년 추적 안전성 데이터 인용 가능.'},
+  {cat:'insurance',q:'이거 실손 되나요? 얼마나 돌려받아요?',
+   a:'<p>카티스템은 비급여 항목이고, 실손 보장 여부와 환급액은 <b>가입 상품·약관·가입시점</b>에 따라 달라 가입 보험사에 직접 확인하시는 게 가장 정확합니다. 저희는 진료에 맞는 정확한 서류를 제공해 드립니다.</p>',
+   clin:'\'실손 다 됩니다\'·금액 단정 금지(분쟁 직접 원인). 세대(1~4세대)·특약·시점별로 비급여 보장이 크게 다름. 거절 시 사유를 6슬롯으로 분류(실손 탭).'},
+  {cat:'insurance',q:'보험 되게 진단명·코드를 바꿔줄 수 있나요?',
+   a:'<p>진단명·코드는 <b>실제 진료 내용에 따라 의사가 의학적으로 기재</b>하는 부분이라 보험 청구를 위해 임의로 정할 수 없습니다. 작성된 서류 기준으로 청구하시면 됩니다.</p>',
+   clin:'⚠️ 보장에 유리한 코드 변경 유도·암시는 보험사기방지특별법 리스크 — 의료진이 가장 단호해야 할 영역. 응대는 \'진료 내용대로 기재\'로 고정.'},
+  {cat:'insurance',q:'보험사가 거절했어요. 어떻게 해야 하나요?',
+   a:'<p>먼저 <b>서면 거절 사유서</b>를 받아 정확한 사유를 확인합니다. 사유에 따라 검사 결과·소견서·의무기록으로 보완해 재심사를 요청할 수 있는 경우가 있고, 약관 자체 문제로 보완이 어려운 경우도 있습니다. 담당자가 함께 확인해 드립니다.</p>',
+   clin:'거절 6슬롯 분류 → 보완 가능성(높음/중간/낮음) 정직하게 안내. 재심사 불수용 시 금감원 분쟁조정. 결과는 약속하지 않음. 상세는 실손 탭.'},
+  {cat:'insurance',q:'청구 기한이 지나도 받을 수 있나요?',
+   a:'<p>실손 보험금 청구권은 보통 <b>청구 사유가 생긴 날부터 3년</b>이 지나면 소멸됩니다. 기한이 임박했다면 서두르셔야 하며, 필요한 서류는 원무과에서 신속히 발급 도와드리겠습니다.</p>',
+   clin:'소멸시효 3년(상법 제662조). 시효 임박 건 우선 처리. 서류 미비(S6)는 6슬롯 중 가장 해결 쉬움.'}
+];
+function buildQna(filter){
+  var box=document.getElementById('panel-qna');
+  if(!box.dataset.init){
+    var hh=hero('teal','💬 환자 Q&A 모음','자주 묻는 질문 + 의학적으로 정확한 답변',
+      '환자가 흔히 묻는 질문과, 의료진이 줄 수 있는 정확한 답변입니다. 각 항목의 <b>임상 메모</b>는 의사용 근거·주의점입니다.');
+    var chips='<div class="qfilter" id="qfilter"><span class="chip" data-qf="all" data-active="true">전체 '+QNA.length+'</span>';
+    Object.keys(QCAT).forEach(function(k){
+      var n=QNA.filter(function(p){return p.cat===k;}).length;
+      if(n)chips+='<span class="chip" data-qf="'+k+'">'+QCAT[k]+' '+n+'</span>';
+    });
+    chips+='</div>';
+    box.innerHTML=hh+chips+'<div id="qlist"></div>';
+    box.dataset.init='1';
+  }
+  var f=filter||'all';
+  var list=QNA.map(function(q,i){return {q:q,i:i};}).filter(function(o){return f==='all'||o.q.cat===f;});
+  document.getElementById('qlist').innerHTML=list.map(function(o){return qnaHTML(o.q,o.i);}).join('');
+}
+function qnaHTML(q,i){
+  return '<details class="faq"><summary><span class="num">'+(i+1)+'</span><div class="qt"><span class="ctag">'+QCAT[q.cat]+'</span><div class="qx">'+q.q+'</div></div><span class="car">▶</span></summary>'+
+    '<div class="ans">'+q.a+'</div>'+
+    '<div class="clin"><div class="cl">🩺 임상 메모 (의료진용)</div><p>'+q.clin+'</p></div></details>';
+}
+
+/* ---------- 공통 헬퍼 ---------- */
+function hero(cls,badge,title,sub){return '<div class="hero '+cls+'"><span class="pb">'+badge+'</span><h2>'+title+'</h2><p>'+sub+'</p></div>';}
+function fact(l,v){return '<div class="fact"><div class="fl">'+l+'</div><div class="fv">'+v+'</div></div>';}
+function row(k,v){return '<div class="row"><span class="k">'+k+'</span>'+v+'</div>';}
+function acc(ic,t,open,inner){return '<details class="acc"'+(open?' open':'')+'><summary><span class="pi">'+ic+'</span>'+t+'<span class="ar">▶</span></summary><div class="pin">'+inner+'</div></details>';}
+function secHead(cls,t){return '<div class="sec '+cls+'"><span class="bar"></span><h3>'+t+'</h3></div>';}
+function callout(cls,h,b){return '<div class="callout '+cls+'"><div class="ch">'+h+'</div>'+b+'</div>';}
+function pr(ic,n,t,d,warn){return '<div class="pr'+(warn?' warnp':'')+'"><div class="pn">'+n+'</div><div class="pt">'+t+'</div><div class="pd">'+d+'</div></div>';}
+function flag(ic,t){return '<div class="flag"><span class="fi">'+ic+'</span><span class="ft">'+t+'</span></div>';}
+function phase(cc,pl,t,p,b,items){return '<div class="phase" style="--cc:'+cc+'"><div class="ph"><span class="pl">'+pl+'</span><span class="pp">'+p+'</span></div><div style="font-size:13.5px;font-weight:700;margin-bottom:3px">'+t+'</div><div class="pb2">'+b+'</div><ul>'+items.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';}
+function lstep(w,d){return '<div class="lstep"><span class="lw">'+w+'</span><span class="ld">'+d+'</span></div>';}
+function term(t,en,d){return '<div class="term"><div class="tt">'+t+(en?' <span>('+en+')</span>':'')+'</div><div class="td">'+d+'</div></div>';}
+function escAttr(s){return (s||'').split('"').join('&quot;');}
+function stripHTML(s){return (s||'').replace(/<[^>]+>/g,' ');}
+
+/* ---------- 탭 전환 ---------- */
+var BUILT={};
+function ensureBuilt(name){
+  if(BUILT[name])return;
+  if(name==='product')buildProduct();
+  else if(name==='rehab')buildRehab();
+  else if(name==='insurance')buildInsurance();
+  else if(name==='consult')buildConsult();
+  else if(name==='papers')buildPapers();
+  else if(name==='qna')buildQna();
+  BUILT[name]=1;
+}
+function showTab(name){
+  ensureBuilt(name);
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name);});
+  document.querySelectorAll('.tabbar button').forEach(function(b){b.setAttribute('data-active', b.dataset.tab===name?'true':'false');});
+  try{history.replaceState(null,'','#'+name);}catch(e){}
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.tabbar button').forEach(function(b){b.addEventListener('click',function(){var g=document.getElementById('gsearch');g.value='';document.getElementById('gclr').style.display='none';showTab(this.dataset.tab);});});
+
+/* ---------- 클릭 위임 (필터·복사·재활트랙·검색결과) ---------- */
+document.addEventListener('click',function(e){
+  var pf=e.target.closest&&e.target.closest('#pfilter .chip');
+  if(pf){document.querySelectorAll('#pfilter .chip').forEach(function(c){c.setAttribute('data-active',c===pf?'true':'false');});buildPapers(pf.dataset.pf);return;}
+  var qf=e.target.closest&&e.target.closest('#qfilter .chip');
+  if(qf){document.querySelectorAll('#qfilter .chip').forEach(function(c){c.setAttribute('data-active',c===qf?'true':'false');});buildQna(qf.dataset.qf);return;}
+  var rt=e.target.closest&&e.target.closest('.rtile');
+  if(rt){var v=rt.dataset.rt;
+    document.querySelectorAll('.rtile').forEach(function(t){t.classList.toggle('active',t.dataset.rt===v);});
+    document.querySelectorAll('.rview').forEach(function(p){p.classList.toggle('active',p.id==='rv-'+v);});
+    window.scrollTo(0,0);return;}
+  var cp=e.target.closest&&e.target.closest('.copy');
+  if(cp){copyText(cp.getAttribute('data-copy'));return;}
+  var r=e.target.closest&&e.target.closest('.searchres');
+  if(r){showTab(r.dataset.tab);return;}
+});
+
+/* ---------- 복사 / 토스트 ---------- */
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},1700);}
+function copyText(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast('복사되었습니다.');},function(){fbcopy(t);});}
+  else fbcopy(t);
+}
+function fbcopy(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('복사되었습니다.');}catch(e){toast('복사 실패');}document.body.removeChild(ta);}
+
+/* ---------- 통합검색 ---------- */
+var SEARCH_IDX=null;
+var REHAB_IDX=[
+  {t:'MFC vs PF 두 트랙 차이',s:'체중부하·보조기·각도·OKC',k:'mfc pf 대퇴골 슬개대퇴 보조기 brace 차이 비교 트랙'},
+  {t:'PF 5가지 절대 원칙',s:'신전 체중부하·OKC 12주 금지',k:'원칙 신전 체중부하 굴곡 rom okc ckc 미니스쿼트 깊은스쿼트'},
+  {t:'Red Flags 6가지 이상 징후',s:'VAS4·부종발열·잠김·감염·DVT·신전지연',k:'red flag 통증 vas 부종 발열 잠김 locking 감염 dvt 신전지연 extension lag'},
+  {t:'3단계 재활 로드맵',s:'보호기·회복기·강화기 12개월',k:'phase 보호 회복 강화 로드맵 cpm 사다리 보조기 해제'},
+  {t:'신전 지연(Extension Lag) 테스트',s:'6주 보조기 해제 기준 SLR',k:'extension lag 신전지연 slr 보조기 해제 대퇴사두근 6주'},
+  {t:'PFJ 스트레스 안전도 분류',s:'조기허용·지연도입·장기금지',k:'pfj 안전도 okc leg extension 깊은스쿼트 평영 breaststroke'}
+];
+var PRODUCT_IDX=[
+  {t:'작용 기전 (파라크라인)',s:'연골 재생·분해 억제·항염증·면역조절',k:'기전 파라크라인 msc 면역조절 항염증 동종'},
+  {t:'용량·용법 (결손 면적 기준)',s:'2~9㎠ 면적별 투여량',k:'용량 용법 결손 면적 바이알 투여량 도포'},
+  {t:'수술 술기',s:'드릴링·도포·관절경·HTO 병행',k:'수술 술기 드릴링 debridement 관절경 hto 절골술 도포'},
+  {t:'GMP 생산·발주',s:'발주 화목·유효기간 48시간',k:'gmp 생산 발주 화목 유효기간 무균 엔도톡신 품질'},
+  {t:'공식 제품 설명자료 44p',s:'메디포스트 deck',k:'deck 설명자료 슬라이드 44p 공식 제품'},
+  {t:'치료 단계 포지셔닝',s:'관절 보존 vs 인공관절 치환',k:'포지셔닝 단계 인공관절 미세천공술 oats aci 보존'}
+];
+function buildSearchIndex(){
+  var idx=[];
+  PAPERS.forEach(function(p){idx.push({type:'논문',tab:'papers',title:p.title,sub:p.journal+' '+p.year+(p.pmid?' · PMID '+p.pmid:(p.pdf?' · PDF':'')),hay:(p.title+' '+p.authors+' '+p.journal+' '+p.key+' '+p.tags.join(' ')+' '+p.pmid+' '+(PCAT[p.cat]?PCAT[p.cat].label:'')).toLowerCase()});});
+  QNA.forEach(function(q){idx.push({type:'환자 Q&A',tab:'qna',title:q.q,sub:QCAT[q.cat]+' · 임상 메모 포함',hay:(q.q+' '+stripHTML(q.a)+' '+q.clin+' '+QCAT[q.cat]).toLowerCase()});});
+  SLOTS.forEach(function(s){idx.push({type:'실손 거절',tab:'insurance',title:s.tag+' — '+s.title,sub:'거절 슬롯 · 소견서 근거',hay:(s.tag+' '+s.title+' '+s.reason+' '+stripHTML(s.rebut)).toLowerCase()});});
+  MATERIALS.forEach(function(m){idx.push({type:'상담자료',tab:'consult',title:m.t,sub:m.s,hay:(m.t+' '+m.s+' '+m.points.map(stripHTML).join(' ')+' '+m.copy).toLowerCase()});});
+  REHAB_IDX.forEach(function(r){idx.push({type:'재활',tab:'rehab',title:r.t,sub:r.s,hay:(r.t+' '+r.s+' '+r.k).toLowerCase()});});
+  PRODUCT_IDX.forEach(function(r){idx.push({type:'제품정보',tab:'product',title:r.t,sub:r.s,hay:(r.t+' '+r.s+' '+r.k).toLowerCase()});});
+  return idx;
+}
+function renderSearch(term){
+  var box=document.getElementById('panel-search');
+  var raw=(term||'').trim().toLowerCase();
+  if(!raw){box.innerHTML='<p class="modehint">논문 제목·저자·PMID, 환자 Q&amp;A, 재활 키워드(신전지연·OKC·MFC), 실손 슬롯, 제품정보를 한 번에 검색합니다.</p>';return;}
+  if(!SEARCH_IDX)SEARCH_IDX=buildSearchIndex();
+  var toks=raw.split(/\s+/).filter(Boolean);
+  var hits=SEARCH_IDX.map(function(it){var s=0;toks.forEach(function(t){if(it.hay.indexOf(t)>-1)s++;});return {it:it,s:s};}).filter(function(o){return o.s>0;});
+  hits.sort(function(a,b){return b.s-a.s;});
+  if(!hits.length){box.innerHTML='<div class="empty">"'+term+'" 검색 결과가 없습니다.<br><span style="font-size:12px">다른 키워드 (예: HTO, BMAC, 신전지연, 소멸시효)</span></div>';return;}
+  var by={};hits.forEach(function(o){(by[o.it.type]=by[o.it.type]||[]).push(o.it);});
+  var html='<p class="modehint">"'+term+'" 검색 결과 <b>'+hits.length+'</b>건 — 항목을 누르면 해당 탭으로 이동합니다.</p>';
+  Object.keys(by).forEach(function(type){
+    html+=secHead('','<span style="font-size:13px">'+type+' <span class="mono" style="color:var(--faint);font-size:11px">'+by[type].length+'</span></span>');
+    html+=by[type].map(function(it){
+      return '<button class="searchres" data-tab="'+it.tab+'"><div class="srt">'+it.title+'</div><div class="srs">'+it.sub+' &nbsp;›&nbsp; '+it.tab+' 탭에서 보기</div></button>';
+    }).join('');
+  });
+  box.innerHTML=html;
+}
+function runSearch(){
+  var g=document.getElementById('gsearch');var v=g.value;
+  document.getElementById('gclr').style.display=v?'block':'none';
+  if(!v.trim()){var cur=(location.hash||'#product').slice(1);if(cur==='search')cur='product';showTab(cur);return;}
+  renderSearch(v);
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-search');});
+  document.querySelectorAll('.tabbar button').forEach(function(b){b.setAttribute('data-active','false');});
+}
+var gs=document.getElementById('gsearch');
+['input','compositionend','keyup','change'].forEach(function(ev){gs.addEventListener(ev,runSearch);});
+document.getElementById('gclr').addEventListener('click',function(){gs.value='';document.getElementById('gclr').style.display='none';showTab('product');gs.focus();});
+
+/* ---------- 버전 전환 / 글자 / 인쇄 ---------- */
+(function(){
+  var sw=document.getElementById('modeSwitch');
+  var ver=document.getElementById('verLabel');
+  if(MODE==='full'){sw.textContent='🪶 라이트';sw.href='cartistem-md-light.html';sw.title='라이트(가벼운) 버전으로';ver.textContent='v2.0 · Full';}
+  else{sw.textContent='📦 풀버전';sw.href='cartistem-md-full.html';sw.title='풀(시각자료 포함) 버전으로';ver.textContent='v2.0 · Light';}
+})();
+var ZL=[1,1.12,1.25],ZLABEL=['가＋','가＋＋','가'],zi=0;
+try{var sv=parseFloat(localStorage.getItem('catiMdZoom'));if(sv){zi=ZL.indexOf(sv);if(zi<0)zi=0;}}catch(e){}
+function applyZoom(){var v=document.getElementById('view');if(v)v.style.zoom=ZL[zi];var b=document.getElementById('fontBtn');if(b)b.textContent=ZLABEL[zi];try{localStorage.setItem('catiMdZoom',ZL[zi]);}catch(e){}}
+document.getElementById('fontBtn').addEventListener('click',function(){zi=(zi+1)%ZL.length;applyZoom();});
+document.getElementById('printBtn').addEventListener('click',function(){window.print();});
+
+/* ---------- 초기화 ---------- */
+buildProduct();BUILT.product=1;applyZoom();
+(function(){var m=(location.hash||'').slice(1);if(/^(product|rehab|insurance|consult|papers|qna)$/.test(m))showTab(m);})();
+</script>
+
+<script>var DOCS={};function openDoc(){alert('이 시각자료는 Full 버전(cartistem-md-full.html)에서 확인하세요.\n상단 \u0027\ud83d\udce6 \ud480\ubc84\uc804\u0027 \ubc84\ud2bc\uc73c\ub85c \uc804\ud658\ud558\uc138\uc694.');}function closeDoc(){}var DMAP={'material-mechanism':'mechanism','material-production':'production','material-cases':'cases','material-insurance-playbook':'insurance','product-deck':'deck'};document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';if(/(material-mechanism|material-production|material-cases|material-insurance-playbook|product-deck)\.html/.test(h)){e.preventDefault();openDoc();}});</script>
+</body>
+</html>
