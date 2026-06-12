@@ -171,6 +171,57 @@ header .brand h1{font-size:17px}
 .tabbar button[data-active="true"].b{color:var(--b)}
 .tabbar button[data-active="true"].r{color:var(--no)}
 .tabbar button[data-active="true"].g{color:var(--ok)}
+.tabbar button[data-active="true"].p{color:#0d7490}
+/* 6탭 대응: 좁은 화면에서 글자 축소 */
+.tabbar button{font-size:10.5px;padding:8px 2px}
+.tabbar button .ic{font-size:18px}
+.tabbar button .tsub{font-size:8px}
+@media(max-width:380px){.tabbar button{font-size:9.5px} .tabbar button .ic{font-size:16px}}
+
+/* 제품정보 패널 */
+.pwrap{}
+.phero{background:linear-gradient(135deg,#0c2a3a,#10485e);color:#fff;border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.phero .pb{display:inline-block;font-size:10.5px;font-weight:700;color:#a9e2f0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:3px 10px;margin-bottom:9px}
+.phero h2{font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.35}
+.phero p{font-size:12.5px;color:#bcd5e0;margin-top:7px;line-height:1.6}
+.pfacts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+@media(max-width:520px){.pfacts{grid-template-columns:1fr}}
+.pfact{background:#fff;border:1px solid var(--line);border-left:4px solid #0e8aaa;border-radius:12px;padding:11px 13px;box-shadow:var(--shadow)}
+.pfact .fl{font-size:10.5px;font-weight:700;color:#0d7490;letter-spacing:.02em}
+.pfact .fv{font-size:13.5px;font-weight:600;color:var(--ink);margin-top:3px;line-height:1.5}
+.pfact .fv b{color:#0d7490}
+.pacc{background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+.pacc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 16px;font-size:14.5px;font-weight:700}
+.pacc>summary::-webkit-details-marker{display:none}
+.pacc>summary .pi{font-size:17px}
+.pacc>summary .ar{margin-left:auto;font-size:12px;color:var(--faint);transition:transform .2s}
+.pacc[open]>summary .ar{transform:rotate(90deg)}
+.pacc .pin{padding:2px 16px 15px}
+.pacc .row{font-size:13px;color:#3c4651;line-height:1.62;padding:6px 0 6px 15px;position:relative;border-top:1px dashed #eef2f6}
+.pacc .row:first-child{border-top:0}
+.pacc .row::before{content:"•";position:absolute;left:2px;color:#0e8aaa;font-weight:700}
+.pacc .row b{color:var(--ink);font-weight:600}
+.pacc .row .k{display:inline-block;min-width:84px;color:var(--faint);font-weight:600}
+.dosetbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+.dosetbl th{background:#eaf4f7;color:#0d7490;font-weight:700;text-align:left;padding:7px 9px;font-size:11.5px;border-bottom:1px solid var(--line)}
+.dosetbl td{padding:7px 9px;border-bottom:1px solid var(--line);color:#3c4651}
+.dosetbl tr:last-child td{border-bottom:0}
+.dosetbl .v{font-family:'IBM Plex Mono',monospace;font-weight:600;color:#0d7490}
+.pdeckbtn{display:flex;align-items:center;gap:13px;text-decoration:none;color:inherit;background:linear-gradient(135deg,#0d7490,#0e8aaa);border-radius:14px;padding:15px 17px;box-shadow:var(--shadow);margin:6px 0 16px}
+.pdeckbtn .di{font-size:26px}
+.pdeckbtn .dt{color:#fff}
+.pdeckbtn .dt b{font-size:15px;font-weight:700;display:block}
+.pdeckbtn .dt span{font-size:12px;color:#cdeaf2}
+.pdeckbtn .dar{margin-left:auto;color:#fff;font-size:18px}
+.prelink{display:grid;gap:8px;margin-bottom:6px}
+.prl{display:flex;align-items:center;gap:11px;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;box-shadow:var(--shadow);transition:border-color .15s}
+.prl:hover{border-color:#bce3ee}
+.prl .ri{font-size:18px}
+.prl .rt{font-size:13.5px;font-weight:600}
+.prl .rs{font-size:11.5px;color:var(--faint);margin-top:1px}
+.prl .rar{margin-left:auto;color:#0d7490;font-size:14px}
+.pdisc{font-size:11.5px;color:var(--faint);line-height:1.7;background:#f7f9fb;border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-top:8px}
+.pdisc b{color:var(--sub)}
 
 /* 환자 상담 시각자료 (의료진용) 갤러리 */
 .pmintro{background:linear-gradient(#ecf8f1,#fff);border:1px solid #cfe9da;border-left:5px solid var(--ok);border-radius:14px;padding:14px 16px;margin-bottom:8px}
@@ -347,7 +398,8 @@ header .brand h1{font-size:17px}
 </header>
 
 <main id="view">
-  <section class="panel active" id="panel-staff"></section>
+  <section class="panel active" id="panel-product"></section>
+  <section class="panel" id="panel-staff"></section>
   <section class="panel" id="panel-faq"></section>
   <section class="panel" id="panel-ptmat"></section>
   <section class="panel" id="panel-search"></section>
@@ -355,9 +407,10 @@ header .brand h1{font-size:17px}
 </main>
 
 <nav class="tabbar">
-  <button data-tab="staff" data-active="true"><span class="ic">🩺</span>상담원<span class="tsub">수술전 일반</span></button>
+  <button data-tab="product" class="p" data-active="true"><span class="ic">🧬</span>제품정보<span class="tsub">카티스템</span></button>
+  <button data-tab="staff"><span class="ic">🩺</span>상담원<span class="tsub">수술전 일반</span></button>
   <button data-tab="faq" class="b"><span class="ic">💬</span>상담실 FAQ</button>
-  <button data-tab="ptmat" class="g"><span class="ic">🖼️</span>환자자료<span class="tsub">의료진용 시각자료</span></button>
+  <button data-tab="ptmat" class="g"><span class="ic">🖼️</span>환자자료<span class="tsub">시각자료</span></button>
   <button data-tab="search"><span class="ic">🔎</span>통합검색</button>
   <button data-tab="denial" class="r"><span class="ic">🛡️</span>실손정보</button>
 </nav>
@@ -977,7 +1030,7 @@ function renderSearch(term){
 }
 
 /* ===== 탭 전환 ===== */
-var TAGS={staff:'상담원 · 수술 전 일반 상담',faq:'상담실 FAQ',ptmat:'환자 상담 시각자료 · 의료진용',search:'통합검색',denial:'실손보험 정보사항'};
+var TAGS={product:'카티스템 제품정보 · 공식자료',staff:'상담원 · 수술 전 일반 상담',faq:'상담실 FAQ',ptmat:'환자 상담 시각자료 · 의료진용',search:'통합검색',denial:'실손보험 정보사항'};
 function showTab(name){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name);});
   document.querySelectorAll('.tabbar button').forEach(function(b){b.dataset.active=(b.dataset.tab===name)?'true':'false';});
@@ -1072,9 +1125,97 @@ function buildPtMat(){
   document.getElementById('panel-ptmat').innerHTML=html;
 }
 
+/* ===== 카티스템 제품정보 (공식 제품 설명자료 요약) ===== */
+function buildProduct(){
+  var h='';
+  h+='<div class="phero"><span class="pb">📑 메디포스트 공식 제품 설명자료</span>'+
+     '<h2>카티스템®<br>세계 최초 동종 제대혈유래 줄기세포치료제</h2>'+
+     '<p>퇴행성·외상성 골관절염으로 손상된 무릎연골(ICRS Grade IV)을 재생하는 식약처 허가 전문의약품입니다. 아래는 제조사 공식자료를 정리한 의료진 참고용 핵심 정보입니다.</p></div>';
+
+  // 퀵 팩트
+  h+='<div class="pfacts">'+
+    fact('적응증','퇴행성·반복적 외상성 <b>골관절염(ICRS Grade IV)</b>의 무릎 연골결손 치료')+
+    fact('허가','식약처 품목허가 <b>2012.1.18</b> · 전문의약품 · 비급여 (국내 2번째 줄기세포치료제)')+
+    fact('주성분','<b>동종 제대혈유래 중간엽줄기세포</b> · 병변 크기별 유효 세포수 적용')+
+    fact('첨부물','<b>히알루론산나트륨</b>(동결건조 생체적합성 고분자) · 혼합 시 세포적합성 확보')+
+    fact('대상 연령','<b>연령 제한 없음</b> — 정형외과적 수술이 가능한 모든 연령')+
+    fact('결손 크기','<b>2㎠ ~ 9㎠</b> · K&amp;L Grade I~III · OA/OCD')+
+  '</div>';
+
+  // 공식 전체자료 버튼
+  h+='<a class="pdeckbtn" href="product-deck.html"><span class="di">📑</span><span class="dt"><b>공식 제품 설명자료 전체보기</b><span>회사·과학·생산·임상·사례 원본 슬라이드 44p</span></span><span class="dar">→</span></a>';
+
+  // 아코디언 섹션들
+  h+=acc('🧬','줄기세포 · 작용 기전', true,
+    row('줄기세포','<b>자가복제능력</b>과 <b>조직세포 분화능</b>을 가진 세포')+
+    row('중간엽줄기세포(MSC)','부착성 세포 · 특이 표면항원 발현 · 다능성 분화능 (ISCT 기준)')+
+    row('면역 특성','면역 활성 인자 발현이 없고 면역조절능 보유 → <b>동종이식에 적합</b>')+
+    row('작용 기전','파라크라인 효과(분비 단백질)로 <b>연골 재생 촉진 · 연골 분해 억제 · 항염증 · 면역조절</b>을 유도')
+  );
+  h+=acc('🏭','생산 · 품질관리(GMP)', false,
+    row('생산','제대혈 채취 → 공여자 적격성 검사 → 세포 분리 → 반복 계대배양 → 동결 저장 → (주문) 해동·배양 → 완제품')+
+    row('일정','발주 매주 화·목 · 생산 약 8일 · 유효기간 48시간(수·금 18:00까지)')+
+    row('품질규격','성상시험 · 무균시험 · 마이코플라스마 부정시험 · 엔도톡신 &lt;2 EU/mL · 총세포수 측정 등')
+  );
+  h+=acc('🔬','비임상 안전성', false,
+    row('유효성','Mouse·Rat·Rabbit·Micro-pig·Goat 연골결손 모델에서 병변당 최적 세포농도 확인')+
+    row('독성/PK','단회투여독성 · 국소면역독성 · 분포시험에서 대조군과 유사, 면역적 안전성 확인')+
+    row('종양원성','투여 6개월 후 종양 관찰되지 않음 — <b>비종양원성</b> (BioReliance, USA)')
+  );
+  h+=acc('📊','임상시험 결과', false,
+    row('임상 3상','무릎 연골손상 환자 대상 카티스템® vs 미세천공술(Microfracture) <b>무작위배정·공개·다기관</b> 시험')+
+    row('1년 결과','시술 48주째 ICRS overall repair 개선율이 카티스템군에서 <b>통계적으로 유의하게 높음</b> (p=0.0008)')+
+    row('층화분석','병변 크기·연령대별 분석에서 미세천공술 대비 우수한 연골 재생률 확인')+
+    row('5년 결과','VAS·IKDC·WOMAC 5년 추적에서 미세천공술 대비 <b>유의하게 개선</b> (p&lt;0.05) — Orthop J Sports Med 2021;9(1)')+
+    row('임상 1/2a','7년차 장기 추적 결과 발표')
+  );
+  h+=acc('💉','적응증 · 용량/용법', false,
+    row('적응증','OA · OCD · ICRS Grade IV · K&amp;L Grade I~III · 결손 2㎠~9㎠ · 연령 제한 없음')+
+    '<div style="padding:8px 0 2px"><table class="dosetbl"><thead><tr><th>결손 면적</th><th>키트 구성</th><th>투여량</th></tr></thead><tbody>'+
+    '<tr><td>2㎠ 이상~3㎠ 미만</td><td class="v">각 1 바이알</td><td>1.0~1.5 mL</td></tr>'+
+    '<tr><td>3㎠ 이상~4㎠ 미만</td><td class="v">각 2 바이알</td><td>1.5~2.0 mL</td></tr>'+
+    '<tr><td>4㎠ 이상~5㎠ 미만</td><td class="v">각 2 바이알</td><td>2.0~2.5 mL</td></tr>'+
+    '<tr><td>5㎠ 이상~6㎠ 미만</td><td class="v">각 2 바이알</td><td>2.5~3.0 mL</td></tr>'+
+    '<tr><td>6㎠ 이상~7㎠ 미만</td><td class="v">각 3 바이알</td><td>3.0~3.5 mL</td></tr>'+
+    '</tbody></table></div>'+
+    row('비고','병변 크기에 따라 유효 용량(세포수)을 적용. 정확한 용량·키트는 결손 면적 측정 후 결정')
+  );
+  h+=acc('🦵','수술 방법 · 재활', false,
+    row('수술 개요','병변 정리 → subchondral bone 노출 → 드릴링(4–5mm, K-강선)으로 골수강 출혈 유도 → 세포 도포')+
+    row('원리','석회화 연골·손상 연골 제거 후 골수 출혈을 유도해 뼈와 연골이 함께 재생되도록 함')+
+    row('재활','카티스템® 기본 재활 프로토콜에 따라 단계적 체중부하·관절가동범위 회복')
+  );
+  h+=acc('🪜','연골손상 단계별 치료 (포지셔닝)', false,
+    row('1단계','약물치료 · 미세천공술(Microfracture) — 경미한 손상')+
+    row('2단계','수술적 복원술 — 자가연골이식술(OATS) · 자가연골세포배양이식술(ACI) — 기존 치료 효과 부족 시')+
+    row('3단계','인공관절 부분/전치환술 — 1~2단계 치료가 효과 없을 시')+
+    row('카티스템 위치','ICRS Grade IV 연골결손에서 미세천공술 대비 재생 효과가 확인된 줄기세포 치료 옵션')
+  );
+  h+=acc('🏢','제조사 · 메디포스트', false,
+    row('회사','메디포스트㈜ (MEDIPOST CO., Ltd.) · 대표 양윤선 · 설립 2000.6.26 · 상장사')+
+    row('R&amp;D','국내외 특허 84건 · 국책과제 35건 · 제대혈은행 보관 270,171 units · R&amp;D 인력 비중 49% (2022.7 기준)')
+  );
+
+  // 관련 시각자료 바로가기
+  h+='<div style="font-size:12px;font-weight:700;color:var(--sub);margin:18px 0 9px">🔗 관련 환자 설명자료</div>';
+  h+='<div class="prelink">'+
+    prl('material-mechanism.html','🌱','작용 기전 설명자료','연골 재생 원리 환자용 그림')+
+    prl('material-production.html','🏭','GMP 생산 과정','제조 단계·발주/수술 일정')+
+    prl('material-cases.html','📈','임상 사례 & 5년 결과','Pre/Post 비교·조직검사')+
+  '</div>';
+
+  h+='<div class="pdisc"><b>※ 안내</b> 본 정보는 제조사 메디포스트㈜ 공식 제품 설명자료를 의료진 참고용으로 요약한 것입니다. 임상 수치는 해당 임상시험 결과이며 모든 환자에게 동일한 결과를 보장하지 않습니다. 적응증·시술 적합성·예후는 담당 의사가 판단합니다.</div>';
+
+  document.getElementById('panel-product').innerHTML=h;
+}
+function fact(l,v){return '<div class="pfact"><div class="fl">'+l+'</div><div class="fv">'+v+'</div></div>';}
+function row(k,v){return '<div class="row"><span class="k">'+k+'</span>'+v+'</div>';}
+function acc(ic,t,open,inner){return '<details class="pacc"'+(open?' open':'')+'><summary><span class="pi">'+ic+'</span>'+t+'<span class="ar">▶</span></summary><div class="pin">'+inner+'</div></details>';}
+function prl(href,ic,t,s){return '<a class="prl" href="'+href+'"><span class="ri">'+ic+'</span><span><span class="rt">'+t+'</span><span class="rs">'+s+'</span></span><span class="rar">→</span></a>';}
+
 /* ===== 초기 ===== */
-buildStaff(); buildFAQ(); buildPtMat(); buildDenial(); renderSearch('');
-if(/^#(staff|faq|ptmat|search|denial)$/.test(location.hash)){showTab(location.hash.slice(1));}
+buildProduct(); buildStaff(); buildFAQ(); buildPtMat(); buildDenial(); renderSearch('');
+if(/^#(product|staff|faq|ptmat|search|denial)$/.test(location.hash)){showTab(location.hash.slice(1));}
 </script>
 </body>
 </html>
