@@ -99,6 +99,17 @@
     });
   });
   toc.innerHTML=tHTML; deck.innerHTML=dHTML;
+
+  /* 목차/맨위로 이동: URL 앵커 대신 JS 스크롤.
+     (단일 파일에서는 이 문서가 iframe srcdoc로 열려 base URL을 부모에서 상속하므로
+      '#sec-..' 앵커가 부모 파일로 이동해 버린다. JS 스크롤로 그 문제를 회피.) */
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href^="#"]'); if(!a) return;
+    var id=a.getAttribute('href').slice(1); if(!id) return;
+    var el=document.getElementById(id); if(!el) return;
+    e.preventDefault();
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
 </script>
 </body>
 </html>
