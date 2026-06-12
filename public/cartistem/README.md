@@ -40,4 +40,18 @@ Next.js `public/` 아래에 있으므로 배포 시 아래 주소로 열립니�
 모든 자료는 앱의 황금 규칙(효과·완치 단정 금지, 보험 보장 단정 금지, 경쟁치료 폄하 금지,
 공포 조장 금지, 적응증 판단은 담당 의사)을 따릅니다.
 
+## 오프라인 단일 파일 빌드
+
+`build_standalone.py` — 모든 이미지를 base64로 인라인하고 자료 페이지를 파일 내부
+iframe(srcdoc)으로 묶어 **인터넷 없이 열리는 단일 HTML**을 생성합니다.
+자료 페이지의 `← 자료목록` 링크는 `postMessage('closeDoc')`로 부모(셸)에 닫기를 요청합니다.
+
+```
+python3 build_standalone.py
+# → consult-standalone.html       (전체, 44p deck 포함 · 약 18.8MB)
+# → consult-standalone-lite.html  (deck 제외 · 약 8.8MB, 메신저용)
+```
+
+생성물(대용량)은 git에 커밋하지 않습니다(스크립트로 언제든 재생성).
+
 > 내부 참고용입니다. 카티스템®은 전문의약품으로 치료 적합성·예후는 담당 의사가 판단합니다.
