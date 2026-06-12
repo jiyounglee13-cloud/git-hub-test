@@ -42,3 +42,7 @@ next-env.d.ts
 
 # generated offline single-file builds (large)
 public/cartistem/consult-standalone*.html
+
+# python bytecode cache
+__pycache__/
+*.pyc
