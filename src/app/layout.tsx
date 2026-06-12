@@ -14,16 +14,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "카티스템 정보 - CARTSTEM 연골재생 줄기세포 치료제 안내",
+  title: "카티스템 상담 도구 - CARTSTEM Consultation Suite",
   description:
-    "카티스템(CARTSTEM)에 대한 종합 정보를 제공합니다. 동종 제대혈 유래 중간엽줄기세포 연골재생 치료제의 원리, 치료 과정, 부작용, FAQ 등을 확인하세요.",
+    "카티스템(CARTSTEM) 상담 전 페르소나 브리핑, 상담 가이드, 실손보험 안내, 급여 청구 가이드를 제공하는 통합 상담 도구입니다.",
 };
 
 const navLinks = [
   { href: "/", label: "홈" },
-  { href: "/about", label: "카티스템이란?" },
-  { href: "/process", label: "치료 과정" },
-  { href: "/side-effects", label: "부작용" },
+  { href: "/persona", label: "페르소나 브리핑" },
+  { href: "/consult", label: "상담 가이드" },
+  { href: "/insurance", label: "실손보험" },
+  { href: "/billing", label: "급여 청구" },
   { href: "/faq", label: "FAQ" },
 ];
 
@@ -46,7 +47,7 @@ export default function RootLayout({
             >
               🦴 카티스템
             </Link>
-            <ul className="flex gap-6 text-sm font-medium">
+            <ul className="flex gap-4 text-sm font-medium">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -66,11 +67,15 @@ export default function RootLayout({
         <footer className="border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
           <div className="mx-auto max-w-6xl px-6 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
             <p>
-              본 사이트는 교육 및 정보 제공 목적으로 제작되었습니다. 의료적
-              결정은 반드시 전문의와 상담하세요.
+              본 도구는 상담 준비를 위한 내부 참고용입니다. 카티스템은
+              전문의약품으로 치료 적합성은 담당 의사가 판단합니다.
+            </p>
+            <p className="mt-1">
+              개별 환자의 경과와 보험 보장 여부는 다를 수 있습니다.
             </p>
             <p className="mt-2">
-              &copy; 2026 카티스템 정보. All rights reserved.
+              &copy; 2026 카티스템 상담 도구. 본 도구는 어떤 정보도 저장하지
+              않습니다.
             </p>
           </div>
         </footer>

@@ -1,110 +1,159 @@
 import Link from "next/link";
 
-const features = [
+const tools = [
   {
-    icon: "🔬",
-    title: "카티스템이란?",
+    icon: "🎯",
+    title: "페르소나 브리핑",
     description:
-      "동종 제대혈 유래 중간엽줄기세포(MSC)를 이용하여 손상된 무릎 연골을 재생하는 세계 최초의 동종 줄기세포 치료제입니다.",
-    href: "/about",
+      "환자 기본 정보를 입력하면 손상 서사(A축)와 의사결정 동인(B축) 2축으로 매칭하여 맞춤형 상담 브리핑 카드를 생성합니다.",
+    href: "/persona",
+    color: "from-indigo-500 to-purple-600",
+    badge: "v1.1",
   },
   {
-    icon: "🏥",
-    title: "치료 과정",
+    icon: "🩺",
+    title: "상담 가이드",
     description:
-      "진단부터 관절경 수술을 통한 줄기세포 투여, 재활까지 카티스템 치료의 전체 과정을 단계별로 안내합니다.",
-    href: "/process",
+      "제품 정보, 시술 과정, 줄기세포, 경쟁품 비교, 재활 등 상담원이 알아야 할 Q&A 카드를 검색하고 참조합니다.",
+    href: "/consult",
+    color: "from-blue-500 to-cyan-600",
+    badge: "22+ 카드",
   },
   {
-    icon: "⚠️",
-    title: "부작용 관리",
+    icon: "🛡️",
+    title: "실손보험 안내",
     description:
-      "수술 부위 통증, 부종, 감염 위험 등 주요 부작용과 관리 방법에 대해 알아봅니다.",
-    href: "/side-effects",
+      "실손 세대별 보장 구조, 청구 서류, 거절 사유 6슬롯 대응 체계를 안내합니다. 보장 단정·승소 가능성 % 표기 절대 금지.",
+    href: "/insurance",
+    color: "from-amber-500 to-orange-600",
+    badge: "6슬롯",
+  },
+  {
+    icon: "📋",
+    title: "급여 청구 가이드",
+    description:
+      "카티스템 동반 급여 수술 9개 분류, OCD 케이스, 의무기록 작성 가이드, 부당청구 위험 패턴을 의료진에게 안내합니다.",
+    href: "/billing",
+    color: "from-teal-500 to-emerald-600",
+    badge: "의료진용",
   },
   {
     icon: "❓",
-    title: "자주 묻는 질문",
+    title: "환자 FAQ",
     description:
-      "카티스템 치료 대상, 비용, 효과 지속 기간 등 환자분들이 궁금해하는 질문에 답합니다.",
+      "카티스템 치료 대상, 비용, 효과, 재활 등 환자와 보호자가 자주 묻는 질문에 대한 답변을 확인합니다.",
     href: "/faq",
+    color: "from-rose-500 to-pink-600",
+    badge: "8개 FAQ",
   },
 ];
 
-const stats = [
-  { value: "2012", label: "세계 최초 허가 (한국 식약처)" },
-  { value: "1회", label: "단일 투여로 치료" },
-  { value: "15,000+", label: "누적 투여 환자 수" },
-  { value: "메디포스트", label: "개발사" },
+const goldenRules = [
+  {
+    num: "01",
+    rule: "의학적 판단은 의사에게",
+    detail: "적응증·단계·예후를 상담원이 판정하지 않는다",
+  },
+  {
+    num: "02",
+    rule: "보험 보장을 단정하지 않는다",
+    detail: '"실손 다 됩니다"는 금지 — 약관별 상이',
+  },
+  {
+    num: "03",
+    rule: "효과를 보장하지 않는다",
+    detail: '"완치·100%·평생" 금지 — 개인차 있음',
+  },
+  {
+    num: "04",
+    rule: "경쟁 치료를 폄하하지 않는다",
+    detail: "사실 차이만 안내, 우열 단정 금지",
+  },
+  {
+    num: "05",
+    rule: "공포를 조장하지 않는다",
+    detail: '"지금 안 하면 큰일" 금지 — 시급성은 의사 판단',
+  },
 ];
 
 export default function Home() {
   return (
     <div>
-      <section className="bg-gradient-to-br from-teal-600 to-emerald-800 px-6 py-24 text-white dark:from-teal-900 dark:to-emerald-950">
+      <section className="bg-gradient-to-br from-slate-800 to-slate-950 px-6 py-20 text-white">
         <div className="mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-            카티스템
-            <br />
-            <span className="text-teal-200">CARTSTEM 연골재생 줄기세포 치료제</span>
-          </h1>
-          <p className="mt-6 text-lg leading-8 text-teal-100">
-            카티스템(CARTSTEM)은 동종 제대혈 유래 중간엽줄기세포를 이용한 세계
-            최초의 동종 줄기세포 연골재생 치료제입니다. 퇴행성 또는 반복적
-            외상으로 인한 무릎 연골 결손 환자에게 새로운 치료 옵션을 제공합니다.
+          <p className="mb-3 text-sm font-semibold tracking-widest text-teal-400">
+            CARTSTEM CONSULTATION SUITE
           </p>
-          <div className="mt-8 flex justify-center gap-4">
-            <Link
-              href="/about"
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-teal-700 shadow transition hover:bg-teal-50"
-            >
-              자세히 알아보기
-            </Link>
-            <Link
-              href="/faq"
-              className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-            >
-              자주 묻는 질문
-            </Link>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+            카티스템 상담 도구
+          </h1>
+          <p className="mt-4 text-lg leading-8 text-slate-300">
+            페르소나 브리핑 · 상담 가이드 · 실손보험 · 급여 청구
+          </p>
+          <p className="mt-2 text-sm text-slate-400">
+            메디포스트 · 동종 제대혈 유래 줄기세포 치료제 · 품목허가번호
+            201200401
+          </p>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-12">
+        <div className="mb-10 rounded-2xl bg-gradient-to-r from-slate-800 to-slate-900 p-6 text-white shadow-lg">
+          <h2 className="mb-1 text-sm font-bold tracking-widest text-amber-400">
+            ⚡ 황금 규칙 5계명
+          </h2>
+          <p className="mb-4 text-xs text-slate-400">
+            모든 상담에 공통 적용 — 위반 시 법적·윤리적 리스크
+          </p>
+          <div className="grid gap-3 sm:grid-cols-5">
+            {goldenRules.map((r) => (
+              <div
+                key={r.num}
+                className="rounded-xl bg-white/[0.06] p-4 text-center"
+              >
+                <span className="font-mono text-xs font-bold text-teal-400">
+                  {r.num}
+                </span>
+                <p className="mt-1 text-sm font-semibold">{r.rule}</p>
+                <p className="mt-1 text-xs text-slate-400">{r.detail}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-16">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-          {stats.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <p className="text-3xl font-bold text-[var(--primary)]">
-                {stat.value}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {tools.map((tool) => (
+            <Link
+              key={tool.title}
+              href={tool.href}
+              className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all hover:border-transparent hover:shadow-xl dark:border-gray-800 dark:bg-gray-900"
+            >
+              <div
+                className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${tool.color} opacity-0 transition-opacity group-hover:opacity-100`}
+              />
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">{tool.icon}</span>
+                <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-bold text-gray-500 dark:bg-gray-800">
+                  {tool.badge}
+                </span>
+              </div>
+              <h3 className="mt-4 text-lg font-bold">{tool.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400">
+                {tool.description}
               </p>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                {stat.label}
-              </p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-20">
-        <h2 className="mb-10 text-center text-2xl font-bold">
-          카티스템 알아보기
-        </h2>
-        <div className="grid gap-8 sm:grid-cols-2">
-          {features.map((feature) => (
-            <Link
-              key={feature.title}
-              href={feature.href}
-              className="group rounded-2xl border border-gray-200 p-8 transition-all hover:border-[var(--primary-light)] hover:shadow-lg dark:border-gray-800 dark:hover:border-[var(--primary)]"
-            >
-              <span className="text-3xl">{feature.icon}</span>
-              <h3 className="mt-4 text-lg font-semibold group-hover:text-[var(--primary)]">
-                {feature.title}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-400">
-                {feature.description}
-              </p>
-            </Link>
-          ))}
+      <section className="border-t border-gray-100 bg-gray-50 px-6 py-10 dark:border-gray-800 dark:bg-gray-950">
+        <div className="mx-auto max-w-3xl text-center text-xs leading-6 text-gray-400">
+          <p>※ 본 자료는 상담 준비를 위한 내부 참고용입니다.</p>
+          <p>※ 카티스템은 전문의약품으로 치료 적합성은 담당 의사가 판단합니다.</p>
+          <p>※ 개별 환자의 경과와 보험 보장 여부는 다를 수 있습니다.</p>
+          <p className="mt-2 font-semibold text-gray-500">
+            본 도구는 어떤 정보도 저장하지 않습니다.
+          </p>
         </div>
       </section>
     </div>
