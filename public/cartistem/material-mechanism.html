@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#15538a">
+<title>카티스템® 작용 기전 · 환자 설명자료</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fff;--bg:#e9edf1;--ink:#15202e;--sub:#5c6775;--faint:#8b95a1;--line:#e4e9ee;
+    --accent:#168f57;--accent-soft:#e7f6ef;--accent-bar:#21a368;
+    --staff:#2563eb;--staff-soft:#eef3ff;
+    --no:#cf3636;--no-soft:#fdecec;
+    --radius:18px;--shadow:0 1px 2px rgba(16,28,44,.06),0 8px 24px rgba(16,28,44,.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'IBM Plex Sans KR',sans-serif;background:radial-gradient(circle at 12% -5%,#f1faf5 0%,transparent 45%),var(--bg);color:var(--ink);line-height:1.62;-webkit-font-smoothing:antialiased;padding:0 0 60px}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .wrap{max-width:820px;margin:0 auto;padding:0 18px}
+
+  header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .hbar{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:13px 18px}
+  .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--sub);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 12px;white-space:nowrap}
+  .back:hover{color:var(--accent);border-color:#bfe3cf}
+  .htitle{font-size:15px;font-weight:700;letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .htitle .em{color:var(--accent)}
+  .fontbtn{margin-left:auto;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:9px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+  .fontbtn:hover{background:#f3f6f9;color:var(--ink)}
+
+  .hero{margin:18px 0 8px}
+  .hero .badge{display:inline-block;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid #cfe9da;border-radius:999px;padding:4px 12px;margin-bottom:10px}
+  .hero h1{font-size:25px;font-weight:700;letter-spacing:-.02em;line-height:1.28}
+  .hero p{font-size:14.5px;color:var(--sub);margin-top:8px;line-height:1.66}
+
+  .slide{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin:14px 0}
+  .slide img{width:100%;display:block}
+  .slide .cap{font-size:11.5px;color:var(--faint);padding:9px 14px;border-top:1px solid var(--line);background:#fafbfc}
+
+  .seclabel{display:flex;align-items:center;gap:9px;margin:26px 0 13px}
+  .seclabel .bar{width:4px;height:18px;border-radius:3px;background:var(--accent-bar)}
+  .seclabel h2{font-size:16px;font-weight:700;letter-spacing:-.01em}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.compare{grid-template-columns:1fr}}
+  .cc{border-radius:16px;padding:16px 17px;border:1px solid;box-shadow:var(--shadow)}
+  .cc.bad{background:#fdf4f4;border-color:#f4d3d3}
+  .cc.good{background:var(--accent-soft);border-color:#cfe9da}
+  .cc h3{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .cc.bad h3{color:#b03636}.cc.good h3{color:var(--accent)}
+  .cc ul{list-style:none;display:grid;gap:8px}
+  .cc li{font-size:13.5px;line-height:1.55;display:flex;gap:8px;align-items:flex-start;color:#374049}
+  .cc li .mk{flex:none;font-weight:700}
+  .cc.bad li .mk{color:#cf3636}.cc.good li .mk{color:var(--accent)}
+
+  .steps{display:grid;gap:11px}
+  .mstep{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px 16px;box-shadow:var(--shadow);display:flex;gap:14px;align-items:flex-start}
+  .mstep .n{flex:none;width:40px;height:40px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:20px}
+  .mstep .b{min-width:0}
+  .mstep .t{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .mstep .d{font-size:13.5px;color:var(--sub);line-height:1.6;margin-top:4px}
+
+  .keymsg{background:linear-gradient(135deg,#15412e,#1f6a48);color:#fff;border-radius:var(--radius);padding:18px 20px;margin:22px 0;box-shadow:var(--shadow)}
+  .keymsg .kl{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:#9fe4c2;margin-bottom:6px}
+  .keymsg p{font-size:15.5px;line-height:1.62;font-weight:500}
+  .keymsg p b{color:#bdf0d6}
+
+  .staffbox{border:1px solid #cfdcf6;border-left:5px solid var(--staff);border-radius:14px;background:var(--staff-soft);margin:20px 0 14px;overflow:hidden}
+  .staffbox>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 16px;font-size:14px;font-weight:700;color:var(--staff)}
+  .staffbox>summary::-webkit-details-marker{display:none}
+  .staffbox>summary .tag{font-size:10.5px;font-weight:700;color:#fff;background:var(--staff);border-radius:999px;padding:3px 9px}
+  .staffbox>summary .ar{margin-left:auto;font-size:12px;color:var(--staff);transition:transform .2s}
+  .staffbox[open]>summary .ar{transform:rotate(90deg)}
+  .staffin{padding:4px 16px 16px}
+  .scriptline{background:#fff;border:1px solid #d9e4f7;border-radius:11px;padding:12px 14px;font-size:14.5px;line-height:1.62;color:#16315e;margin-bottom:10px}
+  .scriptline .ql{font-size:10.5px;font-weight:700;color:var(--staff);letter-spacing:.03em;display:block;margin-bottom:5px}
+  .point{font-size:13.5px;color:#33415a;line-height:1.62;padding:6px 0 6px 16px;position:relative}
+  .point::before{content:"•";position:absolute;left:2px;color:var(--staff);font-weight:700}
+  .point b{color:#16315e}
+  .caution{margin-top:12px;background:var(--no-soft);border:1px solid #f4d3d3;border-radius:11px;padding:11px 13px}
+  .caution .cl{font-size:10.5px;font-weight:700;color:var(--no);letter-spacing:.02em;margin-bottom:5px}
+  .caution ul{list-style:none;display:grid;gap:5px}
+  .caution li{font-size:12.5px;color:#7d2b2b;line-height:1.55;padding-left:15px;position:relative}
+  .caution li::before{content:"✕";position:absolute;left:0;font-size:10px;top:2px}
+
+  .disc{font-size:11.5px;color:var(--faint);line-height:1.72;border-top:1px solid var(--line);padding-top:16px;margin-top:26px}
+  .disc b{color:var(--sub)}
+  .src{font-size:11px;color:var(--faint);margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <a class="back" href="consult.html#ptmat">← 자료목록</a>
+    <span class="htitle"><span class="em">①</span> 카티스템® 작용 기전</span>
+    <button class="fontbtn" id="fontBtn">가＋</button>
+  </div>
+</header>
+
+<main class="wrap" id="view">
+  <section class="hero">
+    <span class="badge">🖼️ 환자 설명자료 · 의료진용</span>
+    <h1>카티스템®은 손상된 연골에<br>어떻게 작용하나요?</h1>
+    <p>제대혈에서 얻은 <b>중간엽줄기세포</b>가 닳아 없어진 무릎 연골 부위에서 재생을 돕는 원리를 그림으로 설명합니다.</p>
+  </section>
+
+  <div class="slide">
+    <img src="img/mechanism.png" alt="카티스템 작용 기전 - 골관절염과 카티스템 치료 효능 비교 도해">
+    <div class="cap">원본 제작자료 — 카티스템® 작용 기전 (메디포스트)</div>
+  </div>
+
+  <div class="seclabel"><span class="bar"></span><h2>골관절염이 생기면 vs 카티스템 치료</h2></div>
+  <div class="compare">
+    <div class="cc bad">
+      <h3>🦴 골관절염(연골 손상) 상태</h3>
+      <ul>
+        <li><span class="mk">→</span>연골이 닳아 <b>통증·염증</b>이 생깁니다</li>
+        <li><span class="mk">→</span>뼈 가시(골극)가 자라고 <b>관절 간격이 좁아</b>집니다</li>
+        <li><span class="mk">→</span>움직일 때 시큰거리고 붓는 <b>임상 증상</b>으로 이어집니다</li>
+        <li><span class="mk">→</span>연골은 스스로 잘 재생되지 않는 조직입니다</li>
+      </ul>
+    </div>
+    <div class="cc good">
+      <h3>🌱 카티스템® 치료 효능</h3>
+      <ul>
+        <li><span class="mk">✓</span>줄기세포가 <b>연골 재생을 촉진</b>합니다</li>
+        <li><span class="mk">✓</span>연골을 분해하는 작용을 <b>억제</b>합니다</li>
+        <li><span class="mk">✓</span>관절 속 <b>염증 반응을 가라앉</b>힙니다</li>
+        <li><span class="mk">✓</span>재생에 유리한 <b>관절 환경</b>을 만듭니다</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="seclabel"><span class="bar"></span><h2>줄기세포는 이렇게 작용합니다</h2></div>
+  <div class="steps">
+    <div class="mstep"><span class="n">🧬</span><div class="b"><div class="t">1. 손상 부위에 자리 잡습니다</div><div class="d">결손된 연골 부위에 도포된 줄기세포가 주변 조직에 신호를 보내기 시작합니다.</div></div></div>
+    <div class="mstep"><span class="n">📡</span><div class="b"><div class="t">2. 재생 신호를 분비합니다 (파라크라인 효과)</div><div class="d">줄기세포 자체가 연골로 변하기보다, 여러 성장인자를 분비해 우리 몸의 연골 재생을 유도하는 방식입니다.</div></div></div>
+    <div class="mstep"><span class="n">🛡️</span><div class="b"><div class="t">3. 염증과 연골 분해를 줄입니다</div><div class="d">관절 안의 염증 반응과 연골을 파괴하는 작용을 낮춰, 재생이 일어날 수 있는 환경을 만듭니다.</div></div></div>
+    <div class="mstep"><span class="n">🩹</span><div class="b"><div class="t">4. 연골 재생을 돕습니다</div><div class="d">시간이 지나며 결손 부위에 새로운 연골 조직이 채워지는 것을 목표로 합니다. 회복 정도와 속도는 개인차가 있습니다.</div></div></div>
+  </div>
+
+  <div class="keymsg">
+    <div class="kl">핵심 메시지</div>
+    <p>카티스템®은 증상만 가리는 것이 아니라 <b>손상된 연골 자체의 재생</b>을 목표로 하는 치료입니다. 다만 결과는 사람마다 다르며, 적합 여부는 검사를 통해 의사가 판단합니다.</p>
+  </div>
+
+  <details class="staffbox">
+    <summary><span class="tag">의료진용</span> 설명 포인트 · 주의사항 <span class="ar">▶</span></summary>
+    <div class="staffin">
+      <div class="scriptline"><span class="ql">설명 예시</span>"줄기세포가 직접 연골로 바뀐다기보다, 손상 부위에서 <b>재생을 돕는 신호물질을 분비</b>해서 우리 몸이 연골을 다시 만들도록 유도하는 방식이에요. 그래서 염증도 줄고 연골이 차오르는 것을 기대하는 치료입니다."</div>
+      <div class="point"><b>비교 포인트:</b> 미세천공술(microfracture) 등 증상 완화 위주 시술과 달리, 카티스템은 연골 재생을 목표로 한다는 점을 사실 위주로 설명합니다.</div>
+      <div class="point"><b>주성분:</b> 동종 제대혈 유래 중간엽줄기세포 / 첨부물: 동결건조된 히알루론산나트륨.</div>
+      <div class="point"><b>적응증·시술 적합성</b>은 영상·관절경 등 검사 결과를 바탕으로 <b>담당 의사</b>가 판단합니다. 상담원은 적응증을 단정하지 않습니다.</div>
+      <div class="caution">
+        <div class="cl">설명 시 금지 표현</div>
+        <ul>
+          <li>"100% 재생된다 / 완치된다 / 평생 간다"</li>
+          <li>"누구나 다 좋아진다 / 무조건 효과 있다"</li>
+          <li>"인공관절보다 무조건 낫다" 등 우열 단정</li>
+          <li>"지금 안 하면 큰일 난다" 식의 공포 조장</li>
+        </ul>
+      </div>
+    </div>
+  </details>
+
+  <div class="disc">
+    <b>※ 안내</b> 본 자료는 상담 중 의료진이 환자에게 설명하기 위한 시각자료입니다. 카티스템®은 전문의약품으로, 치료 적합성과 예후는 담당 의사가 판단합니다. 치료 효과와 경과는 개인에 따라 다를 수 있습니다.
+    <div class="src">출처: 메디포스트 카티스템® 작용 기전 제작자료 · 내부 참고용</div>
+  </div>
+</main>
+
+<script>
+  var ZL=[1,1.15,1.3],ZLB=['가','가＋','가＋＋'],zi=0;
+  try{var s=localStorage.getItem('catiZoom');if(s!==null){var k=ZL.indexOf(parseFloat(s));if(k>=0)zi=k;}}catch(e){}
+  function applyZoom(){document.getElementById('view').style.zoom=ZL[zi];document.getElementById('fontBtn').textContent=ZLB[zi];try{localStorage.setItem('catiZoom',ZL[zi]);}catch(e){}}
+  document.getElementById('fontBtn').addEventListener('click',function(){zi=(zi+1)%ZL.length;applyZoom();});
+  applyZoom();
+</script>
+</body>
+</html>

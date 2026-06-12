@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#15538a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="카티스템 상담">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2315538a'/><rect x='26' y='9' width='12' height='19' rx='6' fill='%23fff'/><rect x='26' y='36' width='12' height='19' rx='6' fill='%23fff'/><rect x='21' y='28' width='22' height='8' rx='4' fill='%2348c9b0'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2315538a'/><rect x='26' y='9' width='12' height='19' rx='6' fill='%23fff'/><rect x='26' y='36' width='12' height='19' rx='6' fill='%23fff'/><rect x='21' y='28' width='22' height='8' rx='4' fill='%2348c9b0'/></svg>">
+<title>카티스템 상담 올인원</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ffffff; --bg:#e9edf1; --ink:#15202e; --sub:#5c6775; --faint:#8b95a1; --line:#e4e9ee;
+    --a:#2563eb; --a-soft:#eef3ff; --a-bar:#3b74e8;
+    --b:#c87214; --b-soft:#fdf4e6; --b-bar:#df8a1d;
+    --e:#6354cf; --e-soft:#edeafb; --e-bar:#7a6ae0;
+    --ok:#168f57; --ok-soft:#e7f6ef;
+    --no:#cf3636; --no-soft:#fdecec;
+    --esc:#5a4bd4; --esc-soft:#edeafb;
+    --turn:#475569; --turn-soft:#eef1f5;
+    --note:#9a6b14; --note-soft:#fbf3df;
+    --radius:18px;
+    --shadow:0 1px 2px rgba(16,28,44,.06),0 8px 24px rgba(16,28,44,.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'IBM Plex Sans KR',sans-serif;
+    background:
+      radial-gradient(circle at 12% -5%,#f3f6f9 0%,transparent 45%),
+      radial-gradient(circle at 100% 0%,#eaf0f6 0%,transparent 40%),
+      var(--bg);
+    color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; padding:0 0 70px;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:780px;margin:0 auto;}
+
+  header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:16px 20px 12px;}
+  .brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .brand h1{font-size:18px;font-weight:700;letter-spacing:-.01em;}
+  .brand .tag{font-size:11px;font-weight:500;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:#fff;}
+  .brand .ver{font-size:11px;color:var(--faint);margin-left:auto;}
+  .search{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;transition:border-color .15s,box-shadow .15s;}
+  .search:focus-within{border-color:var(--a);box-shadow:0 0 0 4px rgba(37,99,235,.10);}
+  .search svg{flex:none;color:var(--faint);}
+  .search input{border:0;outline:0;font:inherit;font-size:15px;width:100%;background:transparent;color:var(--ink);}
+  .search input::placeholder{color:var(--faint);}
+  .search .clr{cursor:pointer;color:var(--faint);font-size:18px;line-height:1;padding:0 2px;display:none;}
+  .filters{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap;}
+  .chip{font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--sub);border-radius:999px;padding:6px 14px;transition:all .15s;user-select:none;}
+  .chip:hover{border-color:#cfd7df;}
+  .chip[data-active="true"]{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .chip.a[data-active="true"]{background:var(--a);border-color:var(--a);}
+  .chip.b[data-active="true"]{background:var(--b);border-color:var(--b);}
+  .chip.emo[data-active="true"]{background:var(--e);border-color:var(--e);}
+
+  main{max-width:780px;margin:22px auto 0;padding:0 20px;}
+
+  /* 황금 규칙 배너 */
+  .golden{background:linear-gradient(135deg,#1b2433,#243246);color:#fff;border-radius:var(--radius);padding:18px 22px;margin-bottom:24px;box-shadow:var(--shadow);}
+  .golden h2{font-size:14px;font-weight:600;letter-spacing:.02em;display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+  .golden .gsub{font-size:12px;color:#aab6c6;margin-bottom:12px;}
+  .golden ol{list-style:none;display:grid;gap:9px;}
+  .golden li{font-size:13.5px;line-height:1.55;display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:11px;padding:10px 13px;}
+  .golden li b{color:#fff;}
+  .golden .num{font-family:'IBM Plex Mono',monospace;font-weight:600;color:#7fb0ff;flex:none;}
+  .golden .x{color:#ff9c9c;} .golden .o{color:#86e3b3;}
+
+  /* 빠른 이동 */
+  .qnav{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px;}
+  .qnav a{font-size:12px;color:var(--sub);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;transition:all .15s;}
+  .qnav a:hover{border-color:var(--a);color:var(--a);}
+
+  /* 섹션 헤더 */
+  .sec{display:flex;align-items:center;gap:10px;margin:30px 0 14px;scroll-margin-top:150px;}
+  .sec .bar{width:4px;height:18px;border-radius:3px;}
+  .sec.a .bar{background:var(--a-bar);} .sec.b .bar{background:var(--b-bar);} .sec.emo .bar{background:var(--e-bar);}
+  .sec h3{font-size:15px;font-weight:600;letter-spacing:-.01em;}
+  .sec .cnt{font-size:11px;color:var(--faint);font-family:'IBM Plex Mono',monospace;}
+
+  /* 실손 6슬롯 인트로 박스 */
+  .intro{background:#fff;border:1px solid var(--line);border-left:5px solid var(--b-bar);border-radius:14px;padding:15px 17px;margin-bottom:18px;font-size:13px;color:#5a4a30;line-height:1.62;}
+  .intro b{color:var(--b);} .intro .hl{font-weight:600;color:var(--ink);}
+  .rtable{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12.5px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
+  .rtable th{background:#f4f6f9;color:var(--sub);font-weight:600;text-align:left;padding:9px 11px;font-size:11.5px;border-bottom:1px solid var(--line);}
+  .rtable td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;color:#3c4651;}
+  .rtable tr:last-child td{border-bottom:0;}
+  .rtable .s{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--b);}
+  .rtable .yes{color:var(--ok);font-weight:600;} .rtable .lo{color:var(--no);font-weight:600;}
+
+  /* 카드 */
+  .card{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px;position:relative;border:1px solid #edf1f5;animation:rise .45s cubic-bezier(.2,.7,.3,1) both;}
+  @keyframes rise{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;}
+  .card.a::before{background:linear-gradient(var(--a-bar),#5b8ef0);}
+  .card.b::before{background:linear-gradient(var(--b-bar),#eaa64a);}
+  .card.emo::before{background:linear-gradient(var(--e-bar),#9a8cf0);}
+  .chead{padding:18px 22px 14px 26px;border-bottom:1px solid var(--line);}
+  .crow{display:flex;align-items:center;gap:9px;margin-bottom:11px;flex-wrap:wrap;}
+  .cid{font-size:12px;font-weight:600;letter-spacing:.03em;}
+  .card.a .cid{color:var(--a);} .card.b .cid{color:var(--b);} .card.emo .cid{color:var(--e);}
+  .mtag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;}
+  .mtag.a{background:var(--a-soft);color:var(--a);} .mtag.b{background:var(--b-soft);color:var(--b);} .mtag.emo{background:var(--e-soft);color:var(--e);}
+  .risk{margin-left:auto;font-size:11px;font-weight:600;color:var(--no);background:var(--no-soft);padding:3px 10px;border-radius:999px;}
+  .q{font-size:18px;font-weight:600;letter-spacing:-.01em;line-height:1.45;}
+  .q .quote{color:var(--faint);font-weight:400;}
+  .reason{margin-top:8px;font-size:12.5px;color:var(--sub);background:#f6f8fa;border:1px solid var(--line);border-radius:9px;padding:7px 11px;}
+  .reason b{color:var(--b);font-weight:600;}
+  .cbody{padding:6px 22px 16px 26px;}
+  .sig{padding:13px 0;border-bottom:1px dashed var(--line);}
+  .sig:last-child{border-bottom:0;}
+  .slabel{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;margin-bottom:7px;letter-spacing:.01em;}
+  .dot{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:12px;flex:none;}
+  .ok .dot{background:var(--ok-soft);} .ok .slabel{color:var(--ok);}
+  .no .dot{background:var(--no-soft);} .no .slabel{color:var(--no);}
+  .esc .dot{background:var(--esc-soft);} .esc .slabel{color:var(--esc);}
+  .turn .dot{background:var(--turn-soft);} .turn .slabel{color:var(--turn);}
+  .script{background:var(--ok-soft);border-radius:12px;padding:13px 15px;font-size:15px;line-height:1.62;color:#13352a;border:1px solid #d4ecdf;}
+  .qa{font-size:13.5px;color:var(--sub);margin:5px 0;}
+  .qa b{color:var(--ink);font-weight:600;}
+  .nolist{font-size:14px;color:#7d2b2b;background:var(--no-soft);border-radius:10px;padding:11px 14px;border:1px solid #f4d3d3;}
+  .esctext{font-size:14px;color:#3b3470;background:var(--esc-soft);border-radius:10px;padding:11px 14px;border:1px solid #ddd7f5;}
+  .esctext b{font-weight:600;}
+  .note{margin-top:12px;background:var(--note-soft);border:1px solid #f0e0b8;border-radius:10px;padding:11px 14px;}
+  .note .nl{font-size:11px;font-weight:700;color:var(--note);letter-spacing:.02em;margin-bottom:4px;}
+  .note p{font-size:12.5px;color:#6b4f12;line-height:1.55;}
+  .more{margin-top:12px;}
+  .more summary{cursor:pointer;list-style:none;font-size:12px;font-weight:600;color:var(--sub);display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:10px;background:#f3f6f9;border:1px solid var(--line);transition:background .15s;user-select:none;}
+  .more summary::-webkit-details-marker{display:none;}
+  .more summary:hover{background:#eaeff4;}
+  .more summary .ar{margin-left:auto;transition:transform .2s;font-size:11px;color:var(--faint);}
+  .more[open] summary .ar{transform:rotate(90deg);}
+  .more .mc{font-size:13px;color:#46505c;line-height:1.62;padding:12px 14px 4px;}
+  .more .mc b{color:var(--ink);font-weight:600;}
+  .deep{margin-top:12px;border:1px solid var(--line);border-left:3px solid #94a3b8;border-radius:10px;background:#f7f9fb;padding:11px 14px;}
+  .deep .dl{font-size:11px;font-weight:700;color:#475569;letter-spacing:.04em;margin-bottom:6px;}
+  .deep .mc{font-size:13px;color:#46505c;line-height:1.64;}
+  .deep .mc b{color:var(--ink);font-weight:600;}
+
+  /* 부록 (라우팅/만능문장) */
+  .appx{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin-bottom:18px;box-shadow:var(--shadow);}
+  .appx h4{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .magic{display:grid;gap:9px;}
+  .magic div{font-size:13.5px;background:#f6f8fa;border:1px solid var(--line);border-radius:10px;padding:10px 13px;line-height:1.55;}
+  .magic .mk{font-weight:600;color:var(--a);}
+
+  footer{max-width:780px;margin:26px auto 0;padding:0 20px;}
+  .disc{font-size:11.5px;color:var(--faint);line-height:1.7;border-top:1px solid var(--line);padding-top:16px;}
+  .disc b{color:var(--sub);}
+  .empty{text-align:center;color:var(--faint);font-size:14px;padding:48px 0;display:none;}
+  .hide{display:none !important;}
+
+
+body{padding-bottom:78px}
+header .brand h1{font-size:17px}
+.appbar{display:flex;align-items:center;gap:10px}
+.modehint{font-size:12px;color:var(--sub);margin:2px 0 16px}
+.panel{display:none} .panel.active{display:block}
+#view{max-width:780px;margin:18px auto 0;padding:0 20px}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.tabbar button{flex:1;border:0;background:transparent;padding:8px 4px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--faint);font:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:color .15s}
+.tabbar button .ic{font-size:19px;line-height:1}
+.tabbar button .tsub{font-size:8.5px;font-weight:500;line-height:1;margin-top:1px;opacity:.75}
+.tabbar button[data-active="true"]{color:var(--a)}
+.tabbar button[data-active="true"].b{color:var(--b)}
+.tabbar button[data-active="true"].r{color:var(--no)}
+.tabbar button[data-active="true"].g{color:var(--ok)}
+
+/* 환자 상담 시각자료 (의료진용) 갤러리 */
+.pmintro{background:linear-gradient(#ecf8f1,#fff);border:1px solid #cfe9da;border-left:5px solid var(--ok);border-radius:14px;padding:14px 16px;margin-bottom:8px}
+.pmintro .pmh{font-size:13px;font-weight:700;color:var(--ok);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.pmintro .pmb{font-size:13px;color:#28453a;line-height:1.66}
+.pmintro .pmb b{color:#13352a;font-weight:600}
+.pmgrid{display:grid;gap:13px;margin-top:6px}
+.pmcard{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid #e6ecf2;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;animation:rise .4s cubic-bezier(.2,.7,.3,1) both;transition:transform .15s,box-shadow .15s,border-color .15s}
+.pmcard:hover{transform:translateY(-2px);border-color:#bfe3cf;box-shadow:0 10px 26px -10px rgba(22,143,87,.4)}
+.pmcard:active{transform:scale(.99)}
+.pmthumb{height:108px;background-size:cover;background-position:center;position:relative;border-bottom:1px solid #eef2f6}
+.pmthumb .pmnum{position:absolute;left:12px;top:12px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:#fff;background:rgba(20,32,46,.62);backdrop-filter:blur(3px);padding:4px 10px;border-radius:999px}
+.pmthumb .pmtag{position:absolute;right:12px;top:12px;font-size:10.5px;font-weight:700;color:#fff;background:rgba(22,143,87,.92);padding:4px 10px;border-radius:999px}
+.pmbody{padding:13px 16px 15px}
+.pmtitle{font-size:16px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.pmtitle .arr{margin-left:auto;color:var(--ok);font-size:15px}
+.pmdesc{font-size:12.5px;color:var(--sub);line-height:1.6;margin-top:6px}
+.pmmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pmmeta span{font-size:11px;color:#46505c;background:#f3f6f9;border:1px solid var(--line);border-radius:8px;padding:4px 9px}
+.badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;margin-bottom:8px}
+.badge.staff{background:var(--a-soft);color:var(--a)} .badge.pt{background:var(--b-soft);color:var(--b)}
+.hot{font-size:10.5px;font-weight:700;color:#b5450e;background:#fde7d3;border:1px solid #f6cda6;padding:2px 8px;border-radius:999px}
+.faq{background:#fff;border:1px solid var(--line);border-left:5px solid var(--b-bar);border-radius:16px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;animation:rise .4s cubic-bezier(.2,.7,.3,1) both}
+.faq details{display:block}
+.faq summary{list-style:none;display:flex;gap:11px;align-items:flex-start;padding:15px 16px;cursor:pointer}
+.faq summary::-webkit-details-marker{display:none}
+.faq .num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--b-soft);color:var(--b);display:grid;place-items:center;font-weight:700;font-size:13px;font-family:'IBM Plex Mono',monospace;margin-top:1px}
+.faq .qt{flex:1;min-width:0}
+.faq .ctag{display:inline-block;font-size:10.5px;font-weight:700;color:var(--b);background:var(--b-soft);border-radius:999px;padding:2px 8px;margin-bottom:5px}
+.faq .qx{font-size:15.5px;font-weight:600;line-height:1.45;letter-spacing:-.01em}
+.faq .ar{flex:none;color:var(--faint);font-size:13px;margin-top:4px;transition:transform .2s}
+.faq details[open] .ar{transform:rotate(90deg)}
+.faq .ans{border-top:1px solid #eef2f7;padding:14px 16px 16px;color:#334155;font-size:15px;line-height:1.65}
+.faq .ans p{margin:0 0 10px} .faq .ans p:last-child{margin:0}
+.faq .ans b{color:#0f2747;font-weight:600}
+.url{color:#0052a3;word-break:break-all;font-size:13px}
+.faq .ptnote{margin:12px 16px 0;background:var(--note-soft);border:1px solid #f0e0b8;border-radius:10px;padding:10px 13px}
+.faq .ptnote .nl{font-size:10.5px;font-weight:700;color:var(--note);margin-bottom:3px}
+.faq .ptnote p{font-size:12px;color:#6b4f12;line-height:1.55;margin:0}
+.faq .copyrow{display:flex;justify-content:flex-end;gap:8px;padding:0 16px 15px}
+.faq .copy{border:1px solid var(--b);background:var(--b-soft);color:var(--b);border-radius:11px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer}
+.faq .copy:active{transform:scale(.97)}
+.toast{position:fixed;left:16px;right:16px;bottom:92px;z-index:60;background:var(--ink);color:#fff;border-radius:14px;padding:13px;text-align:center;font-weight:700;font-size:14px;opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:none}
+.searchhint{color:var(--faint);font-size:13px;text-align:center;padding:30px 10px}
+.reslabel{font-size:12px;font-weight:700;color:var(--sub);margin:18px 0 10px;display:flex;align-items:center;gap:7px}
+.reslabel .ln{flex:1;height:1px;background:var(--line)}
+.know{background:linear-gradient(#f2f7fe,#fff);border:1px solid #d7e6fb;border-left:5px solid var(--a-bar);border-radius:14px;padding:13px 16px;margin:0 0 14px}
+.know .kh{font-size:12px;font-weight:700;color:var(--a);margin-bottom:6px;letter-spacing:.01em}
+.know .kb{font-size:13px;color:#33415a;line-height:1.66}
+.know .kb b{color:#12294b;font-weight:600}
+.badge.dn{background:var(--no-soft);color:var(--no)}
+.badge.info{background:#e1f0f4;color:#0e7490}
+.mtag.obj{background:#fdeede;color:#c2570c}
+.stagebar{display:flex;align-items:flex-start;gap:9px;border-radius:12px;padding:10px 13px;margin-bottom:13px}
+.stagebar .sb-ic{font-size:16px;line-height:1.3;flex:none}
+.stagebar .sb-t{font-size:12.5px;line-height:1.55}
+.stagebar.st{background:var(--b-soft);border:1px solid #d6e4f0}
+.stagebar.st .sb-t,.stagebar.st .sb-t b{color:var(--b)}
+.stagebar.pt{background:var(--ok-soft);border:1px solid #d4ecdf}
+.stagebar.pt .sb-t{color:#1f4a3a}
+.stagebar.pt .sb-t b{color:#13352a}
+/* 검색 결과: 상담원 카드 접힘(환자 FAQ와 동일한 스캔 리듬) */
+.card details.cwrap>summary{list-style:none;cursor:pointer;display:block;position:relative;border-bottom:1px solid var(--line);}
+.card details.cwrap>summary::-webkit-details-marker{display:none;}
+.card details.cwrap>summary .car{position:absolute;right:18px;top:18px;color:var(--faint);font-size:14px;transition:transform .2s;}
+.card details.cwrap[open]>summary{border-bottom:1px solid var(--line);}
+.card details.cwrap[open]>summary .car{transform:rotate(90deg);}
+.card details.cwrap>summary .q{font-size:15.5px;padding-right:18px;}
+/* 적응증 요약 */
+.indik{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:560px){.indik{grid-template-columns:repeat(2,1fr)}}
+.ind{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 10px;text-align:center;box-shadow:var(--shadow)}
+.ind .ii{font-size:22px;line-height:1}
+.ind .il{font-size:11px;color:var(--faint);margin-top:5px}
+.ind .iv{font-size:14px;font-weight:700;color:var(--b);margin:2px 0 5px}
+.ind .idt{font-size:11px;color:var(--sub);line-height:1.45}
+/* 대응 절차 */
+.steps{margin-bottom:22px}
+.stp{display:flex;gap:12px;padding-bottom:14px;position:relative}
+.stp:not(:last-child)::before{content:"";position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--line)}
+.stn{flex:none;width:28px;height:28px;border-radius:50%;background:var(--b);color:#fff;display:grid;place-items:center;font-size:9px;font-weight:700;font-family:'IBM Plex Mono',monospace;z-index:1;text-align:center;line-height:1.1}
+.stc{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 13px;box-shadow:var(--shadow)}
+.stt{font-size:14px;font-weight:600}
+.std{font-size:12.5px;color:var(--sub);line-height:1.5;margin-top:2px}
+.stday{font-size:11px;color:var(--b);font-weight:600;margin-top:5px}
+/* 거절 케이스 카드 */
+.case{background:#fff;border:1px solid #edf1f5;border-left:5px solid var(--cc,var(--b-bar));border-radius:16px;box-shadow:var(--shadow);margin-bottom:13px;overflow:hidden;animation:rise .4s cubic-bezier(.2,.7,.3,1) both}
+.case>details>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:flex-start;gap:10px}
+.case>details>summary::-webkit-details-marker{display:none}
+.chead2{flex:1;min-width:0}
+.chead2 .crow{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.ctag2{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;color:var(--cc)}
+.sev{font-size:10px;color:#cf3636;letter-spacing:1px}
+.wr{margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.ctitle{font-size:15px;font-weight:700;line-height:1.42;letter-spacing:-.01em}
+.csub{font-size:12.5px;color:var(--sub);margin-top:4px;line-height:1.45}
+.car{flex:none;color:var(--faint);font-size:14px;margin-top:4px;transition:transform .2s}
+.case>details[open] .car{transform:rotate(90deg)}
+.cbody2{padding:2px 16px 16px}
+.deny{background:var(--no-soft);border:1px solid #f4d3d3;border-radius:11px;padding:11px 13px;margin:8px 0 4px;font-size:13.5px;color:#7d2b2b;line-height:1.6}
+.deny .dl{display:block;font-size:10.5px;font-weight:700;color:var(--no);margin-bottom:4px;letter-spacing:.02em}
+.bl{display:block;font-size:12px;font-weight:700;color:var(--ink);margin:15px 0 8px}
+.cps .cp{background:var(--ok-soft);border:1px solid #d4ecdf;border-radius:11px;padding:10px 12px;margin-bottom:8px}
+.cpp{font-size:13.5px;font-weight:600;color:#13352a;line-height:1.5}
+.cpd{font-size:12.5px;color:#3c5247;line-height:1.62;margin-top:5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chipx{font-size:11.5px;background:#f3f6f9;border:1px solid var(--line);border-radius:8px;padding:5px 9px;color:#46505c;line-height:1.4}
+.chipx.law{background:var(--esc-soft);border-color:#ddd7f5;color:var(--esc)}
+.strat{background:var(--note-soft);border:1px solid #f0e0b8;border-radius:11px;padding:11px 13px;margin-top:15px;font-size:13px;color:#6b4f12;line-height:1.62}
+.strat .bl{color:var(--note);margin-top:0}
+/* 실손 정보 대시보드 */
+.insdash{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.instile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;box-shadow:var(--shadow);transition:all .18s;font-family:inherit}
+.instile .iti{font-size:20px}
+.instile .itt{font-size:14px;font-weight:700;color:var(--ink)}
+.instile .its{font-size:11px;color:var(--faint);line-height:1.4}
+.instile.active{border-color:var(--b);background:var(--b-soft);box-shadow:0 4px 14px -6px var(--b)}
+.instile.active .itt{color:var(--b)}
+.insview{display:none}
+.insview.active{display:block;animation:rise .35s cubic-bezier(.2,.7,.3,1) both}
+.subnote{font-size:12.5px;color:var(--sub);line-height:1.6;background:#f7f9fb;border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:14px}
+/* 세대별 카드 */
+.genc{background:#fff;border:1px solid #edf1f5;border-left:5px solid var(--cc);border-radius:15px;padding:14px 15px;box-shadow:var(--shadow);margin-bottom:11px;animation:rise .4s cubic-bezier(.2,.7,.3,1) both}
+.gh{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.gg{font-size:17px;font-weight:800;letter-spacing:-.02em}
+.gp{font-size:11.5px;color:var(--faint);font-family:'IBM Plex Mono',monospace}
+.gn{font-size:13px;font-weight:600;color:var(--sub);margin:1px 0 9px}
+.grow{display:flex;gap:8px;font-size:12.5px;padding:3px 0;border-top:1px dashed #eef2f6}
+.gl{flex:none;width:74px;color:var(--faint);font-weight:600}
+.gv{flex:1;color:var(--ink);line-height:1.5}
+.gfeat{font-size:12px;color:var(--sub);line-height:1.6;margin-top:9px;padding-top:9px;border-top:1px solid #f0f3f6}
+.gcati{font-size:12px;color:#155e44;background:var(--ok-soft);border:1px solid #d4ecdf;border-radius:9px;padding:8px 10px;margin-top:9px;line-height:1.55}
+/* 용어 미니사전 */
+.terms{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.term{background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 13px;box-shadow:var(--shadow)}
+.term .tt{font-size:13.5px;font-weight:700;color:var(--b)}
+.term .td{font-size:12.5px;color:var(--sub);line-height:1.58;margin-top:3px}
+/* 헤더 도구(인쇄·글자크기) */
+.tools{display:flex;gap:6px;align-self:center;margin-left:6px}
+.tbtn{font-family:inherit;font-size:12.5px;font-weight:500;border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:9px;padding:5px 9px;cursor:pointer;line-height:1;white-space:nowrap}
+.tbtn:hover{background:#f3f6f9;color:var(--ink)}
+/* 인쇄 */
+@media print{
+  header .search,.tools,nav.tabbar,.toast,.car,.stagebar{display:none !important}
+  header{position:static;backdrop-filter:none}
+  #view{zoom:1 !important;max-width:100% !important;margin:0 !important;padding:0 !important}
+  .panel:not(.active){display:none}
+  details>*{display:block !important}
+  details>summary{cursor:default}
+  .card,.faq,.case,.genc,.know,.term{break-inside:avoid;box-shadow:none}
+}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <h1>카티스템 상담 올인원</h1>
+      <span class="tag" id="tagLabel">상담원 모드</span>
+      <span class="ver mono">v2.3 · 기준 2026.6</span>
+      <div class="tools">
+        <button id="fontBtn" class="tbtn" title="글자 크기">가＋</button>
+        <button id="printBtn" class="tbtn" title="인쇄">🖨 인쇄</button>
+      </div>
+    </div>
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="gsearch" type="search" placeholder="환자 질문·키워드 검색 (예: 실비, 성공률, 인공관절…)">
+      <span class="clr" id="gclr" style="cursor:pointer;color:var(--faint);font-size:18px;display:none">×</span>
+    </div>
+  </div>
+</header>
+
+<main id="view">
+  <section class="panel active" id="panel-staff"></section>
+  <section class="panel" id="panel-faq"></section>
+  <section class="panel" id="panel-ptmat"></section>
+  <section class="panel" id="panel-search"></section>
+  <section class="panel" id="panel-denial"></section>
+</main>
+
+<nav class="tabbar">
+  <button data-tab="staff" data-active="true"><span class="ic">🩺</span>상담원<span class="tsub">수술전 일반</span></button>
+  <button data-tab="faq" class="b"><span class="ic">💬</span>상담실 FAQ</button>
+  <button data-tab="ptmat" class="g"><span class="ic">🖼️</span>환자자료<span class="tsub">의료진용 시각자료</span></button>
+  <button data-tab="search"><span class="ic">🔎</span>통합검색</button>
+  <button data-tab="denial" class="r"><span class="ic">🛡️</span>실손정보</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MLABEL = {a:'의학·제품', b:'실손', emo:'실손 · 감정응대', obj:'거절 극복'};
+
+// 토픽 순서 + 인트로(실손 6슬롯에만)
+const TOPICS = [
+  {t:'제품 정보 & 시술', mod:'a'},
+  {t:'줄기세포의 이해', mod:'a'},
+  {t:'퇴행성 관절염', mod:'a'},
+  {t:'인공관절과 다른 점', mod:'a'},
+  {t:'경쟁품과 다른 점', mod:'a'},
+  {t:'재활', mod:'a'},
+  {t:'실손 문의 전', mod:'b'},
+  {t:'실손 청구', mod:'b'},
+  {t:'실손 거절 대응 · 6슬롯', mod:'b', intro:`
+    <div class="intro">
+      <span class="hl">🔑 먼저 구분 — 카티스템 ≠ 무릎 줄기세포 '주사'.</span> 언론·금감원 경보의 '무릎 줄기세포 주사'는 대부분 <b>2023 신의료기술 자가 골수흡인물 주사(BMAC)</b>로, 카티스템(2012 허가 전문의약품·수술)과 별개입니다. "복지부 고시 치료대상 미해당" 주사 논리를 카티스템에 그대로 쓰면 틀립니다. 카티스템 실손 쟁점은 <b>비급여 수술·약제·재료의 치료목적/적정성/입원 필요성</b> 중심.
+      <br><br><span class="hl">신입은 거절 안내문의 '사유'를 확인 → 아래 슬롯으로 분류 → 실손 담당자 인계까지만.</span> 결과는 약속하지 않는다.
+    </div>
+    <table class="rtable">
+      <tr><th>슬롯</th><th>거절 사유</th><th>환자 신호</th><th>보완</th><th>인계 ↗</th></tr>
+      <tr><td class="s">S1</td><td>치료목적·필요성 미인정</td><td>"꼭 필요한 치료가 아니래요"</td><td class="yes">있음</td><td>담당자+의료진</td></tr>
+      <tr><td class="s">S2</td><td>가입담보·특약 범위 밖</td><td>"내 보험으론 안 된대요"</td><td class="lo">거의 없음</td><td>보험사+담당자</td></tr>
+      <tr><td class="s">S3</td><td>입원 적정성 불인정</td><td>"통원만 된대요"</td><td class="yes">있음</td><td>담당자+의료진</td></tr>
+      <tr><td class="s">S4</td><td>비급여 항목 적정성·삭감</td><td>"금액 깎였어요"</td><td class="yes">있음</td><td>담당자+원무</td></tr>
+      <tr><td class="s">S5</td><td>진단·청구내역 불일치</td><td>"서류가 안 맞는대요"</td><td>사실 확인</td><td>의사+담당자</td></tr>
+      <tr><td class="s">S6</td><td>서류 미비·소멸시효</td><td>"서류 빠졌대요"</td><td class="yes">있음</td><td>원무+담당자</td></tr>
+    </table>`},
+  {t:'환자 감정 응대', mod:'emo'},
+];
+
+const DATA = [
+/* ===== 제품 정보 & 시술 ===== */
+{id:'A-1-1',mod:'a',topic:'제품 정보 & 시술',k:'카티스템 무엇 뭐예요 제품 줄기세포 제대혈',
+ q:'"카티스템이 뭐예요?"',
+ script:`카티스템은 <b>탯줄 혈액(제대혈)에서 얻은 줄기세포</b>로 만든 <b>무릎 연골결손 치료제</b>입니다. 2012년 식약처 허가를 받아 국내에서 10년 넘게 사용되어 왔고, 손상된 무릎 연골 부위에 직접 적용해 연골이 다시 자라도록 돕습니다. 적합 여부는 검사 후 담당 의사 선생님이 판단하십니다.`,
+ follow:[['안전한가요?','전문의약품으로 의사 처방·지도 하에 사용되며, 장기 유효성·안전성 재심사도 통과했습니다. 다만 부작용 가능성은 있어 시술 전 의료진이 안내드립니다.'],['효과 얼마나 좋아요?','임상에서 연골 재생이 확인되었습니다. 다만 <b>개인차가 있어</b> 구체적 기대 효과는 진료 시 상담이 정확합니다.']],
+ no:`"완치" · "100% 재생" · "무조건 좋아진다" · "최고의/유일한 치료제"`,
+ esc:`본인 무릎 상태로 효과를 구체적으로 묻는 경우 → <b>의사 진료 안내</b>`,
+ note:`메디포스트 발표 국내 임상에서 투여 환자 98%(43명 중 42명) 연골 재생 확인. 단 '재생 확인'이지 '완치·통증 소실'이 아님. 환자에게 수치를 효능 보장처럼 전달 금지.`,
+ deep:`세계 최초 동종(타인 유래) 줄기세포 치료제(메디포스트, 2012 허가). 주성분은 제대혈유래 <b>중간엽 줄기세포(MSC)</b>. "동종"은 자가가 아닌 타인 제대혈을 쓴다는 의미.`},
+
+{id:'A-1-2',mod:'a',topic:'제품 정보 & 시술',k:'시술 방법 어떻게 수술 관절경 절개 몇번',
+ q:'"어떻게 시술하나요?"',
+ script:`무릎 관절을 절개하거나 관절경(내시경)으로 손상 부위에 작은 구멍을 낸 뒤 줄기세포 치료제를 도포하는 방식입니다. <b>한 번의 시술</b>로 진행되며, 입원·회복 일정은 본원 기준으로 안내드립니다. <span style="color:#c87214">[본원 기준 확인]</span>`,
+ follow:[['몇 번 받아야 해요?','카티스템은 <b>1회 시술</b>이 원칙입니다.'],['전신마취 하나요?','마취 방식·입원 기간은 환자 상태와 병원 기준에 따라 달라 진료 시 정확히 안내드립니다. [본원 기준 확인]']],
+ no:`"간단해서 부작용 없어요" · "바로 일상복귀 100%"`,
+ esc:`마취·합병증·기저질환 → <b>간호사/의사</b>`,
+ deep:`절개형/관절경형 모두 손상 연골에 미세천공 후 도포. 자가 조직 채취가 없어 1회로 끝나는 점이 자가세포 치료(2회)와의 핵심 차이.`},
+
+{id:'A-1-3',mod:'a',topic:'제품 정보 & 시술',k:'비용 얼마 가격 돈 할인 비싸',
+ q:'"비용이 얼마예요?"',
+ script:`카티스템은 <b>비급여 항목</b>이라 건강보험이 적용되지 않습니다. 정확한 금액은 본원 공시 가격표로 안내드리겠습니다. <span style="color:#c87214">[본원 비급여 가격 확인]</span>`,
+ follow:[['왜 이렇게 비싸요?','줄기세포를 사용하는 전문 치료제이기 때문입니다. 비용 부담은 실손보험 적용 여부를 가입 보험사에 확인해 보시는 방법이 있습니다(보장은 약관에 따라 다릅니다).'],['할인 안 돼요?','⛔ 할인·이벤트·패키지 흥정은 금지입니다(의료법 환자유인). "공시된 비급여 가격으로 안내드립니다."']],
+ no:`"○회 패키지 할인" · "친구 데려오면 무료" · 가격 흥정`,
+ esc:`가격 협의·수납·환불 → <b>원무/실장</b>`,
+ deep:`비급여는 의료법상 가격 사전 공시 의무 대상. 할인·면제 광고는 의료법 제27조 제3항(환자유인)+제56조 제2항 제13호 리스크.`},
+
+{id:'A-1-4',mod:'a',topic:'제품 정보 & 시술',k:'부작용 통증 아파요 위험 안전',
+ q:'"부작용 있어요? 시술 후 많이 아파요?"',
+ script:`모든 시술이 그렇듯 부작용 가능성을 0으로 단정할 수는 없습니다. 시술 후 통증·부기 등이 있을 수 있고 회복 과정에서 관리됩니다. <b>구체적인 부작용·금기는 허가사항을 근거로 의료진이 직접 안내</b>드리며, 시술 전 충분히 설명해 드립니다.`,
+ follow:[['위험한 부작용은 없어요?','드물지만 가능한 이상반응은 의료진이 허가사항 기준으로 안내드립니다. 제가 임의로 "없다"고 말씀드리지 않는 이유는 정확한 안전 정보를 의료진이 드려야 하기 때문입니다.']],
+ no:`"부작용 없음" · "안전 100%" · "천연이라 위험 없음" (→ 의료법 제56조 제2항 제7호)`,
+ esc:`부작용 목록·본인 위험도 → <b>의료진(허가사항 기준)</b>`,
+ deep:`"부작용 없음"은 의료광고 단골 적발 표현. 상담원이 부작용을 '나열'도 '부정'도 하지 않고 의료진으로 일원화. [허가사항 이상반응 목록은 의료진/약제팀 보유]`},
+
+{id:'A-1-5',mod:'a',topic:'제품 정보 & 시술',k:'효과 지속 평생 얼마나 가나요 재시술 또',
+ q:'"효과가 평생 가나요? 재시술 되나요?"',
+ script:`효과 지속 기간은 <b>개인차가 큽니다</b>. 카티스템은 시판 후 장기 유효성 평가(재심사)를 통과한 치료제이지만 '평생 간다'처럼 단정해 드릴 수는 없습니다. 장기 경과와 재시술 필요 여부는 의사 선생님과 상의하시는 게 정확합니다.`,
+ follow:[['효과 떨어지면 또 받아요?','재시술 여부는 상태에 따라 의료진이 판단하는 영역입니다.']],
+ no:`"평생 보장" · "한 번이면 끝" · 지속기간 수치 단정`,
+ esc:`장기 예후·재시술 → <b>의료진</b>`,
+ deep:`카티스템은 5년 장기유효성 평가 + 시판후조사(PMS) 후 식약처 의약품 재심사 통과 이력 → "장기 데이터가 쌓인 치료제"라는 사실은 말할 수 있으나, 개인별 지속기간은 단정 불가.`},
+
+{id:'A-1-6',mod:'a',topic:'제품 정보 & 시술',k:'양쪽 무릎 동시 둘다 한번에',
+ q:'"양쪽 무릎 한 번에 돼요?"',
+ script:`양쪽 무릎 동시 시술 가능 여부는 환자 상태와 의료진 판단에 따라 달라집니다. 검사 후 의사 선생님이 안전과 회복을 고려해 결정하시므로 진료에서 상의하시면 정확합니다.`,
+ no:`"당연히 양쪽 같이 돼요" (상담원의 시술 범위 판정 금지)`,
+ esc:`동시 시술 가능성 → <b>의료진</b>`,
+ deep:`동시/순차 시술은 마취 부담·재활 부담과 직결되는 의학적 판단 → 상담원 답변 영역 아님.`},
+
+{id:'A-1-7',mod:'a',topic:'제품 정보 & 시술',k:'뭐부터 시작 절차 예약 검사 순서 어떻게',
+ q:'"뭐부터 해야 해요?" (시작 절차)',
+ script:`먼저 <b>진료 예약</b>을 잡으시면, 무릎 상태 확인을 위한 <b>검사(MRI 등)</b>를 진행하고, 그 결과로 <b>의사 선생님이 카티스템 적합 여부를 판단</b>하십니다. 적합하면 시술·입원·재활 일정을 안내받으십니다. 지금 진료 예약 도와드릴까요?`,
+ follow:[['검사부터 돈 들어요?','검사 비용은 항목에 따라 다르므로 예약 시 안내드리겠습니다. [본원 검사 비용 확인]']],
+ no:`"검사 안 해도 돼요" · 적합 여부 사전 단정`,
+ esc:`검사 종류·판독 → 의료진 / 예약·수납 → 원무`,
+ deep:`이 카드는 상담의 '관문' 카드. 막연한 문의를 진료 예약으로 안전하게 전환시키고 적합성 판정을 의사에게 넘기는 표준 경로.`},
+
+/* ===== 줄기세포의 이해 ===== */
+{id:'A-2-1',mod:'a',topic:'줄기세포의 이해',k:'줄기세포 무엇 종류 배아 성체 제 세포',
+ q:'"줄기세포가 뭐예요? 종류가 있나요?"',
+ script:`줄기세포는 우리 몸의 여러 조직으로 자랄 수 있는 '기본 세포'입니다. 크게 <b>배아줄기세포, 성체줄기세포, 역분화(유도만능)줄기세포</b>로 나뉘는데, 카티스템에 쓰이는 건 <b>제대혈에서 얻은 성체 줄기세포(중간엽 줄기세포)</b>입니다.`,
+ follow:[['제 세포를 쓰는 거예요?','아니요, <b>다른 사람의 제대혈에서 얻은 세포(동종)</b>를 사용합니다. 내 조직을 떼어낼 필요 없이 한 번에 시술합니다.']],
+ no:`종교·윤리 논쟁 단정 · "배아줄기세포보다 우월" 비교 단정`,
+ esc:`세포 분화·작용기전 심화 → <b>의료진</b>`,
+ deep:`중간엽 줄기세포(MSC)는 연골·뼈·지방 등으로 분화 가능한 성체 줄기세포. 제대혈 MSC는 비교적 '어린' 세포라 재생능이 좋고, 출산 시 폐기되는 제대혈 기반이라 윤리적 부담이 적다는 점이 특징(사실 설명용, 우열 단정 금지).`},
+
+{id:'A-2-2',mod:'a',topic:'줄기세포의 이해',k:'제대혈 장점 단점 좋은점 나쁜점',
+ q:'"제대혈 줄기세포의 장점/단점은?"',
+ script:`<b>장점</b>은 ① 내 몸에서 세포를 떼어낼 필요가 없어 한 번에 끝나고, ② 비교적 어린 세포라 재생 능력이 좋다는 점입니다. <b>고려사항</b>은 ① 비급여라 비용 부담이 있고, ② 모든 단계의 관절염에 쓰는 건 아니며, ③ 효과에 개인차가 있다는 점입니다. 적합 여부는 검사 후 의사 선생님이 판단합니다.`,
+ no:`"단점이 전혀 없다" · "부작용 없는 천연 치료"`,
+ esc:`면역·안전성 세부 → <b>의료진</b>`,
+ deep:`동종 사용 가능 = 대량 생산·표준화 가능 → '기성품'처럼 바로 시술(자가세포는 배양 대기). 단점 축엔 '비용'과 '적응증 제한'을 균형 있게 제시.`},
+
+{id:'A-2-3',mod:'a',topic:'줄기세포의 이해',k:'거부반응 남의 세포 동종 면역',
+ q:'"남의 세포인데 거부반응 없나요?"',
+ script:`제대혈 유래 중간엽 줄기세포는 면역 거부반응이 상대적으로 낮은 것으로 알려져 동종(타인) 세포로도 사용됩니다. 다만 부작용 가능성을 0으로 단정할 수는 없어, 시술 전 의료진이 안전성과 주의사항을 직접 안내드립니다.`,
+ no:`"거부반응 절대 없음" · "100% 안전"`,
+ esc:`본인 면역질환·알레르기 이력 → <b>의료진</b>`,
+ deep:`MSC는 면역원성이 낮은 세포로 알려져 동종 이식이 가능. 단 '낮다'와 '없다'는 다름 — 환자에겐 항상 '낮은 편'까지만.`},
+
+/* ===== 퇴행성 관절염 ===== */
+{id:'A-3-1',mod:'a',topic:'퇴행성 관절염',k:'단계 받을 수 있나 적합 몇기 가능',risk:'적응증 판정 금지',
+ q:'"제 무릎이 카티스템 받을 수 있는 단계인가요?"',
+ script:`카티스템은 <b>퇴행성·외상성 골관절염으로 인한 무릎 연골결손</b>에 사용하도록 허가된 치료제입니다. <b>적합 단계인지는 영상검사(MRI 등)와 진료로 의사 선생님이 판단</b>하셔야 정확합니다. 진료 예약 도와드릴까요?`,
+ follow:[['저는 몇 기예요?','단계는 검사 결과로 의사 선생님이 진단하십니다. 상담원이 판정해 드릴 수는 없어요.'],['너무 심하면 못 받나요?','말기로 손상이 큰 경우 다른 치료가 고려될 수 있고, 이 판단도 진료에서 이뤄집니다.']],
+ no:`"받으시면 돼요/안 돼요" (상담원 적응증 판정 = 무면허 의료행위 소지)`,
+ esc:`본인 적합성 판단 일체 → <b>의사 진료</b>`,
+ deep:`허가 적응증은 ICRS grade IV 연골결손. 주 타깃은 K&L 2~3등급(경증~중등증). 이 등급 기준은 상담원이 환자에게 적용·판정하지 않는다.`},
+
+{id:'A-3-2',mod:'a',topic:'퇴행성 관절염',k:'퇴행성 관절염 무엇 연골 닳아',
+ q:'"퇴행성 관절염이 뭐예요?"',
+ script:`나이·사용·외상 등으로 무릎 연골이 닳아 통증과 운동 제한이 생기는 질환입니다. 연골은 한번 닳으면 스스로 잘 회복되지 않아, 진행 단계에 따라 약물·주사·재생치료·수술 등을 의사 선생님과 상의해 선택합니다.`,
+ no:`"방치하면 큰일 난다"식 공포 조장`,
+ esc:`본인 진단·치료 계획 → <b>의료진</b>`,
+ deep:`연골은 혈관이 없어 자연 재생이 어려움 → 재생치료의 존재 이유. K&L 등급은 X-ray 기반 중증도, ICRS 등급은 연골결손 정도 — 둘 다 의사가 판정.`},
+
+{id:'A-3-3',mod:'a',topic:'퇴행성 관절염',k:'나이 연세 많은데 적은데 가능 노인',
+ q:'"연세가 많은데(또는 적은데) 받을 수 있나요?"',
+ script:`나이만으로 가능/불가능이 정해지진 않습니다. 카티스템은 인공관절 수술과 달리 나이보다 <b>연골 손상 정도와 전반적 상태</b>를 보고 판단하는 편이라, 검사 후 의사 선생님이 적합 여부를 결정하십니다.`,
+ no:`"나이 상관없이 다 돼요" · 특정 나이 컷오프 단정`,
+ esc:`본인 연령·상태 적합성 → <b>의료진</b>`,
+ deep:`"인공관절 대비 나이·손상 정도에 비교적 구애받지 않는다"는 장점이 언급되나, 이는 '나이 무관'이 아니라 '연골 상태 중심 판단'이라는 의미. 최종 판단은 의사.`},
+
+/* ===== 인공관절 ===== */
+{id:'A-4-1',mod:'a',topic:'인공관절과 다른 점',k:'인공관절 차이 다른점 비교 치환',
+ q:'"인공관절이랑 뭐가 달라요?"',
+ script:`가장 큰 차이는 <b>내 관절을 보존하느냐</b>입니다. 카티스템은 <b>남아 있는 연골을 살려 재생을 유도</b>하는 치료이고, 인공관절은 손상이 심해진 관절을 <b>인공 관절로 바꾸는 수술</b>입니다. 적용되는 단계가 다르며, 어떤 치료가 맞는지는 검사 후 의사 선생님이 판단하십니다.`,
+ follow:[['어느 게 더 좋아요?','더 좋고 나쁨이 아니라 <b>단계와 상태에 맞는 치료가 다른 것</b>입니다.']],
+ no:`"인공관절보다 무조건 좋다" · 인공관절 폄하`,
+ esc:`본인에게 어느 쪽이 맞는지 → <b>의료진</b>`,
+ deep:`카티스템은 경증~중등증 '관절 보존' 단계, 인공관절(TKA)은 말기 '관절 치환' 단계 — 경쟁이 아니라 단계별 선택지. 이 프레임이 비방 리스크를 피하는 핵심.`},
+
+{id:'A-4-2',mod:'a',topic:'인공관절과 다른 점',k:'인공관절 안하고 버틸 미룰 피할',
+ q:'"인공관절 안 하고 이걸로 버틸 수 있어요?"',
+ script:`카티스템은 자기 관절을 보존하며 증상 개선을 기대하는 치료지만, <b>'인공관절을 영구히 피한다'고 단정할 수는 없습니다.</b> 진행 정도에 따라 결과가 다르므로 장기 계획은 의사 선생님과 상의하시는 게 정확합니다.`,
+ no:`"인공관절 안 해도 된다" · "평생 보장"`,
+ esc:`예후·장기 전망 → <b>의료진</b>`,
+ deep:`'인공관절 지연/회피 기대'는 치료 동기가 될 수 있으나 보장이 아님 — 환자 기대치 관리가 분쟁 예방의 핵심.`},
+
+/* ===== 경쟁품 ===== */
+{id:'A-5-1',mod:'a',topic:'경쟁품과 다른 점',k:'카티라이프 차이 비교 경쟁 자가',
+ q:'"카티라이프랑 뭐가 달라요?"',
+ script:`두 치료 모두 무릎 연골 재생이 목표지만 원리가 다릅니다. 카티스템은 <b>다른 사람의 제대혈 줄기세포(동종)를 한 번에 시술</b>하고, 카티라이프는 <b>환자 본인의 연골 세포를 채취·배양해 다시 이식(자가)</b>하는 방식이라 시술 횟수·과정이 다릅니다. 적합 여부는 의사 선생님 판단입니다.`,
+ follow:[['뭐가 더 좋아요?','우열이 아니라 <b>방식과 적용 기준이 다른 치료</b>입니다.']],
+ no:`"○○보다 우수/빠름" · 타사 단점 부각`,
+ esc:`본인에게 어느 게 맞는지 → <b>의료진</b>`,
+ deep:`카티스템=동종 제대혈 MSC, 1회 시술 / 카티라이프(바이오솔루션)=자가 늑연골세포 배양·이식, 2회 시술, 재활 약 6주. '횟수·세포 출처'가 가장 명확한 사실 차이. 그 외 메가카티(동종 늑골연골 과립, 신의료기술) 등도 존재.`},
+
+{id:'A-5-2',mod:'a',topic:'경쟁품과 다른 점',k:'주사 골수 줄기세포 주사 차이 BMAC',
+ q:'"주사로 하는 줄기세포(골수주사 등)랑 차이는?"',
+ script:`흔히 말하는 자가골수 줄기세포 '주사'는 수술 없이 주입해 통증·염증 개선을 기대하는 시술로 간편하지만 원리가 다릅니다. 카티스템은 <b>연골결손 부위에 직접 적용하는 시술적 치료</b>입니다. 적합한 방법은 손상 정도에 따라 의사 선생님이 판단합니다.`,
+ no:`타 시술 폄하 · "주사는 효과 없다"`,
+ esc:`시술 선택 상담 → <b>의료진</b>`,
+ deep:`골수흡인농축물(BMAC) 주사는 '환경 개선·통증 완화' 성격, 카티스템은 '연골결손 부위 재생 유도' 성격 — 목적·침습도가 다른 별개 옵션.`},
+
+/* ===== 재활 ===== */
+{id:'A-6-1',mod:'a',topic:'재활',k:'입원 얼마나 언제 걸어 재활 회복 체중',
+ q:'"수술하고 얼마나 입원해요? 언제 걸어요?"',
+ script:`카티스템은 시술 후 <b>재활이 중요한 치료</b>입니다. 입원 기간과 체중부하(걷기) 시작 시점은 환자 상태와 병원 프로토콜에 따라 단계적으로 정해지므로, 정확한 일정은 본원 기준으로 안내드리겠습니다. <span style="color:#c87214">[본원 재활 프로토콜 확인]</span>`,
+ follow:[['바로 걸을 수 있어요?','이식한 세포가 자리 잡는 동안 <b>단계적으로 체중을 늘려가는 보호 기간</b>이 필요합니다. 무리하면 결과에 영향을 줄 수 있어 의료진 안내를 따르셔야 합니다.']],
+ no:`"바로 일상복귀" · "재활 필요 없음"`,
+ esc:`개인별 재활 일정·보조기 → <b>물리치료실/의료진</b>`,
+ deep:`재생치료 특성상 초기 '보호(비/부분 체중부하)' 기간이 결과를 좌우 → 재활 순응도가 효과의 일부. 구체 기간은 반드시 본원 프로토콜 인용.`},
+
+{id:'A-6-2',mod:'a',topic:'재활',k:'재활 어떻게 운동 물리치료 단계',
+ q:'"재활은 어떻게 하나요?"',
+ script:`보통 보호 기간 → 관절 가동범위 회복 → 근력 강화의 단계로, 물리치료와 가정 운동을 병행합니다. 구체적 프로그램은 <b>개인 상태에 맞게 의료진/물리치료사가 처방</b>하므로 그 안내를 정확히 따르는 것이 결과에 도움이 됩니다. <span style="color:#c87214">[세부 단계 본원 확인]</span>`,
+ no:`상담원이 표준 운동을 처방 · "이 운동 하세요"`,
+ esc:`운동 방법·통증 시 대처 → <b>물리치료실/의료진</b>`,
+ deep:`단계별 재활은 '연골 성숙' 시간표에 맞춰 진행. 상담원은 '단계 개요'까지만, 실제 운동 처방은 물리치료 영역.`},
+
+{id:'A-6-3',mod:'a',topic:'재활',k:'운동 음주 술 생활 주의 일상 언제부터',
+ q:'"시술 후 운동·음주·일상생활 주의사항은?"',
+ script:`시술 후에는 무릎에 무리가 가는 활동을 단계적으로 조절해야 하고, 회복기 생활 수칙(체중부하·운동·음주·상처 관리 등)은 <b>개인 상태에 맞춰 의료진이 안내</b>합니다. 퇴원 시 받으신 주의사항을 지키시는 것이 회복에 중요합니다.`,
+ follow:[['술 마셔도 돼요? 운동 언제부터?','회복 단계에 따라 다르므로 의료진 안내 기준을 따르셔야 합니다. 제가 임의로 시점을 말씀드리긴 어렵습니다.']],
+ no:`음주·운동 재개 시점 임의 단정 · "괜찮아요" 식 안심`,
+ esc:`생활 수칙 세부 → <b>의료진/물리치료실</b>`,
+ deep:`초기 회복기 과부하·낙상은 결과를 해칠 수 있어 생활 수칙이 재활의 일부. 상담원은 "퇴원 안내문 준수 + 의료진 문의"로 일원화.`},
+
+/* ===== 실손 문의 전 ===== */
+{id:'B-1-1',mod:'b',topic:'실손 문의 전',k:'실손 되나요 보험 적용 보장',risk:'최고위험 질문',
+ q:'"이거 실손 되나요?"',
+ script:`카티스템은 <b>비급여 항목</b>이고, 실손보험 보장 여부는 <b>가입하신 상품·약관·가입시점</b>에 따라 달라집니다. 그래서 <b>가입 보험사에 직접 확인</b>하시는 게 가장 정확합니다. 저희는 청구에 필요한 서류 안내는 도와드릴 수 있습니다.`,
+ follow:[['그래서 되는 거예요 안 되는 거예요?','단정해 드리면 오히려 잘못된 정보가 될 수 있어요. 약관마다 달라 가입 보험사 확인이 꼭 필요합니다.'],['다른 분은 받았다던데요?','같은 시술이라도 <b>가입 상품·시점이 다르면 결과가 다를 수 있어</b> 일반화가 어렵습니다.']],
+ no:`"실손 다 됩니다" · "당연히 보장돼요" · "전액 받으세요" — 사후 분쟁·신뢰 훼손의 직접 원인`,
+ esc:`약관 해석·보장 가능성 판단 → <b>실손 담당자/가입 보험사</b>`,
+ deep:`실손은 세대(1~4세대)·특약·가입시점별로 비급여 보장이 크게 다름. 2017.4 이후 3·4세대는 별도 비급여 특약 가입 시에만 보상되는 구조. "본인 약관 확인"이 유일한 정답.`},
+
+{id:'B-1-2',mod:'b',topic:'실손 문의 전',k:'얼마 환급 돌려받 금액 한도',
+ q:'"얼마나 돌려받을 수 있어요?"',
+ script:`환급 금액은 <b>자기부담금, 보장한도, 비급여 보장 조건</b> 등 가입 약관에 따라 달라 저희가 금액을 말씀드리긴 어렵습니다. 가입 보험사에 '비급여 줄기세포 치료/주사료 보장 여부와 한도'를 문의하시면 정확히 안내받으실 수 있습니다.`,
+ no:`구체 환급액·비율 단정`,
+ esc:`금액 산정 → <b>가입 보험사</b>`,
+ deep:`같은 보장이라도 자기부담률·연간 한도·통원/입원 구분에 따라 실수령액이 달라짐 → 금액 질문은 100% 보험사 영역.`},
+
+/* ===== 실손 청구 ===== */
+{id:'B-2-1',mod:'b',topic:'실손 청구',k:'청구 서류 필요 준비 진단서 영수증',
+ q:'"청구하려면 뭐가 필요해요?"',
+ script:`일반적으로 <b>진료비 영수증, 진료비 세부내역서, 진단서/소견서, (필요 시) 시술기록</b> 등이 기본 서류입니다. 다만 보험사마다 요구 서류가 달라, <b>가입 보험사 요구 목록을 먼저 확인</b>하시는 게 좋습니다. 본원 발급 가능 서류는 원무과에서 도와드립니다. <span style="color:#c87214">[본원 발급 서류 목록 확인]</span>`,
+ follow:[['진단서 꼭 필요해요?','보험사·청구 금액에 따라 다릅니다. 보험사 안내에 맞춰 발급해 드리겠습니다.']],
+ no:`"이 서류만 내면 무조건 받아요"`,
+ esc:`서류 발급 → 원무과 / 보장 가능성 → 보험사`,
+ deep:`비급여 청구는 '세부내역서 + 의학적 필요성 입증(소견서)'이 핵심. 거절 시 보완 경로와 연결되므로 처음부터 소견서를 잘 챙기는 것이 분쟁 예방.`},
+
+{id:'B-2-2',mod:'b',topic:'실손 청구',k:'진단명 코드 어떻게 적어 보험 되게',risk:'보험사기 리스크',
+ q:'"어떤 진단명(코드)으로 써야 보험 돼요?"',
+ script:`진단명·코드는 <b>실제 진료 내용에 따라 의사 선생님이 의학적으로 기재</b>하시는 부분이라, 보험 청구를 위해 임의로 정할 수 있는 것이 아닙니다. 작성된 서류 기준으로 보험사에 청구하시면 됩니다.`,
+ no:`보장 유리한 진단명·코드 안내·암시 (→ 보험사기·문서 관련 법적 리스크). 어떤 경우에도 상담원이 코드 선택을 유도하지 않는다.`,
+ esc:`진단·코드 일체 → <b>의사(상담원 개입 금지)</b>`,
+ deep:`'보험 되게 코드 바꿔달라'는 요청은 환자·병원 모두를 보험사기 리스크에 노출. 상담원이 가장 단호해야 할 영역. 응대는 "진료 내용대로 의사 기재"로 고정.`},
+
+/* ===== 실손 거절 6슬롯 ===== */
+{id:'S1',mod:'b',topic:'실손 거절 대응 · 6슬롯',k:'거절 치료목적 필요성 적정성 미인정 꼭 필요',
+ q:'S1 — 치료목적·의학적 필요성 미인정',
+ reason:`"질병 치료를 직접 목적으로 하지 않음 / 의학적 필요성 미인정 / 중증도 기준 미충족"`,
+ script:`보험사가 '치료 목적·필요성'을 다시 보겠다는 사유입니다. 이럴 땐 무릎 상태를 보여주는 <b>검사 결과와 의사 소견서</b>로 보완해 재검토를 요청할 수 있는 경우가 있습니다. 다만 결과를 약속드릴 수는 없고, 담당자가 보완 절차를 안내드리겠습니다.`,
+ esc:`<b>실손 담당자 + 의료진(소견서)</b>`,
+ deep:`<b>담당자용 반박:</b> 카티스템은 식약처 허가 적응증(퇴행성·외상성 골관절염 무릎 연골결손, ICRS grade IV)이 명확한 전문의약품 → 적응증 충족(MRI/관절경 소견, KL·ICRS 등급, 보존적 치료력) 입증 시 '치료목적' 방어 가능. 단 적응증 밖(너무 경미)이면 면책 정당. <b>근거:</b> 약관 '질병 치료를 직접 목적' 정의 + FSC 비급여 분쟁조정기준(치료목적 여부, 1~4세대 적용). [본원 약관 조항 확인] <b>보완:</b> ① 소견서(필요성·적응증) ② MRI/관절경 판독 ③ 보존치료력 기록 → 재심사 요청.`},
+
+{id:'S2',mod:'b',topic:'실손 거절 대응 · 6슬롯',k:'거절 가입담보 특약 범위 밖 세대 면책 약관',risk:'보완 여지 거의 없음',
+ q:'S2 — 가입담보·특약 범위 밖',
+ reason:`"약관상 보장하지 않는 비급여 / 해당 특약 미가입 / 가입시점 담보 제외"`,
+ script:`이 사유는 가입하신 보험 상품의 <b>담보 범위</b> 문제라, 안타깝지만 서류 보완으로 바꾸기 어려운 경우가 많습니다. 정확한 담보 내용은 가입 보험사에서 확인하셔야 하며, 담당자가 함께 확인 도와드리겠습니다.`,
+ no:`"보완하면 받을 수 있어요" — 이행 불가 약속 금지. 헛된 희망을 주지 않는 것이 오히려 신뢰를 지킨다.`,
+ esc:`<b>가입 보험사 + 담당자</b>`,
+ deep:`<b>담당자용:</b> 2017.4 이후 가입 3·4세대 실손은 비급여 관련 별도 특약 가입 시에만 보상되는 구조(3세대 비급여주사료 특약, 4세대 3대 비급여 특약 등). 약관 자체 문제라 반박 여지 최소 → 환자 기대치 관리 + 가입담보 확인이 핵심. <b>근거:</b> 금감원 소비자 유의사항(3·4세대 특약 보상 한정), 본인 가입 약관·담보·증권.`},
+
+{id:'S3',mod:'b',topic:'실손 거절 대응 · 6슬롯',k:'거절 입원 적정성 통원 재산정 필요',
+ q:'S3 — 입원 적정성 불인정(통원 재산정)',
+ reason:`"입원의 의학적 필요성 불인정 / 통원 기준 적용"`,
+ script:`입원이 의학적으로 필요했는지를 보겠다는 사유입니다. 시술과 회복 과정상 입원 필요성을 보여주는 <b>의무기록</b>으로 보완할 수 있는 경우가 있습니다. 담당자가 안내드리겠습니다.`,
+ esc:`<b>실손 담당자 + 의료진</b>`,
+ deep:`<b>담당자용 반박:</b> 보험사들은 줄기세포 시술의 '일률적 입원 처리'를 강하게 심사. 카티스템은 절개/관절경 수술 + 회복기 관찰이 필요한 시술(단순 외래 주사와 다름)이므로, 수술 침습도·마취·회복 관찰 필요성을 의무기록으로 입증하는 것이 통원 재산정 방어 논리. <b>근거:</b> 약관 입원/통원 정의 + 입원 필요성에 관한 의학적 판단 법리. [관련 판례·약관 본원 확인] <b>보완:</b> 입원 경위·관찰 필요성 의무기록 + 수술기록 → 재심사.`},
+
+{id:'S4',mod:'b',topic:'실손 거절 대응 · 6슬롯',k:'거절 비급여 항목 적정성 삭감 일부지급 주사료 재료',
+ q:'S4 — 비급여 항목 적정성·금액 삭감(일부지급)',
+ reason:`"비급여 진료비 적정성 미인정 / 일부 항목 삭감"`,
+ script:`청구 금액 중 일부 항목의 적정성을 보겠다는 사유입니다. <b>항목별 산정 근거 자료</b>로 재검토를 요청할 수 있는 경우가 있습니다(결과 약속은 어렵습니다). 담당자가 항목 근거를 정리해 안내드리겠습니다.`,
+ esc:`<b>실손 담당자 + 원무</b>`,
+ deep:`<b>담당자용:</b> 카티스템은 고가 비급여로 약제비·치료재료비·수술료 적정성이 핵심 쟁점("카티스템 비급여주사료+적정성"이 실제 분쟁 키워드). 공시 비급여 가격·실제 사용 약제/재료 내역으로 항목별 근거 제시. 손해사정법인 위탁 조사 가능성도 안내. <b>근거:</b> 비급여 적정성 심사 + FSC 분쟁조정기준 + 손해사정 위탁(보험업법). <b>보완:</b> 비급여 세부산정내역서 + 약제·재료 사용내역 → 항목별 소명.`},
+
+{id:'S5',mod:'b',topic:'실손 거절 대응 · 6슬롯',k:'거절 진단 청구 불일치 서류 안맞 코드',risk:'코드 변경 유도 금지',
+ q:'S5 — 진단·청구내역 불일치',
+ reason:`"진단·시술 내역과 청구 불일치 / 사실관계 확인 필요"`,
+ script:`서류 내용을 다시 확인하겠다는 사유입니다. 진단·시술 기록은 의사 선생님이 <b>진료 내용 그대로 작성</b>하신 것이므로, 그 기준으로 재확인해 드리겠습니다.`,
+ no:`보장에 유리하게 진단명·코드 변경 유도 (→ 보험사기방지특별법 리스크). 신입이 가장 단호해야 할 슬롯.`,
+ esc:`<b>의사 + 담당자</b>`,
+ deep:`<b>담당자용:</b> 불일치를 (a) 단순 기재오류(정정 가능) vs (b) 사실관계 쟁점(의무기록 일치 확인)으로 구분. 어느 경우든 의사 작성 원칙 고수. <b>근거:</b> 서류 진실성, 보험사기방지특별법(부당 변경 시). <b>보완:</b> 의무기록·시술기록 정합 확인(의료진).`},
+
+{id:'S6',mod:'b',topic:'실손 거절 대응 · 6슬롯',k:'거절 서류 미비 누락 소멸시효 기간 지남',
+ q:'S6 — 서류 미비·소멸시효',
+ reason:`"구비서류 미비 / 청구권 소멸시효 경과"`,
+ script:`서류 보완으로 해결되는 경우입니다. 어떤 서류가 필요한지 확인해 <b>원무과에서 발급</b> 도와드리겠습니다. 청구 기한 관련해서도 함께 안내드릴게요.`,
+ esc:`<b>원무과 + 담당자</b>`,
+ deep:`<b>담당자용:</b> 실손 청구권 소멸시효는 보험금 청구사유 발생일로부터 3년(상법 제662조) → 시효 임박 건 우선 처리. 서류 미비는 6슬롯 중 가장 해결이 쉬움. <b>보완:</b> 누락 서류(영수증·세부내역서·진단서·시술기록 등) 발급·제출.`},
+
+/* ===== 감정 응대 ===== */
+{id:'감정 ①',mod:'emo',topic:'환자 감정 응대',k:'불안 무서워 겁 걱정 잘못되면',
+ q:'불안한 환자 — "수술 무서워요 / 잘못되면 어떡해요"',
+ script:`걱정되시는 게 당연합니다. 그래서 시술 전에 의료진이 안전성과 주의사항을 충분히 설명드리고, 궁금한 점을 모두 여쭤보실 수 있게 진료를 잡아드립니다. 무엇이 가장 걱정되시는지 말씀해 주시면 진료 때 꼭 여쭤보실 수 있게 메모해 드릴게요.`,
+ no:`"걱정 마세요, 안전해요" (부작용 부정) · 불안 반복 강화`,
+ deep:`불안한 환자에겐 '안심시키기'보다 '함께 확인할 경로 제시'가 더 안전. 부작용을 부정하지 않는다.`},
+
+{id:'감정 ②',mod:'emo',topic:'환자 감정 응대',k:'화난 분노 속상 항의 거절 거부',risk:'분쟁 고위험',
+ q:'화난 환자 — "보험사가 거절했어요!" (실손/고비용)',
+ script:`많이 속상하셨겠습니다. 충분히 그러실 수 있습니다. 제가 도와드릴 수 있는 부분을 정확히 확인해서 다음 단계를 안내드리겠습니다. 우선 거절 안내문의 <b>사유</b>부터 같이 확인해 볼까요?`,
+ no:`맞받아 변명 · 보험사 비난 동조 · "무조건 받아드릴게요"(이행 불가 약속 → 분쟁 악화)`,
+ esc:`진정되지 않거나 항의가 격해지면 → <b>실장/실손 담당자</b> · 사유 확인 후 6슬롯 트리 연결`,
+ deep:`화난 환자는 '해결'보다 '인정'을 먼저 원함. <b>공감 → 사실 → 다음 단계</b> 순서가 핵심. 결과 약속은 절대 금지.`},
+
+{id:'감정 ③',mod:'emo',topic:'환자 감정 응대',k:'의심 회의 진짜 효과 장사 믿음',
+ q:'의심 많은 환자 — "진짜 효과 있어요? 장사 아니에요?"',
+ script:`충분히 그런 의문 가지실 수 있습니다. 카티스템은 2012년 식약처 허가 후 장기 데이터가 쌓여온 치료제이지만, <b>효과엔 개인차가 있어</b> 제가 '무조건 좋아진다'고 말씀드리진 않습니다. 본인 상태에 맞는지 검사로 확인하시는 게 가장 정확합니다.`,
+ no:`과장으로 설득 · 수치 단정 · "후회 안 하세요"`,
+ deep:`회의적 환자에겐 '겸손한 정직'이 오히려 신뢰를 만든다. 단정하지 않는 태도 자체가 설득력.`},
+
+{id:'감정 ④',mod:'emo',topic:'환자 감정 응대',k:'재촉 오늘 결정 지금 손해 늦어',
+ q:'결정 재촉 상황 — "지금 안 하면 손해예요?"',
+ script:`급하게 결정하실 필요는 없습니다. 검사와 진료로 충분히 확인하신 뒤 결정하셔도 됩니다.`,
+ no:`"오늘 하면 할인" · "지금 안 하면 늦어요" (환자유인·공포 조장)`,
+ deep:`재촉·공포 조장은 환자유인 리스크. 상담원은 오히려 '천천히 결정해도 된다'로 안전하게 응대.`},
+
+/* ===== 거절 극복 (결심 갈림길 키메시지) ===== */
+{id:'OBJ-01',mod:'obj',topic:'거절 극복',k:'비용 부담 비싸 가격 돈 경제적 헛돈',
+ q:`"비용이 너무 부담돼요" (경제적)`,
+ script:`비용이 부담되는 건 당연합니다. 그래서 두 가지를 같이 봅니다 — 하나는 환자분이 실제로 적응증에 맞는지 의료진이 확인하는 것, 다른 하나는 가입하신 실손으로 어디까지 청구가 가능한지 함께 점검하는 것입니다. 비용만 보고 포기하기 전에 이 두 가지부터 확인해 보시죠.`,
+ follow:[['"그래도 너무 큰돈이라…"','카티스템은 1회 이식하는 치료제라 반복 시술과 비용 구조가 다릅니다. 환자분 상황에서 총비용과 청구 가능 범위를 정확히 계산해 알려드릴 수 있습니다.']],
+ no:`"이거면 평생 무릎 걱정 끝" · "100% 보험 처리" · "여기가 제일 쌉니다"`,
+ esc:`구체 비용·납부 방식 → 원무/상담실 안내, 적응증·효과 → 의사 진료 연결`,
+ deep:`속마음은 '돈이 아깝다'가 아니라 '썼는데 효과 없으면 어쩌나(손실 회피)' + '보험으로 일부라도 받을 수 있나'. 카티스템 1회 이식 치료제(식약처 허가). 비용 부담 호소 시 거의 항상 실손(OBJ-05)과 연결해 안내.`},
+{id:'OBJ-02',mod:'obj',topic:'거절 극복',k:'재활 부담 회복 목발 체중부하 일상복귀 입원',
+ q:`"재활·회복 기간이 부담돼요"`,
+ script:`회복 기간이 걱정되시는군요. 사실 그걸 미리 아시는 게 더 좋은 선택에 도움이 됩니다. 직업과 생활 패턴을 알려주시면, 재활이 실제로 어떻게 진행되는지 의료진과 함께 구체적으로 안내해 드리겠습니다.`,
+ follow:[['"몇 주면 끝나요?"','개인차가 커서 \'몇 주면 끝난다\'고 단정하기보다, 환자분 상태에 맞춰 단계별로 어떻게 진행되는지 설명드리는 게 정확합니다.']],
+ no:`"금방 나아요" · "재활 안 해도 됩니다" · "통증 전혀 없어요"`,
+ esc:`구체 재활 일정·체중부하 시점 → 의료진/물리치료사 (상담원 임의 처방 금지)`,
+ deep:`속마음은 '수술보다 그 뒤가 더 무섭다' + 혼자살이·생계중단 공포. 입원 통상 3일~1주, 체중부하·목발 기간은 절골술 병행·연골상태에 따라 개인차 큼. 반드시 '의료진 판단' 전제.`},
+{id:'OBJ-03',mod:'obj',topic:'거절 극복',k:'효과 의구심 정말 재생 되나 의심 믿음',
+ q:`"정말 연골이 재생되나요?" (효과 의구심)`,
+ script:`당연히 의심이 드실 수 있습니다. 그래서 저는 '무조건 된다'고 말씀드리지 않습니다. 대신 임상시험에서 어떤 결과가 보고됐는지, 그리고 그게 환자분께 어떻게 적용될지는 의료진이 판단한다는 점을 정확히 말씀드립니다.`,
+ follow:[['"임상 결과가 어떤데요?"','미세천공술과 비교한 개선율이 논문에 보고돼 있습니다. 다만 실제 결과는 개인차가 있어, 환자분 연골이 적응증에 맞는지부터 확인하는 게 순서입니다.']],
+ no:`"100% 재생" · "완치됩니다" · "재발 없어요" · 환자 후기를 효과 보증처럼 인용`,
+ esc:`근거 자료 상세·본인 적용 → 의사 진료에서 직접 설명`,
+ deep:`속마음은 '광고는 다 좋다고 하지'(합리적 경계). 근거: Lim 2021 RCT(PMID 33490296) 48주 ICRS≥1등급 개선 보고, 3~5년 추적 유지 보고. 전부 '보고됐다'로 전달, 단정 금지. 겸손한 정직이 오히려 신뢰를 만든다.`},
+{id:'OBJ-04',mod:'obj',topic:'거절 극복',k:'수술 무섭다 부담 마취 절개 두려움 공포',
+ q:`"수술이 무서워요" (수술 부담감)`,
+ script:`수술이 무섭다고 느끼시는 건 아주 자연스러운 일입니다. 그 마음을 무시하고 권해드리진 않겠습니다. 대신 시술이 실제로 어떻게 진행되고 어떤 점을 의료진이 관리하는지 정확히 아시면, 막연한 두려움은 줄어들 수 있습니다.`,
+ follow:[['"어떤 게 제일 걱정되세요?"','마취인지, 절개인지, 회복인지에 따라 의료진이 설명드릴 내용이 다릅니다. 걱정되는 점을 메모해 오시면 진료 때 하나씩 짚어드립니다.']],
+ no:`"부작용 없습니다" · "안전합니다(단정)" · "걱정 안 하셔도 돼요"`,
+ esc:`마취·시술 과정·부작용 상세 → 의료진 (시판후조사 이상사례 발현율 등은 허가사항 기준)`,
+ deep:`속마음은 통제감 상실·'잘못되면' 공포. 카티스템은 절개·천공 후 이식하는 외과적 시술용 약제. 부작용 가능성은 항상 있고 사전 검사·상담으로 의료진이 관리한다는 전제. 어디가 무서운지 먼저 물어 구체화.`},
+{id:'OBJ-05',mod:'obj',topic:'거절 극복',k:'실손 보험사 줄기세포 안된다 거절 콜센터 안내 포기',
+ q:`"보험사에서 '줄기세포는 안 된다'고 했어요" (실손) ★`,
+ script:`보험사에 문의하셨을 때 그렇게 들으셨군요, 불안하셨겠습니다. 한 가지만 정확히 알고 가셨으면 합니다 — <b>콜센터 상담원의 구두 안내는 최종 지급 결정이 아닙니다.</b> 보험금은 약관과 제출 서류, 심사로 정해집니다. 구두 안내만 듣고 포기하기보다 약관을 직접 확인하고 정식으로 청구해 보시길 권합니다.`,
+ follow:[['"그래도 안 될 것 같은데요…"','많은 분이 \'무릎 줄기세포 주사\'와 카티스템을 같은 것으로 안내받습니다. 그런데 카티스템은 신의료기술 \'주사\'가 아니라 식약처 허가 전문의약품입니다. 분류가 다르면 약관 적용도 달라질 수 있어, 청구 결과를 받아보기 전엔 단정할 수 없습니다.'],['"보장 확실히 되나요?"','무조건 된다고 말씀드리는 게 아닙니다. 가입 세대·약관에 따라 다릅니다. 다만 청구도 안 해보고 포기하는 것과, 서류 갖춰 정식 청구 후 심사 결과를 받는 것은 전혀 다릅니다.']],
+ no:`"무조건 보장됩니다" · "100% 환급" · "보험사가 틀렸어요" · 특정 보험사 비방`,
+ esc:`정식 청구 절차·손해사정사 무료 선임·금감원 분쟁조정 → 실손정보 탭 + 실손 담당자`,
+ deep:`속마음은 '지급 주체가 안 된다는데…'(권위 신뢰)+헛돈 공포. 핵심: ①구두안내≠최종결정 ②카티스템=전문의약품(품목기준코드 201200401), 신의료기술 주사와 법적 지위 다름 ③1~4세대 약관·심사에 따라 다름 ④3세대 비급여주사료 250만원 한도엔 '항암제 등' 예외조항 → 주계약 입원의료비(연 5천만원) 적용 논리 가능(분쟁 소지 있음, 입원 전제) ⑤손해사정사 보험사 비용 무료 선임권(통보일로부터 3영업일 내). 단, 환자에게 '보장 확약' 금지. 상세는 실손정보 탭 12케이스.`},
+{id:'OBJ-06',mod:'obj',topic:'거절 극복',k:'나이 많아서 젊어서 연령 고령 망설임',
+ q:`"이 나이에 무릎에…" / "아직 젊은데 벌써?" (나이)`,
+ script:`나이 때문에 망설이시는군요. 카티스템 허가 임상은 만 18세 이상을 대상으로 했고 연령 상한이 따로 없습니다. 다만 나이가 아니라 환자분 연골 상태와 적응증이 핵심이라, 그건 의료진이 검사로 판단합니다.`,
+ follow:[['(젊은 환자) "벌써 이런 걸 해야 하나요?"','신중하신 좋은 자세입니다. 무릎 상태가 이 치료의 적응증에 맞는지부터 확인하고, 다른 선택지와 함께 비교해 결정하셔도 늦지 않습니다.']],
+ no:`"나이 상관없이 누구나 효과" · "젊으면 무조건 잘 됩니다"`,
+ esc:`본인 적합 여부 → 검사·의사 진료`,
+ deep:`고령은 자기검열('이 나이에…'), 젊은층은 '벌써?' 거부감. 동종 제대혈 세포라 자가 줄기세포의 연령 한계를 보완. 허가 임상 평균 약 55.9세, 연령 상한 없음. 기준은 나이 아닌 연골상태.`},
+{id:'OBJ-07',mod:'obj',topic:'거절 극복',k:'인공관절 비교 차라리 치환술 망설임',
+ q:`"차라리 인공관절을 할까요?" (인공관절 비교)`,
+ script:`인공관절과 비교하며 고민하시는군요. 두 가지는 적응증과 목적이 다른 치료라, 어느 게 무조건 낫다고 말씀드리긴 어렵습니다. 환자분 연골 상태가 어느 쪽 기준에 맞는지 의료진이 판단하는 게 우선입니다.`,
+ follow:[['"뭘 기준으로 정해요?"','가장 중요하게 생각하시는 게 자기 관절 보존인지, 회복 기간인지 여쭤봐도 될까요? 그에 따라 의료진과 상의할 방향이 달라집니다.']],
+ no:`"인공관절보다 무조건 좋아요" · "인공관절은 하면 안 됩니다" · 타 시술/타 병원 비방`,
+ esc:`두 선택지 비교·본인 적합 → 의사 진료에서 직접 비교`,
+ deep:`'차라리 확실한 인공관절을' 또는 '아직 이르다는데 뭘?' 양가감정. 카티스템은 자기 관절 보존·연골재생 유도로 치환술과 적응증·기전 다름. 우열 단정·비방 금지, 사실 차이만.`},
+{id:'OBJ-08',mod:'obj',topic:'거절 극복',k:'가족 상의 반대 미룰게요 나중에 결정',
+ q:`"가족과 상의 후에 결정할게요"`,
+ script:`가족과 상의하시는 건 정말 현명한 일입니다. 그럼 가족분이 궁금해하실 내용을 환자분이 정확히 전달하실 수 있게 핵심 자료를 정리해 드릴까요? 원하시면 가족분이 함께 진료에 오셔서 의료진 설명을 같이 들으셔도 좋습니다.`,
+ follow:[['"가족이 반대하면요?"','반대하시는 이유가 비용인지, 효과인지, 안전인지에 따라 설명이 다릅니다. 그 부분 자료를 같이 정리해 드리면 대화에 도움이 되실 겁니다.']],
+ no:`"지금 안 하면 늦어요" · "가족 말 들을 필요 없어요" (공포 조장·강요)`,
+ esc:`가족 동반 진료 예약 → 상담실`,
+ deep:`진짜 의사결정자가 따로 있거나, 혼자 책임 부담스러워 '가족'을 방패로. 정보부족으로 설득 자신 없음. 결정 미루기는 정상적 양가감정 → 제거 대상 아님. 자료 제공+가족 동반으로 자기효능감 지지.`},
+{id:'OBJ-09',mod:'obj',topic:'거절 극복',k:'다른 치료 주사 비교 bmac svf 미세천공 다른병원',
+ q:`"더 싸고 간단한 주사도 있다던데요" (타 치료 비교)`,
+ script:`여러 치료를 비교하고 계시는군요, 좋은 접근입니다. 다만 카티스템은 식약처 허가 전문의약품이고, 일부 주사 치료는 신의료기술로 분류가 다릅니다. 분류가 다르면 적응증·보험 적용도 달라질 수 있어, 그 차이를 정확히 아시는 게 도움이 됩니다.`,
+ follow:[['"뭐가 더 좋은데요?"','어느 게 환자분께 맞는지는 무릎 상태에 따라 의료진이 판단합니다. 비교하시는 치료들의 적응증·보험 적용 차이를 표로 정리해 드릴 수 있습니다.']],
+ no:`"다른 병원 주사는 효과 없어요" · "그건 사기예요" · "우리가 제일 낫습니다" · 타 시술 비방`,
+ esc:`치료별 사실 차이 표 + 본인 적합 → 의사 진료`,
+ deep:`'더 싸고 간단한 주사' 비용·간편함 저울질+정보 혼란. 카티스템(전문의약품·절개이식)과 무릎 줄기세포 주사(신의료기술·관절강 주사)는 법적 지위·투여방식 다름. 신의료기술 주사는 복지부 고시 치료대상 미해당 시 부지급 사례 보고됨. 우열 단정·비방 금지, 사실 차이만.`},
+{id:'OBJ-10',mod:'obj',topic:'거절 극복',k:'시간 없다 바쁘다 나중에 지금은 아니다 미루기',
+ q:`"지금은 바빠서요 / 나중에요" (시기 미루기)`,
+ script:`지금 바쁘셔서 시기가 안 맞으시는군요, 충분히 이해합니다. 일정을 미루시더라도 지금 무릎 상태가 어느 단계인지 검사로 확인해 두시는 건 어떨까요? 그래야 나중에 결정하실 때 기준이 생깁니다.`,
+ follow:[['"지금 꼭 해야 하나요?"','지금 결정하시라는 게 아닙니다. 연골 상태는 시간에 따라 변할 수 있어, 현재 상태를 기록해 두는 것만으로도 도움이 됩니다. 검사만 먼저 받아보시겠어요?']],
+ no:`"지금 안 하면 평생 후회해요" · "더 늦으면 손쓸 수 없어요" (시급성 과장·공포)`,
+ esc:`부담 없는 현재 상태 확인 검사 예약 → 상담실`,
+ deep:`우선순위 밀림+회복기간 일·생계 중단 부담+'아직 견딜 만하다' 합리화. 무릎 연골은 자연 회복 어렵다고 보고되나 '지금 안 하면 큰일' 공포 조장 금지. 진행 정도는 의료진 검사 판단 전제. 결정 강요 말고 '현재 상태 기록' 기준점 제공에 초점.`}
+];
+
+/* ── 렌더 ── */
+const deck = document.getElementById('q') ? document.getElementById('deck') : null;
+function esc(s){return s;}
+function cardHTML(c, compact){
+  const risk = c.risk ? `<span class="risk">⚠ ${c.risk}</span>` : '';
+  const reason = c.reason ? `<div class="reason"><b>거절 사유:</b> ${c.reason}</div>` : '';
+  let body = '';
+  if(c.script) body += `<div class="sig ok"><div class="slabel"><span class="dot">✅</span> 권장 응대 스크립트 · 30초</div><div class="script">${c.script}</div></div>`;
+  if(c.follow && c.follow.length){
+    let qa = c.follow.map(f=>`<p class="qa"><b>Q. ${f[0]}</b> → ${f[1]}</p>`).join('');
+    body += `<div class="sig turn"><div class="slabel"><span class="dot">🔄</span> 후속 질문 대응</div>${qa}</div>`;
+  }
+  if(c.no) body += `<div class="sig no"><div class="slabel"><span class="dot">⛔</span> 금지 표현 · 사용 불가</div><div class="nolist">${c.no}</div></div>`;
+  if(c.esc) body += `<div class="sig esc"><div class="slabel"><span class="dot">↗</span> 상위 인계 기준</div><div class="esctext">${c.esc}</div></div>`;
+  if(c.note) body += `<div class="note"><div class="nl">🔒 내부 참고 · 환자 비공개</div><p>${c.note}</p></div>`;
+  if(c.deep) body += `<div class="deep"><div class="dl">🔎 심층 해설</div><div class="mc">${c.deep}</div></div>`;
+  const head = `<div class="crow"><span class="cid mono">${c.id}</span><span class="mtag ${c.mod}">${MLABEL[c.mod]}</span>${risk}</div>
+    <div class="q"><span class="quote">💬</span> ${c.q}</div>`;
+  if(compact){
+    return `<article class="card ${c.mod}" data-mod="${c.mod}" data-k="${c.k}">
+      <details class="cwrap"><summary class="chead csum">${head}<span class="car">›</span></summary>
+      <div class="cbody">${reason}${body}</div></details></article>`;
+  }
+  return `<article class="card ${c.mod}" data-mod="${c.mod}" data-k="${c.k}">
+    <div class="chead">${head}${reason}</div>
+    <div class="cbody">${body}</div></article>`;
+}
+
+
+
+/* ===== 환자 FAQ 데이터 ===== */
+const FAQ = [{"n":1,"cat":"intro","hot":true,"q":"카티스템이 비싼 이유?","k":"비용 가격 천만원 돈 비싸","a":"<p>카티스템은 대량 생산하는 일반 약이 아니라, 기증받은 제대혈 중 일부만을 선별해 전문가가 직접 배양·관리해 만드는 <b>세포치료제</b>입니다. 까다로운 품질검사와 고가 장비, 살아있는 세포의 배양 공정이 필요해 비용이 높습니다.</p><p>단순한 통증 완화를 넘어 손상된 무릎 연골의 재생을 목표로 하는 전문의약품이라는 점이 비용에 반영됩니다.</p>"},{"n":2,"cat":"rehab","hot":true,"q":"수술 후 목발 언제까지? 일상생활 언제 가능?","k":"재활 목발 일상생활 출근 복귀 회복 걷기","a":"<p>입원 기간은 상태에 따라 다르나 일반적으로 최소 3일 이상입니다. 수술 다음 날부터 누운 자세에서 다리 근육 운동을 시작해 근육 소실을 예방하고, 목발 보행도 가능하지만 수술 부위에 체중을 실어서는 안 됩니다.</p><p>이후 상태에 맞춰 엄지발가락부터 단계적으로 체중부하를 늘립니다. 목발 사용 기간은 개인차가 있으나 일반적으로 약 6~12주 후 목발 없이 일상생활이 가능합니다. 회복 속도는 재활 순응도와 개인 상태에 따라 달라집니다.</p>","note":"기존 자료의 '히딩크 감독' 사례는 유명인 치료경험담(의료법 제56조②2호)이라 제외했습니다."},{"n":3,"cat":"rehab","hot":true,"q":"카티스템 수술 많이 아픈지?","k":"통증 아파 아픈 아픔","a":"<p>카티스템 단독 시술은 무릎 수술 중 통증이 비교적 적은 편입니다(다른 수술과 병행 시 일시적 통증이 동반될 수 있습니다). 통증 정도는 개인차가 있으며, 시술 전후 통증 관리는 의료진이 안내합니다.</p>"},{"n":4,"cat":"efficacy","q":"연골 재생 얼마 후 되나요? 어떻게 확인해요?","k":"연골 재생 시점 확인","a":"<p>시술 후 시간이 지나면서 재생된 연골이 영상검사에서 관찰될 수 있습니다. 임상에서는 대체로 수개월에서 1년에 걸쳐 연골 개선이 보고되고 있으나, 재생 정도와 시점에는 개인차가 있습니다. 실제 재생 여부는 MRI 등 영상·검사로 의료진이 확인합니다.</p>"},{"n":5,"cat":"insurance","hot":true,"q":"실손 보험을 받으려면 조건이 어떻게 돼?","k":"실손 실비 보험 청구 손해사정 적응증","a":"<p>카티스템은 비급여 전문의약품으로, 치료 목적으로 적응증에 맞게 사용된 경우 실손보험 청구를 할 수 있습니다. 다만 <b>보장 여부·범위는 가입하신 약관과 보험사 심사에 따라 달라지므로 반드시 보험사에 확인</b>하셔야 합니다. 심사는 진단명뿐 아니라 실제 진료행위·약제비·진료기록을 기준으로 이뤄집니다.</p>\n <p><b>■ 식약처 허가 적응증</b><br>· \"퇴행성관절염\" 또는 \"반복적 외상에 의한 골관절염\" 진단<br>· \"ICRS Grade 4\"(연골결손 정도: MRI·수술기록지)<br>· \"K-L Grade 1~3\" 진단<br>· 나이 제한 없음</p>\n <p><b>■ 보험사 상담 시 유의</b><br>· \"줄기세포\"라는 표현만으로 신의료기술 BMAC과 혼동하는 경우가 있으므로, <b>전문의약품 카티스템(제대혈유래 중간엽줄기세포 치료제)</b>임을 명확히 설명<br>· 일부 보험사가 단순 비급여 주사제(연 250만원 한도)로 오해할 수 있으나, 카티스템은 약제비 보장 항목과 계약 보장비율에 따라 보상될 수 있음<br>· 특별조건부 계약·고지의무·보장비율·단체보험 등은 개인별 증권 확인 필수</p>\n <p><b>■ \"250만원까지만 된다\"고 할 때</b><br>3세대 보험에서 카티스템을 일반 비급여 주사료(연 250만원 한도)로 보아 삭감하는 경우가 있습니다. 그러나 카티스템은 복지부 분류상 “조직세포성장인자 제제(439번)”로, 약관의 “항암제 등” 예외에 해당해 주계약 질병비급여(연 5,000만원 한도·3~4세대 70%)에서 보상 대상이 될 수 있습니다. 이때 <b>반드시 ‘입원 치료’로 진행·기록되어야</b> 주계약 한도가 적용됩니다(통원으로 처리되면 보상이 거의 어렵습니다). 적용 여부는 약관·심사에 따라 다르므로 보험사 확인이 필요합니다.</p>\n <p><b>■ 청구 후 유의 — 손해사정사 선임권</b><br>보험금 청구 후 \"회사가 정한 손해사정사 업체로 의뢰될 예정\"이라는 안내를 받으면, 환자(피보험자)는 <b>[손해사정사 선임권]</b>을 행사할 수 있습니다. 보험사 지정 업체는 객관성이 제한될 수 있으므로, 환자가 직접 지정한 손해사정사가 심사를 맡으면 객관성·공정성을 높일 수 있습니다. 이 선임권은 보험사가 비용을 부담(무료)하며, <b>안내받은 날로부터 3영업일 이내</b> 신청해야 합니다.</p>","note":"도입 문장을 \"청구가 가능합니다\" → \"청구할 수 있으나 보장은 약관·심사에 따라 다름\"으로 보수화. 손해사정사 선임권 안내는 그대로 보존(유용)."},{"n":6,"cat":"compare","q":"\"카티스템\"과 \"미세천공술+콜라겐\"의 차이점","k":"미세천공 콜라겐 차이 비교","a":"<p><b>퇴행성관절염</b>은 치료하지 않으면 연골 손상과 관절 환경 악화가 반복됩니다. 그래서 연골 재생과 함께 관절 환경 개선을 함께 고려하는 것이 중요합니다.</p>\n <p><b>카티스템(첨단바이오의약품)</b>은 식약처 허가 전문의약품으로, GMP 시설에서 품질관리를 거쳐 생산된 줄기세포가 치유 물질을 분비해 연골 재생을 돕고 염증을 억제하는 것을 목표로 합니다.</p>\n <p><b>미세천공술+콜라겐(의료기기)</b>은 뼈에 작은 구멍을 내 골수가 올라와 치유되는 원리이며, 콜라겐은 확산을 막아 재생을 돕는 덮개 역할을 합니다. 세포 성분이 포함되지 않는 시술로, 원리가 다릅니다.</p>","note":"기존의 \"치료 조절할 수 없습니다\"식 타 시술 폄하 표현을 \"원리가 다르다\"는 사실 비교로 보수화."},{"n":7,"cat":"compare","q":"BMAC과 카티스템 뭐가 달라요?","k":"bmac 골수 차이 비교","a":"<p>국내에서 식약처 품목허가를 받은 무릎 연골재생 줄기세포 치료제는 카티스템입니다. 흔히 'BMAC(비맥)'이라 불리는 시술은 줄기세포 치료제가 아니라 환자 본인의 골수를 농축해 통증을 줄이는 주사 치료로, 연골을 새로 만들어 주는 치료와는 성격이 다릅니다.</p>\n <p>과거 BMAC을 줄기세포 치료처럼 광고한 사례가 있었으나, 보건복지부가 \"줄기세포로 광고할 수 없다\"고 안내한 바 있습니다. 카티스템은 손상된 연골 재생을 목적으로 허가받은 줄기세포 치료제입니다.</p>\n <p>※ 참고: BMAC을 줄기세포 치료로 표현할 수 없음을 안내한 보건복지부 자료<br><span class=\"url\">https://drive.google.com/file/d/1MkHFyB4ZtK8dJWtJqYnM0shGTRvDr38A/view</span></p>"},{"n":8,"cat":"surgery","q":"수술 시간과 수술 방법","k":"수술 시간 방법 절개 관절경 영상","a":"<p>카티스템 단독 수술은 집도의에 따라 차이가 있으나 평균 30분~1시간 정도 소요됩니다. 관절 손상 범위와 개인별 특성을 고려해 절개법 또는 관절경 중 적합한 방식으로 시행됩니다.</p>\n <p>· 절개법 영상: <span class=\"url\">https://youtu.be/u3CQ2aBz2Rg</span><br>· 관절경 영상: <span class=\"url\">https://youtu.be/o8SssQPsQb0</span></p>"},{"n":9,"cat":"surgery","q":"주문은 왜 8일 전에 해요?","k":"주문 발주 배양 일정","a":"<p>카티스템은 살아 있는 제대혈 유래 줄기세포 치료제로, 제조 전 과정이 전문성과 시간을 요합니다.</p>\n <p>1) 살아 있는 세포라 미리 재고를 쌓아두지 않음<br>2) 수술 일정에 맞춰 새로 배양<br>3) -196℃ 보관 세포의 안전한 해동에 시간 필요<br>4) 전문가 수작업 배양·증식 + 엄격한 품질관리<br>5) 수술 당일 직배송되어 즉시 사용</p>\n <p><b>발주 가이드</b><br>· 화요일 주문 → 다음 주 화/수 수술 사용 가능<br>· 목요일 주문 → 다음 주 목/금 수술 사용 가능<br>(주문은 거래처 담당자에게 직접 연락)<br><span class=\"url\">https://drive.google.com/file/d/1NW2K-tpufk9G4okbIigMPcYgtoytdIiX/view</span></p>"},{"n":10,"cat":"efficacy","q":"논문이나 실제 임상사례 궁금해요","k":"논문 임상 데이터 근거 사례","a":"<p>임상 3상에서 연골 개선이 확인되었으며, 고령이거나 병변이 큰 경우에도 개선이 보고되었습니다. 구체적인 수치·그래프는 의료진 또는 임상 자료를 통해 확인하실 수 있습니다. 효과에는 개인차가 있습니다.</p>\n <p>· 임상 3상 결과 그래프: <span class=\"url\">https://drive.google.com/file/d/1yhQ-mNSSpFwnsriGHlfZiu05ZGC-3vLS/view</span></p>","note":"상담원 참고(환자 단정 금지): 기존 자료 \"임상3상 98% 개선, 60세 이상 100%, 6cm²↑ 93%\". 수치는 출처와 함께 의료진이 제시하되, 환자에게 '성공률/보장'처럼 전달 금지."},{"n":11,"cat":"intro","q":"카티스템을 이해하기 쉽게 짧게 설명해 주세요","k":"간단 설명 요약","a":"<p>카티스템은 국내에서 허가받은 줄기세포 연골재생 치료제로, 탯줄 혈액(제대혈) 유래 줄기세포로 무릎 연골 재생과 퇴행성관절염 치료를 목표로 하는 전문의약품입니다.</p>","note":"\"국내 유일한\" → \"국내에서 허가받은\"으로 보수화(절대표현 회피)."},{"n":12,"cat":"rehab","q":"부작용?","k":"부작용 안전 위험 후유증","a":"<p>카티스템의 주성분은 면역원성이 낮은 것으로 알려진 제대혈 유래 줄기세포이며, 임상시험을 통해 안전성이 확인된 전문의약품입니다.</p><p>다만 모든 시술이 그렇듯 부작용 가능성을 완전히 배제할 수는 없어, 시술 전 의료진이 금기·주의사항과 가능한 이상반응을 직접 안내합니다.</p>","note":"⚠ 기존 \"부작용 사례는 없었습니다\"는 의료법 제56조②7호(부작용 정보 누락) 직격이라 반드시 삭제·보수화함. 환자에게 '부작용 없음' 단정 금지."},{"n":13,"cat":"intro","q":"핵심 안내 멘트","k":"후킹 멘트 핵심 안내 소개","a":"<p>카티스템은 국가에서 허가받은 전문의약품으로, 손상된 무릎 연골의 재생을 목표로 <b>자기 관절을 보존</b>하는 치료입니다. 장기 추적에서 좋은 경과가 보고되고 있으나 효과에는 개인차가 있으며, 적합 여부는 검사 후 의사 선생님이 판단합니다.</p>","note":"기존 '후킹 멘트'의 \"평생\", \"재수술 0건\", \"1시간이면 간단\" 등은 과장(제56조②8호) 리스크라 제외하고 사실 중심으로 재작성."},{"n":14,"cat":"insurance","q":"사이즈(병변 크기) 제한이 있나요?","k":"사이즈 크기 병변 제한 실손","a":"<p>병변 크기에 대한 적합성 판단은 의료진의 영역입니다. 다만 최근 실손보험 심사 기준이 엄격해진 점을 고려하면, 보험 적용 측면에서는 약 <b>2~9㎠</b> 병변이 비교적 무난한 것으로 안내됩니다(보장 여부는 약관·심사에 따라 다름).</p>","note":"\"크기와 상관없이 우수한 치료 결과\" 효능 단정은 제거. 실손 심사 관련 실무 팁은 보존."},{"n":15,"cat":"intro","q":"어떤 원리로 연골재생·퇴행성관절염 치료가 되나요?","k":"원리 기전 작용","a":"<p>카티스템(제대혈 유래 중간엽줄기세포)이 치유 단백질을 분비하여 ① 연골 재생을 촉진하고 ② 연골 분해를 억제하며 ③ 염증을 억제하는 방식으로, 연골 재생과 퇴행성관절염 개선에 도움을 주는 것을 목표로 합니다.</p>"},{"n":16,"cat":"disease","q":"퇴행성관절염이 어떤 질병이에요?","k":"퇴행성 관절염 질병","a":"<p>퇴행성관절염은 연골이 닳아 염증이 생기고, 그 염증이 악순환되며 무릎 상태가 점점 나빠지는 질환입니다. 치료에는 연골 재생과 관절 환경 개선을 함께 고려하는 것이 중요합니다.</p>"},{"n":17,"cat":"efficacy","q":"수술 효과가 좋은 나이나 크기가 있나요?","k":"나이 크기 효과 연령","a":"<p>임상에서 고령이거나 병변이 큰 경우에도 개선이 보고되었습니다. 다만 효과에는 개인차가 있어, 본인에게 적합한지는 검사 후 의사 선생님이 판단합니다.</p>","note":"기존 \"98%/60세 이상 100%/크기 커도 좋은 결과\" 단정은 효능 보장 인상이라 보수화. 수치는 의료진이 출처와 함께 제시."},{"n":18,"cat":"efficacy","hot":true,"q":"성공률 / 완치율은 어떻게 되나요?","k":"성공률 성공율 완치 완치율","a":"<p>'성공률'이나 '완치율'을 수치로 단정해 말씀드리기는 어렵습니다. 임상 3상에서 무릎 연골 개선이 확인되었고 장기 추적에서도 좋은 경과가 보고되고 있으나, <b>효과에는 개인차</b>가 있습니다. 본인이 기대할 수 있는 결과는 검사 후 의사 선생님과 상담하시는 것이 정확합니다.</p>","note":"⚠ '성공률/완치율'은 효능 보장을 구하는 질문 → 가장 위험. 상담원 참고: 임상3상 연골개선 98%(43명 중 42명), 3~11년 추적 100명 인공관절 전환 보고 관련 — 이데일리 기사(https://www.edaily.co.kr/News/Read?newsId=01082406642040344). 단 '완치율/성공률/0건'으로 환자에게 단정 금지 + 100명·11년 추적 수치는 1차 출처 검증 권장."},{"n":19,"cat":"efficacy","hot":true,"q":"효과 어느정도 가나요? 인공관절 수술 안 해도 되나요?","k":"효과 지속 인공관절 tkr 몇년","a":"<p>장기 추적에서 좋은 경과가 보고되고 있으나, <b>'인공관절을 영구히 피한다'고 단정할 수는 없습니다.</b> 진행 정도에 따라 결과가 다르므로, 어떤 치료가 적합한지는 의사 선생님과 상의하시는 것이 정확합니다.</p>","note":"기존 \"인공관절보다 우선적으로 카티스템을 추천합니다\"는 치료 추천·비교 우위(제56조②4호)라 제거. 효과 지속은 단정 대신 '개인차' 프레임."},{"n":20,"cat":"compare","hot":true,"q":"카티스템 말고 다른 줄기세포 넣으면 안되나요?","k":"다른 줄기세포 bmac svf 차이","a":"<p>국내에서 허가받은 무릎 연골재생 줄기세포 치료제는 카티스템입니다. 흔히 줄기세포로 오인되는 BMAC(골수흡인농축액)·SVF(자가지방유래 기질혈관분획) 주사는 골수·지방을 농축한 시술로, 성격(예: 통증 완화 목적)과 원리가 다릅니다.</p>\n <p>어떤 치료가 본인에게 적합한지는 손상 정도와 상태에 따라 의사 선생님이 판단합니다.</p>","note":"\"카티스템이 유일\" \"근본적으로 치료할 주사는 없으며\" \"효과 차이가 큰\" 등 절대표현·타 시술 폄하(제56조②5호)를 제거하고 사실 차이 중심으로 보수화."},{"n":21,"cat":"insurance","hot":true,"q":"실손 청구가 거절(부지급)됐어요. 어떻게 하나요?","k":"실손 거절 부지급 삭감 이의신청 분쟁조정 손해사정","a":"<p>거절됐다고 끝이 아닙니다. 사유에 따라 다시 검토를 요청할 수 있는 경우가 많습니다. 다만 결과를 보장해 드릴 수는 없고, 절차를 함께 도와드리겠습니다.</p>\n <p><b>■ 순서</b><br>① <b>서면 거절 사유서</b>를 받아 정확한 조항·사유를 확인합니다.<br>② 병원에서 <b>수술기록지·MRI 소견서·진료비 세부내역서·담당의 소견서·식약처 허가사항</b>을 발급받습니다.<br>③ 사유에 맞는 근거로 <b>이의신청(내용증명)</b>을 제출합니다.<br>④ 해결되지 않으면 <b>금융감독원 분쟁조정</b>(무료)을 신청할 수 있습니다.</p>\n <p><b>■ 손해사정사 선임권</b><br>보험사가 \"지정 손해사정 업체로 의뢰하겠다\"고 하면, 환자가 직접 손해사정사를 선임할 수 있습니다(보험사 비용 부담·무료, 통보일로부터 3영업일 이내 신청).</p>\n <p>거절 사유별 구체적인 대응 방법은 병원 담당자가 함께 준비해 드립니다.</p>","note":"상담원용 상세 대응(거절 사유 12종·반박 논리·증거·법적 근거)은 [거절대응] 탭 참조. 환자에게는 절차 안내까지만, 보장·결과 단정 금지."},{"n":22,"cat":"disease","hot":true,"q":"무릎 말고 다른 관절(어깨·고관절·발목)에도 되나요?","k":"다른 관절 어깨 고관절 발목 무릎 전용 적응증","a":"<p>카티스템은 식약처 허가상 <b>무릎 연골결손</b> 치료에 사용하도록 허가된 치료제입니다. 따라서 어깨·고관절·발목 등 다른 관절은 허가 적응증이 아닙니다.</p>\n <p>다른 관절의 통증·손상에 대해서는 별도의 진료와 다른 치료 방법이 필요할 수 있으니, 해당 부위 상태는 진료를 통해 의료진과 상의하시기 바랍니다.</p>","note":"무릎 전용(허가 적응증). 타 관절 적용은 허가 외 → 권유 금지. 다른 관절은 진료 안내로 연결."},{"n":23,"cat":"surgery","q":"당뇨·고혈압 등 지병이 있어도 시술 가능한가요?","k":"당뇨 고혈압 지병 기저질환 복용약 동반질환 가능","a":"<p>지병이 있다고 해서 일률적으로 안 되는 것은 아닙니다. 다만 가능 여부와 주의사항은 <b>개인의 상태·복용 중인 약·기저질환에 따라 달라지므로, 검사 후 의료진이 판단</b>합니다.</p>\n <p>진료 시 현재 앓고 계신 질환과 복용 중인 약(특히 혈액 관련 약 등)을 빠짐없이 알려 주시면 안전하게 안내받으실 수 있습니다.</p>","note":"동반질환 가부는 의료진 판단. 상담원이 \"된다/안 된다\" 단정 금지. 복용약 고지 안내까지."},{"n":24,"cat":"rehab","hot":true,"q":"시술 후 샤워·운전·음주·직장 복귀는 언제부터 가능한가요?","k":"시술 후 샤워 목욕 운전 음주 술 흡연 담배 직장 복귀 출근 일상","a":"<p>일반적인 경과는 아래와 같으나, <b>구체적인 시점은 회복 상태에 따라 다르므로 의료진 안내를 따라 주세요.</b></p>\n <p><b>· 샤워/목욕</b> — 상처 부위 보호가 필요해, 봉합·상처 상태에 따라 시점이 정해집니다.<br><b>· 운전·직장 복귀</b> — 목발·체중부하 단계와 업무 강도에 따라 다르므로 의료진과 상의해 정합니다.<br><b>· 음주·흡연</b> — 회복과 연골 재생에 도움이 되지 않으므로 회복 기간에는 삼가시길 권합니다.</p>","note":"일반 경과까지만. 구체 일정은 본원 재활 프로토콜·의료진. 음주·흡연은 \"삼가 권장\" 톤(단정 금지)."},{"n":25,"cat":"surgery","q":"한 번 맞으면 끝인가요? 나중에 또 해야 하나요?","k":"재시술 한번 1회 또 다시 반복 유효기간 보관","a":"<p>카티스템은 <b>원칙적으로 1회 시술</b>로 진행됩니다. 세포는 시술 시점에 사용되며, 따로 보관해 두는 개념은 아닙니다.</p>\n <p>이후 경과나 추가 시술이 필요한지는 개인의 상태에 따라 다르며, 정기적인 추적 관찰을 통해 의료진이 판단합니다.</p>","note":"1회 시술 원칙. \"평생 효과/재시술 불필요\" 등 단정 금지. 추적·재시술 여부는 의료진."},{"n":26,"cat":"surgery","q":"임신 중이거나 임신 계획이 있는데 가능한가요?","k":"임신 수유 임산부 가임 출산 계획","a":"<p>임신 중이거나 수유 중, 또는 임신을 계획 중이신 경우에는 <b>반드시 사전에 의료진과 상의</b>하셔야 합니다. 해당 상황에서의 시술 여부는 안전을 우선해 의료진이 신중히 판단합니다.</p>\n <p>현재 임신 여부나 계획을 진료 시 꼭 알려 주세요.</p>","note":"임신·수유는 안전 우선·의료진 판단으로 강하게 연결. 상담원이 가부 단정 절대 금지."},{"n":27,"cat":"rehab","q":"흉터가 남나요?","k":"흉터 상처 흉 절개 관절경 자국","a":"<p>카티스템은 관절경을 이용한 작은 절개로 진행되어 흉터가 비교적 작은 편이나, <b>흉터 정도는 절개 방식·피부 상태·개인차</b>에 따라 달라집니다.</p>\n <p>구체적인 절개 부위와 흉터 관리는 시술 방법에 따라 다르므로 의료진에게 확인하시는 것이 정확합니다.</p>","note":"\"흉터 없음\" 단정 금지. \"비교적 작은 편 + 개인차 + 의료진 확인\"으로."}];
+const CATLABEL = {"intro":"소개·원리","disease":"관절염","surgery":"수술·일정","efficacy":"효과·임상","rehab":"재활·안전","compare":"치료 비교","insurance":"실손보험","objection":"거절 극복"};
+const SECTOR_OF = {"A-1-1":"intro","A-1-3":"intro","A-2-1":"intro","A-2-2":"intro","A-3-1":"disease","A-3-2":"disease","A-3-3":"disease","A-1-2":"surgery","A-1-6":"surgery","A-1-7":"surgery","A-1-5":"efficacy","A-4-2":"efficacy","A-1-4":"rehab","A-2-3":"rehab","A-6-1":"rehab","A-6-2":"rehab","A-6-3":"rehab","A-4-1":"compare","A-5-1":"compare","A-5-2":"compare","B-1-1":"insurance","B-1-2":"insurance","B-2-1":"insurance","B-2-2":"insurance","OBJ-01":"objection","OBJ-02":"objection","OBJ-03":"objection","OBJ-04":"objection","OBJ-05":"objection","OBJ-06":"objection","OBJ-07":"objection","OBJ-08":"objection","OBJ-09":"objection","OBJ-10":"objection"};
+const SECTOR_ORDER = ["intro","disease","surgery","efficacy","rehab","compare","insurance","objection"];
+const KNOW = {"intro":"<b>핵심</b> 카티스템 = 메디포스트·2012년 식약처 허가, 세계 최초 <b>동종 제대혈 유래 중간엽줄기세포(MSC)</b> 치료제. 적응증 = 퇴행성·외상성 골관절염 무릎 연골결손(ICRS grade IV). “동종”=타인 제대혈(자가 아님), <b>1회 시술</b>. 줄기세포 종류 중 제대혈은 성체(중간엽)로 윤리 부담이 낮음. 비급여 + 살아있는 세포 수작업 배양이라 고가.<br><b>⚠ 가드레일</b> “최고·유일·완치” 단정 금지 → “국내 허가받은 줄기세포 치료제”까지만(절대표현 회피). 가격은 공시가 안내, 할인·흥정 금지(환자유인 제27조③).","disease":"<b>핵심</b> 퇴행성관절염 = 연골 마모 → 염증 악순환. 연골은 혈관이 없어 자연재생이 어려움(재생치료의 이유). 등급: <b>K&L</b>(X-ray 중증도)·<b>ICRS</b>(연골결손 정도), 주 타깃 K&L 2~3.<br><b>⚠ 가드레일</b> 상담원은 환자의 단계·적합성·나이 가부를 <b>판정하지 않는다</b>(무면허 의료행위 소지). 모든 적합성 질문은 “검사 후 의사 판단”으로 전환.","surgery":"<b>핵심</b> 절개법 또는 관절경으로 연골결손부 미세천공 후 도포, <b>1회·평균 30분~1시간</b>. 입원 최소 3일+(본원 기준). <b>발주 리드타임</b>: 살아있는 세포라 재고 없음 → 화요일 주문=다음 주 화/수, 목요일 주문=다음 주 목/금(거래처 담당자 발주).<br><b>⚠ 가드레일</b> 마취·양쪽 동시 시술·합병증은 의료진 판단. “간단·바로 일상복귀” 단정 금지.","efficacy":"<b>핵심</b> 임상 3상에서 연골 개선 확인(메디포스트 발표 98% = 43명 중 42명). 장기 추적 보고 존재(이데일리 기사).<br><b>⚠ 가드레일</b> “100명·11년·전환 0건” 수치는 <b>1차 출처 검증 필요</b> + 환자에게 ‘성공률·완치율·0건·평생’으로 단정 금지(제56조②8호). “인공관절 영구 회피” 단정·특정 치료 추천 금지(②4호). 효과·지속은 개인차, 수치는 의료진이 출처와 함께 제시.","rehab":"<b>핵심</b> 초기 보호(비/부분 체중부하) 기간이 결과를 좌우 → 재활 순응도가 효과의 일부. 목발 6~12주(개인차), 입원 3일+(본원 기준). 제대혈 MSC는 면역원성이 낮아 동종 사용, 임상에서 안전성 확인.<br><b>⚠ 가드레일</b> <b>“부작용 없음” 단정 절대 금지</b>(②7호) — 부작용 고지는 의료진(허가사항). 운동·음주·복귀 시점은 의료진/물리치료 처방, 상담원 임의 안내 금지.","compare":"<b>핵심</b> 카티스템(동종 제대혈 MSC·1회) / 카티라이프(자가 늑연골·2회·재활 ~6주) / BMAC·SVF(골수·지방 농축 주사·통증완화 성격) / 미세천공+콜라겐(의료기기·세포 없음). 국내 허가 줄기세포 연골재생 치료제는 카티스템(사실). BMAC을 줄기세포로 광고 불가(복지부 안내).<br><b>⚠ 가드레일</b> 비교는 “방식·허가 차이”의 사실까지만. “우수·빠름·유일·근본치료” 단정·타사 폄하 금지(②4호 비교·5호 비방). 적합성은 의사 판단.","insurance":"<b>핵심</b> 비급여. 보장 = 보험사·약관·가입시점·심사에 따라 다름(세대별 비급여: 1세대 ~100% / 2세대 80~90% / 3세대 80% / 4세대 70% / 5세대 비중증 50%·중증 강화). <b>전문의약품 카티스템 ≠ 신의료기술 BMAC·SVF 주사</b> — 모든 거절 대응의 출발점. <b>250만원 한도 함정</b>: 카티스템을 일반 비급여 주사료(연 250만원 한도)로 삭감하려 하면, 약관상 “항암제 등” 예외(복지부 분류 439번 조직세포성장인자 제제)를 근거로 주계약 질병비급여(연 5,000만원·3~4세대 70%)에서 보상 주장 가능. ★단 반드시 <b>입원 치료</b>로 진행·기록되어야 함(통원 처리 시 보상 거의 불가). 거절 시 핵심 무기 = 수술기록지·집도의 소견서·관절경 사진·식약처 허가서. <b>손해사정사 선임권</b>(보험사 지정 업체 통보 시 환자 직접 선임, 무료·3영업일 내).<br><b>⚠ 가드레일</b> 보장·금액 단정 금지. <b>진단명·코드 유도 절대 금지</b>(보험사기방지법). 거절 시 → 거절대응 탭(12개 거절 사유)에서 사유를 찾아 담당자에게 인계.","objection":"<b>핵심</b> 목표는 '설득'이 아니라 <b>환자의 자기결정 지원</b>. 4단계 흐름 = ① 공감(거절 감정 인정) → ② 사실(정확한 정보, \"보고됐다\"·\"개인차\") → ③ 자기결정 질문(무엇이 가장 걱정인지) → ④ 클로징(검사·진료로 부드럽게 연결). 환자가 \"검사 받아보겠다\"면 1차 성공. 비용 호소는 거의 항상 실손(OBJ-05)과 연결. <b>실손 거절은 콜센터 구두 안내 ≠ 최종 결정</b>임을 반드시 정정.<br><b>⚠ 가드레일</b> 효능·완치·100%·유일·평생 단정 금지, <b>공포·시급성 조장 금지</b>(“지금 안 하면 늦는다”·“오늘 하면 할인”=환자유인), 타 시술·타 병원 비방 금지, 보험 보장 단정 금지. 환자가 반복 거부하면 자기결정 존중하고 자료만 제공(강요 금지)."};
+const SYN = [["실손","실비","실손보험","실비보험","실손의료보험","사보험","민영보험","보험","손해사정","선임권"],["성공률","성공율","완치","완치율","완치률","성공"],["비용","가격","돈","얼마","천만원","수술비","치료비","비싸","비싼","고가"],["부작용","후유증","합병증","안전"],["인공관절","tkr","관절치환","치환술"],["일상생활","일상","복귀","출근","목발","보행","걷기","재활","회복"],["통증","아파","아픈","아픔","아프","안아파","안아픈"],["나이","연세","연령","연령대"],["bmac","골수","svf","지방","미세천공","콜라겐","다른줄기세포","다른 줄기세포"],["퇴행성","관절염","골관절염"],["논문","임상","근거","사례","데이터"],["원리","기전","작용"],["다른관절","다른 관절","타관절","어깨","고관절","발목","손목","팔꿈치","무릎전용","무릎 전용"],["지병","기저질환","동반질환","만성질환","당뇨","고혈압","복용약"],["샤워","목욕","세안","씻기"],["음주","흡연","담배","금주","금연"],["직장복귀","출근","일상복귀","업무복귀"],["흉터","상처","흉자국","자국"],["임신","수유","임산부","가임","출산"],["재시술","유효기간","보관"]];
+const CASES = [{"id":1,"tag":"CASE 01","color":"#c0392b","title":"줄기세포는 실손보험 지급이 거부될 수 있다","subtitle":"줄기세포 치료 전반에 대한 포괄적 거절","severity":3,"denialLogic":"줄기세포를 이용한 치료는 보험사 내부 기준상 지급 거절 대상에 해당할 수 있으며, 실손보험 약관상 보상 범위에 포함되지 않는다.","counterPoints":[{"point":"카티스템은 식약처 정식 품목허가 의약품 (2012년, 품목기준코드 201200401)","detail":"카티스템은 2012년 1월 식약처로부터 품목허가를 취득한 전문의약품입니다. 3상 임상시험(Level I evidence)을 거쳤고, 6년간 615명 대상 시판 후 조사를 통과하여 재심사도 완료했습니다. 무허가 줄기세포 시술과는 법적으로 완전히 구분됩니다."},{"point":"실손보험 표준약관에 '줄기세포 제외' 조항 없음 — 포괄주의 원칙","detail":"실손의료보험은 포괄주의(negative list) 방식을 채택하여, '보상하지 않는 사항'을 약관에 열거하고 그 외 의료비는 보상하는 구조입니다. 표준약관의 면책 사항에 '줄기세포 치료'를 특정하여 배제하는 조항은 존재하지 않습니다."},{"point":"약관규제법 제5조 제2항 — 작성자 불이익의 원칙 적용","detail":"약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석되어야 합니다. 약관에 명시적 제외 조항이 없는 상황에서 보험사가 임의로 지급을 거절하면, 이 원칙에 의해 피보험자에게 유리하게 해석해야 합니다."}],"evidence":["식약처 품목허가서 (카티스템, 2012년 1월)","실손보험 표준약관 원문 (면책 사항 부분)","임상 3상 논문 (Lim et al., 2021, OJSM)","약관규제법 조문"],"laws":["약관규제법 제5조 제2항 (작성자 불이익의 원칙)","약관규제법 제6조 (불공정약관 조항 무효)","약관규제법 제3조 (설명의무 위반 시 주장 불가)","의정부지방법원 판결 — 주치의 진단 우선 인정"],"winRate":90,"cumulative":"가장 먼저, 가장 강하게 반박할 수 있는 사유입니다. 식약처 품목허가서 사본과 실손보험 표준약관의 면책 조항 목록을 함께 첨부하면 보험사가 스스로 번복하는 경우가 많습니다."},{"id":2,"tag":"CASE 02","color":"#d35400","title":"카티스템은 고령 환자에게 적합하지 않다","subtitle":"연령을 이유로 한 적응증 외 치료 주장","severity":3,"denialLogic":"카티스템 수술은 고령 환자에게 적합하지 않은 치료이며, 해당 환자의 연령을 고려할 때 적응증에서 벗어난 시술로 보험금 지급이 불가하다.","counterPoints":[{"point":"카티스템 허가사항에 연령 제한 없음","detail":"식약처 품목허가 사항에 연령 상한 또는 하한이 명시되어 있지 않습니다. 허가 적응증은 '퇴행성 또는 반복적 외상으로 인한 골관절염 환자'이며, 특정 연령대를 배제하는 문구가 없습니다."},{"point":"임상시험 평균 연령 55.9세 — 고령 환자 유효성 확인","detail":"3상 임상시험(Lim et al., 2021) 평균 환자 연령 55.9세. Park et al.(2017) 7년 장기 추적에서 KL Grade 3 환자 안전성·유효성 확인."},{"point":"의사의 재량권 — 대법원 94다13046","detail":"대법원 법리: '의사는 환자의 상황과 당시 의료 수준, 전문적 지식과 경험에 따라 적절하다고 판단되는 진료방법을 선택할 수 있다.'"}],"evidence":["식약처 허가 사항 원문 (연령 제한 조항 부재 확인)","3상 임상시험 논문 (Lim et al., 2021)","고령 환자 장기추적 논문 (Park et al., 2017)","담당의 소견서"],"laws":["대법원 94다13046 (의사의 진료방법 선택 재량권)","약관규제법 제6조 제2항 제1호","약관규제법 제5조"],"winRate":92,"cumulative":"식약처 허가 사항을 출력하여 '연령 제한 없음'을 직접 확인시켜 주십시오."},{"id":3,"tag":"CASE 03","color":"#1a6aa5","title":"MRI상 ICRS 등급·결손 크기가 불분명하다","subtitle":"ICRS 등급 경계 모호성을 이유로 한 지급 거절","severity":3,"denialLogic":"MRI 영상 판독 결과, 연골 결손 등급이 ICRS 3등급과 4등급의 경계에 있어 4등급으로 단정하기 어려우며, 결손 크기 역시 기준(2cm²)에 미달할 수 있다.","counterPoints":[{"point":"관절경 소견이 MRI보다 우선 — Gold Standard","detail":"ICRS 등급 분류의 gold standard는 관절경 직접 육안 소견입니다. MRI의 연골 손상 등급 평가 정확도는 60~85% 수준이며, 특히 Grade III와 IV 구분에서 불일치가 발생할 수 있습니다."},{"point":"결손 크기는 수술 중 직접 계측 — 가장 정확한 기록","detail":"카티스템 시술 과정에서 결손 부위를 노출하고 직접 측정하므로, 수술기록지에 기재된 결손 면적은 직접 관찰에 의한 기록입니다."},{"point":"보험사 측 재판독은 '사후 추정'에 불과","detail":"보험사 자문의는 환자를 직접 진찰하지 않고 서류만으로 판단합니다. 관절경으로 직접 관찰한 수술의의 소견보다 정확도가 떨어집니다."}],"evidence":["수술기록지 (ICRS 4등급 및 결손 크기 명시)","관절경 수술 중 사진·영상 자료","수술 전 MRI 판독 소견서","집도의 ICRS 등급 판단 근거 추가 소견서"],"laws":["의료법 제22조 (진료기록부 작성 의무 및 법적 효력)","약관규제법 제5조","ICRS Cartilage Injury Evaluation Package"],"winRate":78,"cumulative":"수술기록지가 핵심 무기입니다. 집도의에게 'ICRS 4등급 확인 및 결손 크기 재확인 소견서'를 별도 발급받아 첨부하면 보험사의 MRI 재판독 주장을 무력화할 수 있습니다."},{"id":4,"tag":"CASE 04","color":"#6c3483","title":"KL 3등급을 제3기관이 4등급(말기)으로 판정","subtitle":"보험사 측 자문의가 KL 4등급 판정 → 적응증 외 주장","severity":3,"denialLogic":"진료 기관은 KL 3등급으로 진단했으나, 보험사가 의뢰한 제3기관이 KL 4등급(말기)으로 판정하여 카티스템 적응증에서 제외된다.","counterPoints":[{"point":"KL Grade와 ICRS Grade는 완전히 다른 평가 체계","detail":"KL Grade는 X-ray 기반 골관절염 전반적 진행 정도를, ICRS Grade는 관절경 기반 국소 연골 결손 심각도를 평가합니다."},{"point":"KL 3↔4 경계는 판독자 간 신뢰도 차이가 큰 영역 (kappa 0.5~0.7)","detail":"KL 등급은 반정량적 지표로, 동일 영상이라도 판독자에 따라 3등급 또는 4등급으로 달리 해석될 수 있습니다."},{"point":"보험사 자문의 이해충돌 — 10건 중 7건 이상 미지급 통계","detail":"2025년 통계에 따르면 생명보험 의료자문 건 중 10건 중 7건 이상에서 보험금이 일부 또는 전부 미지급되었습니다."}],"evidence":["수술 전 X-ray 영상 및 원본 판독 소견서","집도의 KL 등급 판단 근거 소견서","독립 제3기관(대학병원) 재판독 소견서","KL 분류 판독자 간 신뢰도 관련 의학 문헌"],"laws":["약관규제법 제5조","민사소송법 제202조 (자유심증주의)","의정부지법 판결 — 주치의 진단 우선 인정","부산지법 판결 — 미지급 보험금 1,068만 원 지급"],"winRate":70,"cumulative":"독립적인 대학병원 영상의학과에 재판독을 의뢰하여 KL 3등급 확인서를 받으면 보험사 주장에 정면 대응할 수 있습니다."},{"id":5,"tag":"CASE 05","color":"#117a65","title":"사용량(바이알 수)에 대한 지급 보류","subtitle":"카티스템 투여량이 과다하다는 주장","severity":2,"denialLogic":"사용된 카티스템의 바이알 수 또는 투여 용량이 기준을 초과하거나 의학적 근거 없이 과다 사용되었다.","counterPoints":[{"point":"용량은 결손 면적에 의해 객관적으로 결정 — 허가 용법·용량","detail":"카티스템의 허가 투여량은 결손 면적 1cm²당 500μL이며, 최대 3바이알 세트까지 사용 가능합니다."},{"point":"다발성 결손 시 총 면적 합계에 따라 바이알 수 증가는 합리적","detail":"한 무릎 관절 내에 내측과, 슬개골, 활차구 등 다발성 결손이 존재할 수 있습니다."},{"point":"식약처 허가 용법·용량이 유일한 공식 기준","detail":"현재 학회 차원의 용량 기준이 확립 전이므로, 식약처 허가 용법·용량이 유일한 공식 기준입니다."}],"evidence":["수술기록지 (결손 부위별 면적 및 카티스템 사용량)","식약처 허가사항 원문 — 용법·용량 항목","진료비 세부내역서","집도의 사용량 결정 근거 소견서"],"laws":["약관규제법 제5조","실손보험 표준약관 (실제 발생 의료비 보상 원칙)","3상 임상시험 프로토콜 (NCT01041001)"],"winRate":73,"cumulative":"수술기록지에 결손 크기와 투여량이 함께 기재되어 있는지 반드시 확인하십시오."},{"id":6,"tag":"CASE 06","color":"#2980b9","title":"건강보험 비급여 항목이라 지급 대상이 아니다","subtitle":"비급여 = 실손 보상 제외라는 잘못된 약관 해석","severity":2,"denialLogic":"카티스템이 건강보험 비급여 항목에 해당하므로, 실손보험 약관상 지급 대상이 아니다.","counterPoints":[{"point":"실손보험의 핵심 목적 자체가 비급여 의료비 보상","detail":"실손의료보험은 건강보험이 보장하지 않는 비급여 항목까지 보장하기 위해 존재합니다."},{"point":"세대별 비급여 보장 비율 확인 — 0% 보상 약관은 존재하지 않음","detail":"1세대(~2009): 비급여 거의 100% 보장, 2세대: 80~90%, 3세대: 80%, 4세대: 70%, 5세대: 50%."},{"point":"카티스템은 식약처 허가 의약품 — 비인가 시술이 아님","detail":"카티스템은 식약처 품목허가를 받은 전문의약품이므로, 보상 대상인 '치료 목적의 의료비'에 해당합니다."}],"evidence":["보험 가입 약관 원본","진료비 세부내역서","실손보험 표준약관 제3조","금융위원회(2025) 비급여 분쟁조정기준"],"laws":["실손보험 표준약관 (비급여 의료비 보상 원칙)","약관규제법 제5조 제2항","금소법 제19조"],"winRate":82,"cumulative":"약관 원본을 보험사에 서면으로 교부 요청하십시오."},{"id":7,"tag":"CASE 07","color":"#8e44ad","title":"제3의료기관 자문으로 보험사 측에 유리한 지급거부 증가","subtitle":"보험사 의뢰 의료자문이 집도의 소견을 일방적으로 부정하는 구조적 문제","severity":3,"denialLogic":"보험사가 의뢰한 제3의료기관(자문의)의 의견에 따르면, 해당 환자의 카티스템 시술은 적응증에 부합하지 않거나 의학적 필요성이 인정되지 않으므로 보험금 지급이 불가하다.","counterPoints":[{"point":"보험사 의료자문의 구조적 이해충돌 — 10건 중 7건 이상 미지급","detail":"보험사가 자문의를 선정하고, 자문료를 지급하며, 질문 항목도 보험사가 설계하는 구조에서 자문 결과가 보험사에 유리하게 나오는 것은 구조적으로 예견된 결과입니다."},{"point":"자문의는 환자를 직접 진찰하지 않은 '서류 심사'에 불과","detail":"집도의는 환자의 임상 증상, 이학적 검사, MRI, 관절경 직접 소견을 종합하여 치료를 결정했습니다. 법적·의학적으로 직접 진찰·수술한 의사의 판단이 서류 심사보다 높은 증거력을 가집니다."},{"point":"보험사가 자문의에게 불리한 자료를 선택적으로 미전달하는 사례 다수","detail":"관절경 사진, 수술 중 영상, 집도의 상세 소견서 등 환자에게 유리한 자료를 누락하는 경우가 빈번합니다."},{"point":"법원 판례: 주치의 진단이 보험사 자문의보다 우선","detail":"의정부지법, 부산지법 모두 일관되게 직접 진료한 의사의 판단을 서류 자문보다 신뢰합니다."}],"evidence":["보험사 손해사정결과 안내서","의료자문 회신서 원본","자문 의뢰 시 전달 자료 목록","집도의 반박 소견서","관절경 사진·수술 중 영상","독립 제3기관 재판독 소견서"],"laws":["보험업법 제95조의3 (의료자문 남용 방지 의무)","약관규제법 제5조","민사소송법 제202조","의정부지법 판결","부산지법 판결","보험협회 의료자문 표준내부통제기준"],"winRate":72,"cumulative":"① 의료자문 회신서 원본과 전달 자료 목록을 서면으로 요청 ② 집도의에게 항목별 반박 소견서 ③ 누락 자료 보완 제출"},{"id":8,"tag":"CASE 08","color":"#2c3e50","title":"카티스템은 실험적·연구적 치료에 해당한다","subtitle":"약관상 '실험적 치료' 면책 조항을 근거로 한 거절","severity":3,"denialLogic":"카티스템은 아직 충분히 검증되지 않은 실험적·연구적 치료에 해당하며, 약관상 면책 조항에 의거하여 보험금 지급이 불가하다.","counterPoints":[{"point":"카티스템은 3상 임상시험 완료 + 식약처 허가 = 실험적 치료가 아님","detail":"카티스템은 Phase 1/2/3 임상시험을 모두 거쳐 2012년 정식 허가를 받았으며, 이후 시판 후 조사(PMS)와 재심사까지 완료했습니다."},{"point":"누적 3만 명 이상 시술 — 13년간 상용화된 치료","detail":"2012년 허가 이후 13년간 누적 3만 명 이상의 환자에게 시술된 상용 의약품입니다."},{"point":"약관상 '실험적 치료' 정의에 식약처 허가 의약품은 포함 불가","detail":"'실험적 치료'란 통상 '관련 기관의 승인을 받지 않은 치료'를 의미합니다. 카티스템은 식약처 승인을 받은 전문의약품입니다."}],"evidence":["식약처 품목허가서 (2012년)","시판 후 조사(PMS) 완료 보고서","3상 임상시험 논문","보험 약관 원문"],"laws":["약관규제법 제5조 제2항","약관규제법 제3조","약관규제법 제6조"],"winRate":88,"cumulative":"보험사에 '실험적 치료의 정의'를 서면으로 제시하도록 요청하십시오."},{"id":9,"tag":"CASE 09","color":"#16a085","title":"미세천공술로 충분 — 카티스템은 과잉진료다","subtitle":"더 저렴한 치료로 충분하다는 의학적 필요성 부정","severity":3,"denialLogic":"해당 환자의 연골 결손은 미세천공술로 충분히 치료 가능하며, 고가의 카티스템 사용은 과잉진료에 해당한다.","counterPoints":[{"point":"3상 RCT에서 카티스템이 미세천공술 대비 통계적으로 우월","detail":"Lim et al.(2021) RCT 114명: ICRS 등급 개선율 카티스템 97.7% vs 미세천공술 71.7% (p=0.001)."},{"point":"미세천공술은 결손 면적 2cm² 이상에서 효과 급감","detail":"ICRS 국제 가이드라인에서 미세천공술의 효과는 결손 면적 2cm² 이상에서 급격히 떨어집니다."},{"point":"치료법 선택은 의사의 재량권 — 보험사가 대체 치료를 강제할 수 없음","detail":"대법원 94다13046 판결에 따라, 의사는 적절한 진료방법을 선택할 재량이 있습니다."}],"evidence":["3상 RCT 논문 (Lim et al., 2021)","ICRS 국제 가이드라인","집도의 소견서","수술기록지"],"laws":["대법원 94다13046","약관규제법 제5조","실손보험 표준약관"],"winRate":80,"cumulative":"핵심은 '미세천공술로 충분하지 않은 의학적 이유'를 구체적으로 제시하는 것입니다."},{"id":10,"tag":"CASE 10","color":"#b71c1c","title":"MRI로 측정한 병변 크기가 적응증 기준 미달이라는 주장","subtitle":"MRI 결손 면적 기준 2cm² 미달 판정 → 적응증 외 주장 (최신 이슈)","severity":3,"denialLogic":"수술 전 MRI에서 측정한 연골 결손 면적이 카티스템 적응증 기준인 2cm²에 미달하므로 적응증 외 사용에 해당한다.","counterPoints":[{"point":"MRI는 결손 크기를 평균 65~78% 과소평가 — 국제 논문 다수 확인","detail":"Gomoll et al.(2013): 65% 과소평가, 85%에서 실제가 더 큼. Campbell et al.(2013): 평균 70% 더 큼. Rohren et al.(2023): 전층 결손 78.3% 과소평가."},{"point":"정확한 결손 크기는 관절경 데브리드먼트 후 직접 계측이 gold standard","detail":"카티스템 시술 시 손상된 연골을 데브리드먼트하여 건강한 연골 경계까지 정리한 후 실제 결손 면적을 직접 계측합니다."},{"point":"MRI의 부분층 손상은 연골 변성을 반영하지 못함","detail":"MRI에서 Grade II~III로 판독되는 부분층 손상이 수술 시 데브리드먼트하면 전층 결손으로 드러나는 경우가 매우 흔합니다."},{"point":"보험사는 MRI 측정 한계를 알면서 이를 거절 근거로 악용","detail":"MRI의 결손 크기 과소평가는 영상의학계에서 널리 알려진 사실입니다."}],"evidence":["수술기록지 — 데브리드먼트 후 결손 면적","관절경 수술 중 사진·영상","수술 전 MRI 판독 소견서","집도의 소견서","Gomoll, Campbell, Rohren 논문 사본"],"laws":["약관규제법 제5조","의료법 제22조","대법원 94다13046","약관규제법 제6조"],"winRate":82,"cumulative":"핵심은 '수술기록지의 데브리드먼트 후 결손 면적'이 MRI 측정치보다 우선한다는 점입니다."},{"id":11,"tag":"CASE 11","color":"#7B241C","title":"3세대 보험 '비급여 주사료 250만 원 한도'를 적용하여 삭감","subtitle":"카티스템을 일반 비급여 주사로 분류하여 연간 250만 원 한도 적용 (3세대 이슈)","severity":3,"denialLogic":"카티스템은 주사제에 해당하므로, 3세대 실손보험의 '3대 비급여 특약 — 비급여 주사료' 항목에 따라 연간 250만 원 한도가 적용된다. 따라서 250만 원을 초과하는 금액은 보상하지 않는다.","counterPoints":[{"point":"카티스템은 약관상 '항암제' 그룹에 해당하여 250만 원 한도 예외","detail":"3세대·4세대 실손보험 특별약관 제3조 ②항에는 '항암제, 항생제(항진균제 포함), 희귀의약품을 위해 사용된 비급여 주사료는 주계약의 질병 비급여에서 보상한다'는 예외 규정이 있습니다. 여기서 '항암제'는 암 치료제만을 의미하는 것이 아니라, 식약처 의약품 분류표상 '종양용약' 및 '조직세포의 치료 및 진단 목적제제'를 포함합니다. 카티스템의 복지부 분류코드는 439번('기타의 조직세포성장인자 제제')으로, 이 정의에 정확히 부합합니다."},{"point":"카티스템은 '일반 주사제'가 아닌 '첨단재생바이오의약품'으로 분류","detail":"250만 원 한도가 적용되는 '비급여 주사료'란 도수치료, 체외충격파, 증식치료, 영양 주사, 통증 주사 등 과잉 진료 우려가 있는 항목을 관리하기 위한 것입니다. 카티스템은 식약처에서 '첨단바이오의약품'으로 허가된 전문의약품이며, 투여 방식이 주사 형태일 뿐 분류 기준상 일반 주사제와는 완전히 다른 카테고리입니다. 복지부 분류번호 439번은 250만 원 한도 대상인 '도수·체외충격파·증식치료·주사료' 어디에도 속하지 않습니다."},{"point":"카티스템은 주계약 '질병 비급여'에서 보상 — 한도 연간 5,000만 원","detail":"카티스템이 250만 원 한도의 '3대 비급여 특약'에서 제외되면, 보상은 주계약의 '질병 비급여' 항목으로 넘어갑니다. 이 항목의 연간 한도는 대부분 5,000만 원이며, 비급여 비용의 70%(3~4세대 기준)를 보상합니다. 예를 들어 카티스템 수술비가 1,500만 원이라면 약 1,050만 원을 보상받을 수 있습니다."},{"point":"단, 반드시 '입원 치료'로 진행되어야 주계약 한도가 적용됨","detail":"주계약의 질병 비급여 5,000만 원 한도는 '입원 치료'에 적용됩니다. 통원(외래)으로 처리되면 회당 20만 원 내외의 통원 한도가 적용되어 실질적 보상이 거의 불가능합니다. 카티스템 시술이 반드시 입원 상태에서 진행되고, 서류상으로도 '입원 치료'로 기록되어야 합니다."}],"evidence":["보험 가입 약관 원본 — 특별약관 제3조 ②항 예외 규정 확인","식약처 카티스템 품목허가 사항 — 분류코드 439번 확인","복지부 의약품 분류표 — '기타의 조직세포성장인자 제제' 해당 확인","진료비 세부내역서 — 입원 치료 기록 확인","보험사에 약관상 '항암제' 정의 서면 요청"],"laws":["실손보험 특별약관 제3조 ②항 (항암제 등 예외 규정)","약관규제법 제5조 제2항 (불명확 시 고객 유리 해석)","약관규제법 제3조 (설명의무 위반 시 주장 불가)","금소법 제19조 (설명의무 위반 시 입증책임 전환)"],"winRate":85,"cumulative":"핵심은 보험사에 '카티스템이 약관상 250만 원 한도 대상이 되는 근거 조항을 서면으로 제시하라'고 요청하는 것입니다. 카티스템의 복지부 분류코드 439번은 특약 대상인 '도수·체외충격파·증식치료·주사료'에 해당하지 않으며, 약관의 '항암제' 예외 규정(특별약관 제3조 ②항)에 의해 주계약 질병 비급여(5,000만 원 한도)에서 보상받아야 합니다. 반드시 입원 치료로 진행하십시오."},{"id":12,"tag":"CASE 12","color":"#4A235A","title":"제3의료기관 자문에서 '수술 부적정' 소견 → 과잉진료 주장","subtitle":"보험사 의뢰 자문 정형외과 전문의가 '카티스템 수술은 과잉 진료이며 의학적으로 타당하지 않다'고 소견","severity":3,"denialLogic":"보험사가 의뢰한 제3의료기관 정형외과 전문의 자문 결과, '제출된 의무기록을 바탕으로 검토한 결과, 해당 환자의 상태에 카티스템 수술은 과잉 진료이며 의학적으로 타당하지 않다'는 소견이 나왔으므로 보험금 지급이 불가하다.","counterPoints":[{"point":"자문의는 '서류 검토'만 했을 뿐, 환자를 직접 진찰하거나 관절경을 확인하지 않음","detail":"보험사 자문의는 보험사가 전달한 의무기록과 영상 일부만으로 '부적정' 소견을 내렸습니다. 환자를 직접 진찰하지 않았고, 관절경으로 연골 상태를 직접 확인하지도 않았습니다. 반면, 집도의는 환자의 병력·이학적 검사·MRI·관절경 직접 소견을 종합적으로 검토하여 카티스템이 필요하다고 판단했습니다. 의정부지방법원은 보험사 감정의 의견이 '확정적 감정이 아니라 가까워 보인다는 취지에 불과하다'고 판단하여 주치의 진단을 우선 인정한 바 있습니다."},{"point":"'과잉진료' 주장의 의학적 근거가 불충분 — 자문의의 대안 치료 제시 여부 확인 필요","detail":"자문의가 '과잉진료'라고 주장하려면, ① 해당 환자에게 카티스템이 아닌 어떤 치료가 적절했는지, ② 그 대안 치료가 카티스템과 동등하거나 더 나은 결과를 보인다는 의학적 근거를 함께 제시해야 합니다. 단순히 '타당하지 않다'는 결론만 있고 대안 치료와 그 근거가 없다면, 이는 구체적 의학적 판단이 아닌 보험사에 유리한 결론을 위한 자문입니다. 카티스템은 3상 RCT에서 미세천공술 대비 ICRS 개선율 97.7% vs 71.7%(p=0.001)로 우월성이 입증되었습니다(Lim et al., 2021)."},{"point":"자문 의뢰 시 보험사가 전달한 자료의 완전성 검증 필요","detail":"보험사가 자문 의뢰 시 관절경 사진, 수술 중 영상, 집도의 상세 소견서 등 환자에게 유리한 자료를 누락하고 MRI 영상과 기본 진료기록만 전달한 경우가 다수 보고되어 있습니다. 자문 의뢰 시 전달 자료 목록을 보험사에 서면 요청하여, 어떤 자료가 자문의에게 전달되었는지 확인해야 합니다. 불완전한 자료에 기반한 '부적정' 소견은 신뢰도가 떨어집니다."},{"point":"의료자문의 구조적 이해충돌 — 보험업법 제95조의3 남용 방지 의무","detail":"2025년 통계에 따르면 생명보험 의료자문 건 중 10건 중 7건 이상에서 보험금이 일부 또는 전부 미지급되었습니다. 보험사가 자문의를 선정하고, 자문료를 지급하며, 질문 항목도 보험사가 설계하는 구조입니다. 보험협회 의료자문 표준내부통제기준 자체가 '보험금 부지급 또는 삭감 수단으로 남용되지 않도록' 경고하고 있습니다."},{"point":"집도의의 항목별 반박 소견서가 자문의 의견을 무력화","detail":"가장 효과적인 대응은 집도의에게 자문의 소견서 원본을 보여주고, 항목별로 반박하는 소견서를 받는 것입니다. 예: '자문의는 OO라고 판단하였으나, 본인이 관절경으로 직접 확인한 결과 ICRS 4등급 전층 결손이 확인되었으며, 결손 면적 OOcm²로 카티스템 적응증에 정확히 부합합니다. 환자의 연령·전신 상태·기저질환을 종합 고려하여 카티스템이 가장 적절한 치료라고 판단하였습니다.'"}],"evidence":["보험사 손해사정결과 안내서 (자문 결과 원문)","의료자문 회신서 원본 (보험사에 서면 교부 요청)","자문 의뢰 시 전달 자료 목록 (누락 자료 확인)","집도의 반박 소견서 — 자문의 '부적정' 의견에 대한 항목별 반박","수술기록지 (관절경 소견, ICRS 등급, 결손 면적)","관절경 사진·수술 중 영상","3상 RCT 논문 (Lim et al., 2021) — 의학적 필요성 근거"],"laws":["보험업법 제95조의3 (의료자문 남용 방지 의무)","약관규제법 제5조 (불명확 시 피보험자 유리 해석)","대법원 94다13046 (의사의 진료방법 선택 재량권)","민사소송법 제202조 (자유심증주의)","의정부지법 판결 — 주치의 진단 우선 인정","부산지법 판결 — 미지급 보험금 지급 명령"],"winRate":70,"cumulative":"대응의 핵심은 4단계입니다. ① 보험사에 의료자문 회신서 원본과 자문 의뢰 시 전달 자료 목록을 서면으로 요청합니다. ② 자문의가 '과잉진료'라고 판단한 구체적 근거(대안 치료 제시 여부, 의학적 논거)를 확인합니다. ③ 집도의에게 자문의 소견에 대한 항목별 반박 소견서를 받습니다. ④ 관절경 사진 등 자문 시 누락된 자료를 보완 제출합니다. 자문 자체의 공정성과 완전성에 의문을 제기하면 보험사가 재심사에 응하는 경우가 많습니다."}];
+const STEPS = [{"step":"STEP 1","title":"거절 통보서 서면 요청","desc":"반드시 서면 거절 사유서 수령 후 정확한 조항 번호 확인.","days":"수령 즉시"},{"step":"STEP 2","title":"병원 서류 일체 발급","desc":"수술기록지·MRI 소견서·진료비 세부내역서·담당의 소견서·식약처 허가사항 사본.","days":"1~2주"},{"step":"STEP 3","title":"이의신청서 작성·내용증명 발송","desc":"반박 논리를 근거로 작성. 내용증명 우편으로 증거력 확보.","days":"서류 완비 즉시"},{"step":"STEP 4","title":"금융감독원 분쟁조정 신청","desc":"무료. 조정 결정은 재판상 화해 효력. 시효중단 효력.","days":"거절 후 30일 이내"},{"step":"STEP 5","title":"소액심판 또는 민사소송","desc":"분쟁조정 불성립 시. 3,000만 원 이하 소액사건심판법 적용.","days":"조정 불성립 후"}];
+const INDICATIONS = [{"label":"연골 결손 등급","value":"ICRS Grade IV","detail":"전층(Full-thickness) 연골 결손만 해당. 연골하골 노출 상태.","icon":"🦴"},{"label":"관절염 등급","value":"KL Grade 1~3","detail":"Kellgren-Lawrence 1~3등급. Grade 4(말기)는 인공관절 권장.","icon":"🔬"},{"label":"결손 크기","value":"2~9cm²","detail":"결손 면적 2~9cm² 범위가 허가 적응증 대상.","icon":"📐"},{"label":"연령 제한","value":"제한 없음","detail":"식약처 허가사항에 연령 상한·하한 없음.","icon":"👤"},{"label":"부위 제한","value":"무릎 관절","detail":"슬관절(knee joint) 전용 치료제.","icon":"🦵"},{"label":"투여량","value":"1cm²당 500μL","detail":"결손 면적 비례 용량. 최대 3바이알 세트.","icon":"💉"}];
+const GENERATIONS = [{"g":"1세대","period":"~2009.9 가입","name":"구(舊)실손 · 표준화 이전","burden":"자기부담 거의 없음 (손보 0% · 생보 20%)","nonpay":"비급여 거의 100% 보장","renew":"3~5년 갱신 · 80/100세 보장","feat":"보험사별 보장이 제각각이던 시기. 보장 범위 가장 넓고 보험료 높음. 신규 가입 불가(유지만 가능).","cati":"비급여 보상 가능성 가장 높은 편 (약관·심사 전제)","color":"#1a6aa5"},{"g":"2세대","period":"2009.10~2017.3","name":"표준화 실손","burden":"자기부담 10~20%","nonpay":"비급여 약 80~90% (기본 포함)","renew":"15년 재가입(표준형)","feat":"급여/비급여 개념 도입·표준화. 비급여 3종(주사·도수/체외충격파/증식·MRI)이 기본 보장에 포함. 신규 가입 불가.","cati":"비급여 기본 보장 → 보상 가능성 높은 편","color":"#117a65"},{"g":"3세대","period":"2017.4~2021.6","name":"착한실손","burden":"급여 10~20% · 비급여 20%(+특약 자기부담)","nonpay":"비급여 약 80% · 비급여 3종 특약 분리","renew":"15년 재가입","feat":"비급여 3종(주사·도수등·MRI)이 특약으로 분리 → 특약 미가입 시 해당 비급여 보장 안 됨. 비급여 주사료 등 연 250만원 한도. 신규 가입 불가.","cati":"★250만원 주사료 한도 함정 주의 → 카티스템은 항암제 예외(복지부 439번)로 주계약 5,000만원 주장 가능","color":"#c87214"},{"g":"4세대","period":"2021.7~2026.5 (직전 판매 세대)","name":"4세대 실손","burden":"급여 20% · 비급여 30%","nonpay":"비급여 약 70% · 비급여 전부 특약","renew":"5년 재가입","feat":"급여·비급여 완전 분리(비급여 특약). 비급여 이용량에 따라 보험료 할인·할증(최대 +300%). 5세대 출시(2026.5) 직전까지의 판매 상품.","cati":"비급여 70% 보상 가능성 · 할증 구조 유의","color":"#6c3483"},{"g":"5세대","period":"2026.5.6~ 현재 판매 중","name":"5세대 실손 (중증 강화·비중증 축소)","burden":"급여 입원 20% 유지 · 급여 통원 건보 연동(상급종합 외래 최대 60%) · 비중증 비급여 50%","nonpay":"비급여를 중증/비중증 분리 · 비중증 비급여 한도 5,000만→1,000만원 축소 · 중증 비급여 자기부담 연 500만원 상한 신설","renew":"주기적 재가입 (약관 확인)","feat":"2026.5.6 출시. 중증 질환 보장 강화·보험료 인하. 비급여를 중증(특약1)/비중증(특약2)로 분리. 비중증 비급여(도수치료·체외충격파치료·비급여 주사제 등) 자기부담 50%·연 1,000만원 한도로 축소, 미등재 신의료기술·근골격계 주사제 일부 면책. 기존 1~4세대 강제전환은 불가.","cati":"카티스템은 식약처 허가 전문의약품(미등재 신의료기술 아님)이나, 비중증 비급여(주사제·근골격계)로 분류되면 자기부담 50%·연 1,000만원 한도 리스크. 중증/비중증 분류·보장은 약관·심사에 따라 다르므로 가입 보험사 확인 필수.","color":"#0e7490"}];
+const INS_TERMS = [{"t":"급여 / 비급여","d":"급여=건강보험이 일부 부담하는 항목. 비급여=건강보험 미적용으로 환자가 전액 부담(카티스템이 해당)."},{"t":"자기부담금","d":"보험금 청구 시 환자가 부담하는 비율. 세대가 올라갈수록 커지는 경향(1세대 0~20% → 4세대 급여 20%/비급여 30%)."},{"t":"비급여 특약","d":"주사·도수·MRI 등 비급여를 보장받기 위해 별도로 가입하는 특약(3세대부터 분리). 미가입 시 해당 비급여 보장 안 됨."},{"t":"재가입 주기","d":"정해진 기간마다 당시 판매 상품 기준으로 다시 가입하는 것(2~3세대 15년, 4세대 5년)."},{"t":"주계약 질병비급여","d":"비급여 의료비를 보상하는 주계약 항목(연 5,000만원 한도가 일반적). 입원 치료에 적용."}];
+
+function stripHTML(s){s=(s||'').split('</p>').join('\n').split('<br>').join('\n').split('<br/>').join('\n');return s.replace(/<[^>]+>/g,'').trim();}
+
+/* FAQ 카드 HTML */
+function faqHTML(f, openFirst){
+  var note = f.note ? '<div class="ptnote"><div class="nl">📌 상담원 참고(환자 공유 텍스트에는 미포함)</div><p>'+f.note+'</p></div>' : '';
+  var hot = f.hot ? '<span class="hot">🔥 현장 빈출</span> ' : '';
+  return '<article class="faq" data-cat="'+f.cat+'" data-k="'+(f.k||'')+'">'
+    +'<details'+(openFirst?' open':'')+'><summary>'
+    +'<div class="num">'+f.n+'</div>'
+    +'<div class="qt"><span class="ctag">'+(CATLABEL[f.cat]||'')+'</span> '+hot+'<div class="qx">'+f.q+'</div></div>'
+    +'<div class="ar">›</div></summary>'
+    +'<div class="ans">'+f.a+'</div>'+note
+    +'<div class="copyrow"><button class="copy" data-n="'+f.n+'">📋 환자에게 보낼 답변 복사</button></div>'
+    +'</details></article>';
+}
+
+/* ===== 상담원 패널 ===== */
+function buildStaff(){
+  var html='';
+  html += '<div class="stagebar st"><span class="sb-ic">🧭</span><span class="sb-t"><b>결심 전 · 일반 응대 단계</b> — 아직 고민 중인 환자의 문의(효과·적합성·비교 등)를 안전하게 응대하고, 개별 판단은 의료진에게 인계합니다.</span></div>';
+  html += '<p class="modehint">환자 응대 표준 가이드 — 섹션별 <b>핵심 지식·가드레일</b>과 질문별 <b>권장 스크립트·금지 표현·상위 인계 기준·심층 해설</b>을 제공합니다.</p>';
+  // 상담 3대 원칙
+  html += '<section class="golden"><h2>⚠️ 상담 3대 원칙 (필수 준수)</h2><p class="gsub">막히면 답하지 말고 인계한다. "느린 답"보다 "틀린 답"이 더 위험하다.</p><ol>'
+   +'<li><span class="num">1</span><span><b>효능을 단정하지 않는다.</b> <span class="x">"완치·100%·무조건"</span> → <span class="o">"임상에서 연골 재생이 확인되었으나 개인차가 있으며 의료진 상담이 필요합니다"</span></span></li>'
+   +'<li><span class="num">2</span><span><b>실손 보장을 약속하지 않는다.</b> <span class="x">"실손 다 돼요"</span> → <span class="o">"보험사·약관·가입시점에 따라 다르므로 가입 보험사 확인이 필요합니다"</span></span></li>'
+   +'<li><span class="num">3</span><span><b>의학적 판단·진단을 하지 않는다.</b> <span class="x">"받으시면 돼요"</span> → <span class="o">"적합 여부는 검사 후 의사 선생님이 판단하십니다"</span></span></li>'
+   +'</ol></section>';
+  // 섹터 칩 (환자 Q&A와 동일 분류)
+  html += '<div class="filters" data-scope="staff"><span class="chip a" data-f="all" data-active="true">전체</span>'
+    + SECTOR_ORDER.map(function(s){return '<span class="chip a" data-f="'+s+'">'+CATLABEL[s]+'</span>';}).join('')
+    + '<span class="chip emo" data-f="emo">💬 감정응대</span></div>';
+  // 섹터별: 헤더 + 상담원 필수지식 + 카드 (6슬롯 제외)
+  SECTOR_ORDER.forEach(function(s){
+    var items=DATA.filter(function(d){return SECTOR_OF[d.id]===s;});
+    if(!items.length) return;
+    html += '<div class="sec a" data-sec="'+s+'"><span class="bar"></span><h3>'+CATLABEL[s]+'</h3><span class="cnt">'+items.length+'</span></div>';
+    if(KNOW[s]) html += '<div class="know" data-sec="'+s+'"><div class="kh">🎓 핵심 지식 · 응대 가드레일</div><div class="kb">'+KNOW[s]+'</div></div>';
+    html += items.map(function(c){ return cardHTML(c).replace('<article class="card','<article data-sec="'+s+'" class="card'); }).join('');
+  });
+  // 감정 응대 (별도 섹션)
+  var emo=DATA.filter(function(d){return d.mod==='emo';});
+  if(emo.length){
+    html += '<div class="sec emo" data-sec="emo"><span class="bar"></span><h3>환자 감정 응대</h3><span class="cnt">'+emo.length+'</span></div>';
+    html += emo.map(function(c){ return cardHTML(c).replace('<article class="card','<article data-sec="emo" class="card'); }).join('');
+  }
+  // 부록
+  html += '<section class="appx"><h4>📍 에스컬레이션 라우팅표</h4><table class="rtable">'
+   +'<tr><th>질문 유형</th><th>1차 응대</th><th>넘기는 곳 ↗</th></tr>'
+   +'<tr><td>본인 적합·단계·나이 판정</td><td>진료 안내</td><td>의사 진료</td></tr>'
+   +'<tr><td>마취·합병증·부작용</td><td>일반 안내</td><td>간호사/의사</td></tr>'
+   +'<tr><td>재활·운동·생활수칙</td><td>단계 개요</td><td>물리치료실/의료진</td></tr>'
+   +'<tr><td>가격 협의·수납·환불</td><td>공시가 안내</td><td>원무/실장</td></tr>'
+   +'<tr><td>진단명·코드</td><td style="color:var(--no)">안내 불가</td><td>의사(개입 금지)</td></tr>'
+   +'<tr><td>실손 보장·금액</td><td>절차 안내</td><td>가입 보험사</td></tr>'
+   +'<tr><td>실손 거절 대응</td><td>사유 확인</td><td>실손 담당자(거절대응 탭)</td></tr>'
+   +'</table></section>';
+  html += '<section class="appx"><h4>📍 상황별 표준 응대 문장</h4><div class="magic">'
+   +'<div><span class="mk">의학</span> — "정확한 건 검사 후 담당 의사 선생님이 판단하셔야 해서, 진료 예약을 도와드릴게요."</div>'
+   +'<div><span class="mk">실손</span> — "보험은 가입 약관에 따라 달라서 단정해 드리면 부정확할 수 있어요. 가입 보험사 확인을 도와드리겠습니다."</div>'
+   +'<div><span class="mk">공통</span> — "이 부분은 정확히 확인해서 다시 안내드리겠습니다. 잠시만요."</div>'
+   +'</div></section>';
+  document.getElementById('panel-staff').innerHTML=html;
+}
+
+/* ===== 거절대응 패널 (12 CASES + 5 STEPS + 적응증) ===== */
+function caseHTML(c){
+  var sev='●●●○○○'.slice(3-c.severity,6-c.severity);
+  var cps=c.counterPoints.map(function(p){return '<div class="cp"><div class="cpp">✔ '+p.point+'</div><div class="cpd">'+p.detail+'</div></div>';}).join('');
+  var ev=c.evidence.map(function(e){return '<span class="chipx">'+e+'</span>';}).join('');
+  var laws=c.laws.map(function(l){return '<span class="chipx law">'+l+'</span>';}).join('');
+  var k=(c.tag+' '+c.title+' '+c.subtitle+' '+c.denialLogic+' '+c.laws.join(' ')+' 거절 지급거절 부지급 실손').split('"').join('');
+  return '<article class="case" data-k="'+k+'" style="--cc:'+c.color+'">'
+    +'<details><summary><div class="chead2"><div class="crow"><span class="ctag2">'+c.tag+'</span><span class="sev">'+sev+'</span></div>'
+    +'<div class="ctitle">'+c.title+'</div><div class="csub">'+c.subtitle+'</div></div><span class="car">›</span></summary>'
+    +'<div class="cbody2">'
+    +'<div class="deny"><span class="dl">🔴 보험사 거절 논리</span>'+c.denialLogic+'</div>'
+    +'<div class="cps"><span class="bl">✅ 반박 포인트</span>'+cps+'</div>'
+    +'<div class="kv"><span class="bl">📎 필요 증거</span><div class="chips">'+ev+'</div></div>'
+    +'<div class="kv"><span class="bl">⚖️ 법적 근거</span><div class="chips">'+laws+'</div></div>'
+    +'<div class="strat"><span class="bl">🎯 누적 대응 전략</span>'+c.cumulative+'</div>'
+    +'</div></details></article>';
+}
+function genHTML(x){return '<article class="genc" style="--cc:'+x.color+'">'
+    +'<div class="gh"><span class="gg" style="color:'+x.color+'">'+x.g+'</span><span class="gp">'+x.period+'</span></div>'
+    +'<div class="gn">'+x.name+'</div>'
+    +'<div class="grow"><span class="gl">자기부담</span><span class="gv">'+x.burden+'</span></div>'
+    +'<div class="grow"><span class="gl">비급여 보장</span><span class="gv">'+x.nonpay+'</span></div>'
+    +'<div class="grow"><span class="gl">재가입</span><span class="gv">'+x.renew+'</span></div>'
+    +'<div class="gfeat">'+x.feat+'</div>'
+    +'<div class="gcati">💊 카티스템 관점: '+x.cati+'</div>'
+    +'</article>';}
+function termHTML(t){return '<div class="term"><div class="tt">'+t.t+'</div><div class="td">'+t.d+'</div></div>';}
+function buildDenial(){
+  // 대시보드 타일
+  var html='<p class="modehint">실손보험 정보사항 — 두 가지 주제로 나뉩니다. 위 타일을 눌러 전환하세요.</p>';
+  html+='<div class="insdash">'
+    +'<button class="instile active" data-view="info"><span class="iti">📘</span><span class="itt">실손 정보 안내</span><span class="its">세대별 특징·보장 구조·적응증·용어</span></button>'
+    +'<button class="instile" data-view="claim"><span class="iti">🚨</span><span class="itt">지급거절·클레임</span><span class="its">거절 사유 12종·대응 5단계</span></button>'
+    +'</div>';
+
+  // ── 뷰 1: 실손 정보 안내 ──
+  var info='';
+  info+='<div class="sec b"><span class="bar"></span><h3>실손보험 세대별 특징</h3><span class="cnt">학습</span></div>';
+  info+='<p class="subnote">가입 시기에 따라 보장·자기부담이 다릅니다. 현재 1~5세대가 있으며, <b>2026.5.6부터 5세대가 출시·판매</b> 중입니다(신규 가입은 5세대). 1~4세대는 기존 가입자만 유지 가능하며 강제전환은 되지 않습니다. 환자에게는 “가입 보험사·약관 확인”이 원칙입니다.</p>';
+  info+=GENERATIONS.map(genHTML).join('');
+  info+='<div class="sec b"><span class="bar"></span><h3>카티스템 비급여 보장 핵심</h3></div>';
+  info+='<div class="know" style="border-left-color:var(--b-bar)"><div class="kh" style="color:var(--b)">🎯 보장 구조 포인트</div><div class="kb">'
+    +'<b>전문의약품 카티스템 ≠ 신의료기술 BMAC·SVF 주사</b> — 분류 자체가 다릅니다(2012년 식약처 허가, 품목기준코드 201200401).<br>'
+    +'<b>250만원 한도 함정</b>: 3세대에서 일반 비급여 주사료(연 250만원)로 삭감 시 → 복지부 분류 <b>439번(조직세포성장인자)</b> → 약관 “항암제 등” 예외로 <b>주계약 질병비급여(연 5,000만원·3~4세대 70%)</b> 보상 주장 가능.<br>'
+    +'★ 반드시 <b>입원 치료</b>로 진행·기록(통원 시 보상 거의 불가).<br>'
+    +'<b>손해사정사 선임권</b>: 보험사 지정 업체 통보 시 환자가 직접 선임 가능(무료·통보일로부터 3영업일 내).'
+    +'</div></div>';
+  info+='<div class="sec b"><span class="bar"></span><h3>카티스템 적응증 6요소 — 보장 방어 기준선</h3></div>';
+  info+='<div class="indik">'+INDICATIONS.map(function(x){return '<div class="ind"><div class="ii">'+x.icon+'</div><div class="il">'+x.label+'</div><div class="iv">'+x.value+'</div><div class="idt">'+x.detail+'</div></div>';}).join('')+'</div>';
+  info+='<div class="sec b"><span class="bar"></span><h3>용어 미니사전</h3></div>';
+  info+='<div class="terms">'+INS_TERMS.map(termHTML).join('')+'</div>';
+  info+='<div class="subnote" style="margin-top:14px">ℹ️ <b>정보 기준일: 2026.6</b> · 출처: 식약처(nedrug.mfds.go.kr)·금융위원회·금융감독원. 실손 제도·약관·판례는 변동될 수 있으므로, 실제 안내 전 최신 내용과 본원 판매 약관을 확인하세요.</div>';
+
+  // ── 뷰 2: 지급거절·클레임 ──
+  var claim='';
+  claim+='<p class="subnote">실손 지급거절 시 <b>사유별 반박 논리·증거·법적 근거</b>. 거절 안내문의 사유를 아래에서 찾아 대응하세요. 보장·결과는 약속하지 않되, 사유에 맞는 보완 경로를 안내합니다.</p>';
+  claim+='<div class="sec b"><span class="bar"></span><h3>대응 5단계 절차</h3></div>';
+  claim+='<div class="steps">'+STEPS.map(function(s){return '<div class="stp"><div class="stn">'+s.step+'</div><div class="stc"><div class="stt">'+s.title+'</div><div class="std">'+s.desc+'</div><div class="stday">⏱ '+s.days+'</div></div></div>';}).join('')+'</div>';
+  claim+='<div class="sec b"><span class="bar"></span><h3>거절 사유별 대응</h3><span class="cnt">'+CASES.length+'</span></div>';
+  claim+=CASES.map(caseHTML).join('');
+
+  html+='<div class="insview active" id="ins-info">'+info+'</div>';
+  html+='<div class="insview" id="ins-claim">'+claim+'</div>';
+  document.getElementById('panel-denial').innerHTML=html;
+}
+
+/* ===== 환자 FAQ 패널 ===== */
+function buildFAQ(){
+  var cats=['all'].concat(Object.keys(CATLABEL));
+  var faqCats=Object.keys(CATLABEL).filter(function(c){return FAQ.some(function(f){return f.cat===c;});});
+  var chips='<div class="filters" data-scope="faq"><span class="chip b" data-f="all" data-active="true">전체</span>'
+    + faqCats.map(function(c){return '<span class="chip b" data-f="'+c+'">'+CATLABEL[c]+'</span>';}).join('') + '</div>';
+  var cards=FAQ.map(function(f,i){return faqHTML(f,false);}).join('');
+  document.getElementById('panel-faq').innerHTML='<div class="stagebar pt"><span class="sb-ic">🧭</span><span class="sb-t"><b>결심 후 · 실무 안내 단계</b> — 치료를 결정한 환자에게 전달하는 실무 답변입니다(절차·일정·청구 등). 효능 단정 등 광고 규제 기준은 단계와 무관하게 동일하게 적용됩니다.</span></div><p class="modehint">환자에게 보여주거나 카톡으로 보낼 수 있는 답변입니다. 보수 정리(의료광고법) 버전 · 📋 복사 가능.</p>'+chips+cards+'<div class="empty" id="faqEmpty">검색 결과가 없습니다.</div>';
+}
+
+/* ===== 통합검색 패널 ===== */
+function staffHay(c){return [c.id,c.k,c.q,c.script,(c.follow||[]).map(function(f){return f.join(' ');}).join(' '),c.no,c.esc,c.deep,c.reason].join(' ').toLowerCase();}
+function nfc(s){try{return (s||'').normalize('NFC');}catch(e){return s||'';}}
+function augment(hay){
+  SYN.forEach(function(g){ if(g.some(function(w){return hay.indexOf(w)>-1;})){ g.forEach(function(w){ if(hay.indexOf(w)<0) hay+=' '+w; }); } });
+  return hay;
+}
+var STAFF_HAY=DATA.map(function(c){return nfc(augment(staffHay(c)));});
+var FAQ_HAY=FAQ.map(function(f){return nfc(augment((f.q+' '+(f.k||'')+' '+stripHTML(f.a)+' '+(f.note||'')).toLowerCase()));});
+var CASE_HAY=CASES.map(function(c){var h=nfc(augment((c.tag+' '+c.title+' '+c.subtitle+' '+c.denialLogic+' '+c.counterPoints.map(function(p){return p.point+' '+p.detail;}).join(' ')+' '+c.evidence.join(' ')+' '+c.laws.join(' ')+' '+c.cumulative+' 거절 지급거절 부지급 삭감 실손').toLowerCase()));return h+' '+h.split(' ').join('');});
+var GEN_HAY=GENERATIONS.map(function(g){return nfc(augment((g.g+' '+g.name+' '+g.period+' '+g.burden+' '+g.nonpay+' '+g.renew+' '+g.feat+' '+g.cati+' 실손 세대 보장 자기부담').toLowerCase()));});
+var TERM_HAY=INS_TERMS.map(function(t){return nfc(augment((t.t+' '+t.d+' 실손 용어').toLowerCase()));});
+
+/* 문장형/키워드 토크나이저 (조사·물음표·불용어 처리) */
+function depunct(s){var p='?!.,~·…()[]{}:;/「」『』“”‘’、。，？！＂｜=+*&^%$#@<>';for(var i=0;i<p.length;i++){s=s.split(p[i]).join(' ');}return s;}
+var STOP={'그':1,'저':1,'이':1,'것':1,'수':1,'좀':1,'제':1,'저희':1,'우리':1,'및':1,'등':1,'또':1,'또는':1,'그리고':1,'무엇':1,'뭐':1,'뭔':1,'왜':1,'언제':1,'어디':1,'얼마':1,'어떻게':1,'어떤':1,'어떠':1,'무슨':1,'관해':1,'대해':1,'관련':1,'대한':1,'경우':1,'때':1,'중':1,'시':1,'거':1,'게':1,'건':1,'데':1,'요':1,'은':1,'는':1,'가':1,'을':1,'를':1,'에':1,'의':1,'도':1,'만':1,'로':1,'고':1,'면':1,'나요':1,'인가요':1,'되나요':1,'될까요':1,'있나요':1,'없나요':1,'하나요':1,'할까요':1,'가능':1,'궁금':1,'알려줘':1,'알려':1,'주세요':1,'해줘':1,'되는':1,'하는':1,'인지':1,'있어':1,'있을':1,'받을':1,'받나':1,'하면':1};
+var END2=['으로','에서','에게','한테','까지','부터','이나','라도','이라','이는','에는','보다','처럼','만큼','이고','하고','라면','나요','까요','가요','은데','는데','인지','인가','어요','아요','해요','돼요','될까','되나','이야','예요','이에','부턴'];
+var END1=['은','는','이','가','을','를','에','의','도','만','로','와','과','나','면','요','고','임','함','서','랑'];
+function stemQ(t){var i,j;for(i=0;i<END2.length;i++){if(t.length>=4&&t.slice(-2)===END2[i])return t.slice(0,-2);}for(j=0;j<END1.length;j++){if(t.length>=3&&t.slice(-1)===END1[j])return t.slice(0,-1);}return t;}
+function tokenizeQ(raw){var parts=depunct(raw).split(' ').filter(Boolean),out=[];parts.forEach(function(p){if(STOP[p])return;var st=stemQ(p);if(STOP[st]||st.length<2)return;if(out.indexOf(st)<0)out.push(st);});return out;}
+
+function renderSearch(term){
+  var raw=nfc((term||'')).toLowerCase().trim();
+  var box=document.getElementById('panel-search');
+  if(!raw){ box.innerHTML='<p class="modehint">한 번에 검색 — <b>키워드</b>(예: 실비)도, <b>문장</b>(예: 실비 보험 받을 수 있나요?)도 검색됩니다. 같은 주제에 대해 <b>상담원 응대</b>·<b>환자 FAQ</b>·<b>실손 정보</b>·<b>거절 대응</b>을 함께 보여줍니다.</p><div class="searchhint">검색창에 환자 질문이나 키워드를 입력하세요.<br>예: 실비 · 성공률 · 인공관절 · 부작용 · 거절 · 5세대 · 도수치료<br><span style="font-size:12px">문장으로 물어도 됩니다 — 조사·물음표는 자동 처리됩니다.</span></div>'; return; }
+  var toks=tokenizeQ(raw);
+  if(!toks.length){ toks=raw.split(' ').filter(Boolean); }
+  var need=toks.length;
+  function sc(hay){var n=0;for(var i=0;i<toks.length;i++){if(hay.indexOf(toks[i])>-1)n++;}return n;}
+  function rank(arr,hays,skip){var out=[],i;for(i=0;i<arr.length;i++){if(skip&&skip(arr[i]))continue;var s=sc(hays[i]);if(s>0)out.push({it:arr[i],s:s});}out.sort(function(a,b){return b.s-a.s;});return out;}
+  var staffR=rank(DATA,STAFF_HAY,function(c){return c.topic==='실손 거절 대응 · 6슬롯';});
+  var faqR=rank(FAQ,FAQ_HAY,null);
+  var genR=rank(GENERATIONS,GEN_HAY,null);
+  var termR=rank(INS_TERMS,TERM_HAY,null);
+  var denR=rank(CASES,CASE_HAY,null);
+  var anyFull=[staffR,faqR,genR,termR,denR].some(function(R){return R.some(function(o){return o.s>=need;});});
+  function pick(R){if(!R.length)return [];var full=R.filter(function(o){return o.s>=need;});var base=full.length?full:R;return base.slice(0,12).map(function(o){return o.it;});}
+  var staffM=pick(staffR), faqM=pick(faqR), genM=pick(genR), termM=pick(termR), denialM=pick(denR);
+  var partial=(need>1)&&!anyFull;
+  var html='';
+  if(!staffM.length && !faqM.length && !genM.length && !termM.length && !denialM.length){ box.innerHTML='<div class="empty" style="display:block">"'+term+'" 검색 결과가 없습니다.<br><span style="font-size:12px;color:var(--faint)">다른 단어로 시도해 보세요(동의어·구어체도 일부 지원).</span></div>'; return; }
+  if(partial){ html+='<p class="modehint">입력하신 단어를 모두 포함한 결과가 없어, <b>관련도가 높은 순</b>으로 보여드립니다.</p>'; }
+  if(staffM.length){
+    html+='<div class="reslabel"><span class="badge staff">🩺 상담원 응대</span><span>'+staffM.length+'건 — 어떻게 답하고 무엇을 피할지</span><span class="ln"></span></div>';
+    html+=staffM.map(function(c){return cardHTML(c,true);}).join('');
+  }
+  if(faqM.length){
+    html+='<div class="reslabel"><span class="badge pt">💬 환자 안내·공유</span><span>'+faqM.length+'건 — 환자에게 보낼 답변</span><span class="ln"></span></div>';
+    html+=faqM.map(function(f){return faqHTML(f,false);}).join('');
+  }
+  if(genM.length||termM.length){
+    html+='<div class="reslabel"><span class="badge info">📘 실손 정보</span><span>'+(genM.length+termM.length)+'건 — 세대별 특징·용어 (실손정보 탭)</span><span class="ln"></span></div>';
+    html+=genM.map(genHTML).join('');
+    if(termM.length) html+='<div class="terms">'+termM.map(termHTML).join('')+'</div>';
+  }
+  if(denialM.length){
+    html+='<div class="reslabel"><span class="badge dn">🚨 실손 거절 대응</span><span>'+denialM.length+'건 — 거절 사유별 반박·증거·법적 근거</span><span class="ln"></span></div>';
+    html+=denialM.map(caseHTML).join('');
+  }
+  box.innerHTML=html;
+}
+
+/* ===== 탭 전환 ===== */
+var TAGS={staff:'상담원 · 수술 전 일반 상담',faq:'상담실 FAQ',ptmat:'환자 상담 시각자료 · 의료진용',search:'통합검색',denial:'실손보험 정보사항'};
+function showTab(name){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name);});
+  document.querySelectorAll('.tabbar button').forEach(function(b){b.dataset.active=(b.dataset.tab===name)?'true':'false';});
+  document.getElementById('tagLabel').textContent=TAGS[name]||'';
+  window.scrollTo({top:0,behavior:'instant'});
+}
+document.querySelectorAll('.tabbar button').forEach(function(b){b.addEventListener('click',function(){showTab(this.dataset.tab);});});
+
+/* ===== 패널 내 카테고리 필터 ===== */
+document.addEventListener('click',function(e){
+  var chip=e.target.closest('.chip'); if(!chip) return;
+  var scope=chip.parentElement.getAttribute('data-scope');
+  Array.prototype.forEach.call(chip.parentElement.children,function(c){c.dataset.active='false';});
+  chip.dataset.active='true';
+  var f=chip.getAttribute('data-f');
+  if(scope==='staff'){
+    document.querySelectorAll('#panel-staff .card').forEach(function(c){c.classList.toggle('hide', !(f==='all'||c.getAttribute('data-sec')===f));});
+    document.querySelectorAll('#panel-staff .know').forEach(function(k){k.classList.toggle('hide', !(f==='all'||k.getAttribute('data-sec')===f));});
+    document.querySelectorAll('#panel-staff .sec').forEach(function(s){s.classList.toggle('hide', !(f==='all'||s.getAttribute('data-sec')===f));});
+    document.querySelectorAll('#panel-staff .appx').forEach(function(a){a.classList.toggle('hide', f!=='all');});
+  } else if(scope==='faq'){
+    document.querySelectorAll('#panel-faq .faq').forEach(function(c){c.style.display=(f==='all'||c.getAttribute('data-cat')===f)?'':'none';});
+  }
+});
+
+/* ===== 실손 정보 대시보드 타일 토글 ===== */
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.instile'); if(!b) return;
+  var v=b.getAttribute('data-view');
+  document.querySelectorAll('#panel-denial .instile').forEach(function(t){t.classList.toggle('active', t===b);});
+  document.querySelectorAll('#panel-denial .insview').forEach(function(p){p.classList.toggle('active', p.id===('ins-'+v));});
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* ===== 복사(환자 FAQ 공유) ===== */
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},1800);}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.copy'); if(!b) return;
+  e.preventDefault(); e.stopPropagation();
+  var f=FAQ.filter(function(x){return String(x.n)===b.getAttribute('data-n');})[0]; if(!f) return;
+  var text=f.q+'\n\n'+stripHTML(f.a);
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){toast('환자 안내 답변이 복사되었습니다.');},function(){fb(text);});}else{fb(text);}
+});
+function fb(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('복사되었습니다.');}catch(e){toast('길게 눌러 복사하세요.');}document.body.removeChild(ta);}
+
+/* ===== 글로벌 검색 (IME 조합·정규화 대응) ===== */
+var gs=document.getElementById('gsearch'), gclr=document.getElementById('gclr');
+function runSearch(){
+  gclr.style.display=gs.value?'block':'none';
+  showTab('search'); renderSearch(gs.value);
+}
+['input','compositionend','keyup','change'].forEach(function(ev){ gs.addEventListener(ev, runSearch); });
+gclr.addEventListener('click',function(){gs.value='';gclr.style.display='none';renderSearch('');gs.focus();});
+
+/* ===== 글자 크기 · 인쇄 ===== */
+var ZL=[1,1.15,1.3], ZLABEL=['가','가＋','가＋＋'], zi=0;
+try{var zsv=localStorage.getItem('catiZoom'); if(zsv!==null){var k=ZL.indexOf(parseFloat(zsv)); if(k>=0)zi=k;}}catch(e){}
+function applyZoom(){var v=document.getElementById('view'); if(v)v.style.zoom=ZL[zi]; var b=document.getElementById('fontBtn'); if(b)b.textContent=ZLABEL[zi]; try{localStorage.setItem('catiZoom',ZL[zi]);}catch(e){}}
+var fb=document.getElementById('fontBtn'); if(fb)fb.addEventListener('click',function(){zi=(zi+1)%ZL.length; applyZoom();});
+var pb=document.getElementById('printBtn'); if(pb)pb.addEventListener('click',function(){window.print();});
+applyZoom();
+
+/* ===== 환자 상담 시각자료 (의료진용) ===== */
+var PTMAT=[
+  {num:'01', file:'material-mechanism.html', thumb:'img/mechanism.png', tag:'작용 기전',
+   title:'카티스템® 작용 기전',
+   desc:'골관절염으로 손상된 연골에 제대혈 줄기세포가 어떻게 작용하는지 — 연골 재생 촉진·분해 억제·항염증을 그림으로 설명합니다.',
+   meta:['골관절염 vs 치료 효능','중간엽줄기세포','3분 설명']},
+  {num:'02', file:'material-production.html', thumb:'img/production.png', tag:'생산 과정',
+   title:'GMP 생산 과정 & 일정',
+   desc:'제대혈 채취부터 완제품까지 GMP 생산 단계와, 발주~수술 일정(8일·화/목)·유효기간을 한눈에 보여줍니다.',
+   meta:['7단계 공정','발주·수술 일정','주성분/첨부물']},
+  {num:'03', file:'material-cases.html', thumb:'img/case_1.jpg', tag:'임상 사례',
+   title:'임상 사례 & 5년 결과',
+   desc:'시술 전·후 관절경/MRI/조직검사 비교 사례와 임상 3상 5년 추적 결과를 정리한 의료진 설명용 자료입니다.',
+   meta:['Pre/Post 비교','조직학적 재생','5년 추적']}
+];
+function buildPtMat(){
+  var html='<div class="stagebar st"><span class="sb-ic">🖼️</span><span class="sb-t"><b>의료진 주도 설명용 자료</b> — 상담 중 환자에게 보여주며 설명하는 시각자료입니다. 각 자료에는 환자용 그림과 함께 <b>의료진용 설명 포인트·주의(접기)</b>가 들어 있습니다.</span></div>';
+  html+='<div class="pmintro"><div class="pmh">📌 사용 안내</div><div class="pmb">카드를 누르면 전체화면 설명자료가 열립니다. <b>효과·완치를 단정하지 않고</b>, 개인차가 있음을 함께 안내하세요. 적응증·시술 적합성·예후 판단은 <b>담당 의사</b>의 몫입니다.</div></div>';
+  html+='<div class="pmgrid">'+PTMAT.map(function(m){
+    return '<a class="pmcard" href="'+m.file+'">'+
+      '<div class="pmthumb" style="background-image:url('+m.thumb+')"><span class="pmnum">'+m.num+'</span><span class="pmtag">'+m.tag+'</span></div>'+
+      '<div class="pmbody"><div class="pmtitle">'+m.title+'<span class="arr">→</span></div>'+
+      '<div class="pmdesc">'+m.desc+'</div>'+
+      '<div class="pmmeta">'+m.meta.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div></div></a>';
+  }).join('')+'</div>';
+  document.getElementById('panel-ptmat').innerHTML=html;
+}
+
+/* ===== 초기 ===== */
+buildStaff(); buildFAQ(); buildPtMat(); buildDenial(); renderSearch('');
+if(/^#(staff|faq|ptmat|search|denial)$/.test(location.hash)){showTab(location.hash.slice(1));}
+</script>
+</body>
+</html>
