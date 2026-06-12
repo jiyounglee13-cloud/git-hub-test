@@ -1,7 +1,10 @@
 # 카티스템 상담 올인원 (standalone)
 
 상담 현장에서 쓰는 단일 파일 HTML 앱과, 환자 상담용 시각자료 모음입니다.
-Next.js `public/` 아래에 있으므로 앱 구동 시 `/cartistem/consult.html` 로 바로 열립니다.
+Next.js `public/` 아래에 있으므로 배포 시 아래 주소로 열립니다.
+
+- **포털(랜딩):** `/cartistem/` → `index.html` (공식 첫 화면 · 바로가기 모음)
+- **상담앱:** `/cartistem/consult.html` (6탭 올인원)
 
 ## 앱 구분 (탭) — 6개
 
