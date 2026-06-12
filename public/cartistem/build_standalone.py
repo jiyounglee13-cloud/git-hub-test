@@ -37,8 +37,13 @@ def prep_deck(name: str) -> str:
     html = html.replace("src=\"img/deck_'+pad(p)+'.jpg\"",
                         "src=\"'+IMG['img/deck_'+pad(p)+'.jpg']+'\"")
     html = BACKLINK.sub(BACK_REPL, html)
-    html = inline_static(html)
+    # NOTE: deck images are looked up via the IMG map at runtime; do NOT run
+    # inline_static here or it would replace the IMG map KEYS (img/deck_XX.jpg)
+    # with data URIs and break the lookup. The deck has no static img refs.
     return html
+
+# '공식 제품 설명자료 전체보기' 버튼(제품정보 탭) 제거용
+PDECKBTN = re.compile(r"\s*h\+='<a class=\"pdeckbtn\".*?</a>';")
 
 def js_string(s: str) -> str:
     return json.dumps(s, ensure_ascii=False).replace('</', '<\\/')
@@ -72,6 +77,9 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 
     shell = (BASE / 'consult.html').read_text(encoding='utf-8')
     shell = inline_static(shell)
+    if not include_deck:
+        # 라이트: 제품정보 탭의 '공식 제품 설명자료 전체보기' 칸 제거(용량↓)
+        shell = PDECKBTN.sub('', shell)
     shell = shell.replace('</body>', overlay + '\n</body>')
 
     out = BASE / outname
