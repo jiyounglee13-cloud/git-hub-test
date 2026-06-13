@@ -79,6 +79,7 @@ export default function KneeTool() {
 
   const [laterality, setLaterality] = useState<Laterality>("unknown");
   const [viewType, setViewType] = useState<ViewType>("ap_weightbearing");
+  const [tibialSlopeDeg, setTibialSlopeDeg] = useState("");
 
   // ---------- 이미지 업로드 ----------
   const handleFile = useCallback((file: File) => {
@@ -191,11 +192,16 @@ export default function KneeTool() {
     }
 
     // ----- 오버레이 -----
-    const { hip, ankle, medial, lateral, hinge } = landmarks;
+    const { hip, ankle, medial, lateral, hinge, femMedial, femLateral } =
+      landmarks;
 
-    // 평탄부 선
+    // 경골 평탄부 선
     if (medial && lateral) {
       strokeLine(ctx, medial, lateral, "#f59e0b", 2);
+    }
+    // 대퇴 관절선 (JLCA/mLDFA)
+    if (femMedial && femLateral) {
+      strokeLine(ctx, femMedial, femLateral, "#ec4899", 2);
     }
 
     // 역학축 (before: 현재, after: 교정)
@@ -314,7 +320,8 @@ export default function KneeTool() {
             {/* 랜드마크 컨트롤 */}
             <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-800 dark:bg-gray-900/50">
               <p className="mb-2 text-xs font-semibold text-gray-600 dark:text-gray-400">
-                ② 랜드마크 보정 (버튼 클릭 후 영상 위를 클릭)
+                ② 랜드마크 보정 (버튼 클릭 후 영상 위를 클릭) · 대퇴 과 2점은
+                JLCA·mLDFA 산출용 <b>선택</b>
               </p>
               <div className="flex flex-wrap gap-2">
                 {LANDMARK_DEFS.map((d) => (
@@ -337,6 +344,7 @@ export default function KneeTool() {
                   >
                     {landmarks[d.key] ? "✓ " : "○ "}
                     {d.label}
+                    {d.optional ? " (선택)" : ""}
                   </button>
                 ))}
                 <button
@@ -364,7 +372,8 @@ export default function KneeTool() {
               </h3>
               {!correction ? (
                 <p className="text-sm text-gray-500">
-                  5개 랜드마크를 모두 찍으면 교정각이 계산됩니다.
+                  필수 5개 랜드마크(대퇴 과 2점 제외)를 모두 찍으면 교정각이
+                  계산됩니다.
                   {curPct !== null && (
                     <>
                       {" "}
@@ -431,6 +440,30 @@ export default function KneeTool() {
                           : "—"
                       }
                     />
+                    <Stat
+                      label="JLCA"
+                      value={
+                        alignment?.jlca != null
+                          ? `${alignment.jlca.toFixed(1)}°`
+                          : "대퇴 과 필요"
+                      }
+                    />
+                    <Stat
+                      label="mLDFA"
+                      value={
+                        alignment?.mldfa != null
+                          ? `${alignment.mldfa.toFixed(1)}°`
+                          : "대퇴 과 필요"
+                      }
+                    />
+                    <Stat
+                      label="후방 경골 경사"
+                      value={
+                        tibialSlopeDeg.trim() !== ""
+                          ? `${tibialSlopeDeg}° (측면상)`
+                          : "측면상 필요"
+                      }
+                    />
                   </div>
 
                   {/* 안전·금기 경고 */}
@@ -462,19 +495,41 @@ export default function KneeTool() {
                       onChange={(e) => setTargetPct(Number(e.target.value))}
                       className="w-full accent-[var(--primary)]"
                     />
-                    <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                      경골 평탄부 폭(캘리브레이션):
-                      <input
-                        type="number"
-                        value={tibiaWidthMm}
-                        onChange={(e) =>
-                          setTibiaWidthMm(Number(e.target.value))
-                        }
-                        className="w-16 rounded border border-gray-300 px-1.5 py-0.5 dark:border-gray-700 dark:bg-gray-800"
-                      />
-                      mm
-                    </label>
+                    <div className="flex flex-wrap gap-4">
+                      <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        경골 평탄부 폭(캘리브레이션):
+                        <input
+                          type="number"
+                          value={tibiaWidthMm}
+                          onChange={(e) =>
+                            setTibiaWidthMm(Number(e.target.value))
+                          }
+                          className="w-16 rounded border border-gray-300 px-1.5 py-0.5 dark:border-gray-700 dark:bg-gray-800"
+                        />
+                        mm
+                      </label>
+                      <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        후방 경골 경사(측면상에서 측정):
+                        <input
+                          type="number"
+                          value={tibialSlopeDeg}
+                          placeholder="예: 8"
+                          onChange={(e) => setTibialSlopeDeg(e.target.value)}
+                          className="w-16 rounded border border-gray-300 px-1.5 py-0.5 dark:border-gray-700 dark:bg-gray-800"
+                        />
+                        °
+                      </label>
+                    </div>
                   </div>
+                  <p className="rounded-lg bg-violet-50 p-2 text-[11px] text-violet-700 dark:bg-violet-950/40 dark:text-violet-300">
+                    후방 경골 경사는 <b>측면(lateral) 영상</b>에서만 측정됩니다(정면상
+                    불가). 내측 개방 HTO는 경사를 <b>증가</b>시키는 경향이 있어
+                    ACL 부족 슬관절에서 주의가 필요합니다
+                    {tibialSlopeDeg.trim() !== "" &&
+                      Number(tibialSlopeDeg) >= 12 &&
+                      " — 입력값이 이미 높아 추가 증가에 유의."}
+                    .
+                  </p>
 
                   {/* Before / After 토글 */}
                   <div className="flex gap-2">

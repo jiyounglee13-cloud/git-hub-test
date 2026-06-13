@@ -15,11 +15,38 @@ export interface Point {
 export const FUJISAWA_TARGET_PCT = 62;
 
 export const LANDMARK_DEFS = [
-  { key: "hip", label: "대퇴골두 중심 (Hip)", color: "#0ea5e9" },
-  { key: "medial", label: "경골 내측 가장자리 (Medial plateau)", color: "#f59e0b" },
-  { key: "lateral", label: "경골 외측 가장자리 (Lateral plateau)", color: "#f59e0b" },
-  { key: "ankle", label: "족관절 중심 (Ankle)", color: "#0ea5e9" },
-  { key: "hinge", label: "절골 회전축 / 외측 경첩 (Hinge)", color: "#a855f7" },
+  { key: "hip", label: "대퇴골두 중심 (Hip)", color: "#0ea5e9", optional: false },
+  {
+    key: "femMedial",
+    label: "대퇴 내측 과 (Femoral medial condyle)",
+    color: "#ec4899",
+    optional: true,
+  },
+  {
+    key: "femLateral",
+    label: "대퇴 외측 과 (Femoral lateral condyle)",
+    color: "#ec4899",
+    optional: true,
+  },
+  {
+    key: "medial",
+    label: "경골 내측 가장자리 (Medial plateau)",
+    color: "#f59e0b",
+    optional: false,
+  },
+  {
+    key: "lateral",
+    label: "경골 외측 가장자리 (Lateral plateau)",
+    color: "#f59e0b",
+    optional: false,
+  },
+  { key: "ankle", label: "족관절 중심 (Ankle)", color: "#0ea5e9", optional: false },
+  {
+    key: "hinge",
+    label: "절골 회전축 / 외측 경첩 (Hinge)",
+    color: "#a855f7",
+    optional: false,
+  },
 ] as const;
 
 export type LandmarkKey = (typeof LANDMARK_DEFS)[number]["key"];
@@ -110,11 +137,15 @@ export interface Alignment {
   side: "varus" | "valgus" | "neutral";
   /** 내측 근위 경골각 MPTA (도) — 정상 약 85~90° */
   mpta: number;
+  /** 관절선 수렴각 JLCA (도) — 정상 약 0~2°. 대퇴 과 랜드마크 필요 */
+  jlca: number | null;
+  /** 역학적 외측 원위 대퇴각 mLDFA (도) — 정상 약 85~90°. 대퇴 과 랜드마크 필요 */
+  mldfa: number | null;
 }
 
-/** HKA(역학적 대퇴경골각 편위) 및 MPTA 계산 */
+/** HKA·MPTA(필수) + JLCA·mLDFA(대퇴 과 입력 시) 계산 */
 export function computeAlignment(lm: Landmarks): Alignment | null {
-  const { hip, ankle } = lm;
+  const { hip, ankle, femMedial, femLateral } = lm;
   const knee = kneeCenter(lm);
   const pct = currentWblPercent(lm);
   if (!hip || !ankle || !knee || !lm.medial || !lm.lateral || pct === null)
@@ -131,7 +162,21 @@ export function computeAlignment(lm: Landmarks): Alignment | null {
   // MPTA = 경골 역학축(knee→ankle)과 관절선(lateral→medial) 사이 내측각
   const mpta = angleBetween(sub(ankle, knee), sub(lm.medial, lm.lateral));
 
-  return { hkaDeviation: signed, side, mpta };
+  // JLCA / mLDFA : 대퇴 관절선(femMedial-femLateral)이 있어야 산출
+  let jlca: number | null = null;
+  let mldfa: number | null = null;
+  if (femMedial && femLateral) {
+    // JLCA = 대퇴 관절선과 경골 관절선 사이 각 (수렴각)
+    jlca = angleBetween(
+      sub(femLateral, femMedial),
+      sub(lm.lateral, lm.medial)
+    );
+    // mLDFA = 대퇴 역학축(femKnee→hip)과 대퇴 관절선(femMedial→femLateral) 외측각
+    const femKnee = { x: (femMedial.x + femLateral.x) / 2, y: (femMedial.y + femLateral.y) / 2 };
+    mldfa = angleBetween(sub(hip, femKnee), sub(femLateral, femMedial));
+  }
+
+  return { hkaDeviation: signed, side, mpta, jlca, mldfa };
 }
 
 export interface CorrectionResult {
@@ -227,6 +272,16 @@ export function computeCorrection(
   if (targetPct > 50 && currentPct >= 50) {
     warnings.push(
       "현재 정렬이 이미 중립~외반입니다. 내측 개방 HTO 적응증을 재확인하세요."
+    );
+  }
+  if (align?.jlca != null && align.jlca > 4) {
+    warnings.push(
+      `JLCA ${round(align.jlca, 0.5)}° (>4°): 관절내 변형/인대 이완 가능 — 내반의 상당분이 관절내 기원일 수 있어 관절외 과교정에 주의.`
+    );
+  }
+  if (align?.mldfa != null && (align.mldfa > 90 || align.mldfa < 85)) {
+    warnings.push(
+      `mLDFA ${round(align.mldfa, 0.5)}° (정상 85~90°): 대퇴측 변형 가능 — 변형 기원 부위(원위 대퇴 절골술 등) 교정을 고려.`
     );
   }
 
