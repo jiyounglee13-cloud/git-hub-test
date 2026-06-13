@@ -12,8 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // 독립 앱은 자체 빌드/린트를 가짐
-    "knee-hto-app/**",
   ]),
 ]);
 

@@ -25,7 +25,6 @@ const navLinks = [
   { href: "/consult", label: "상담 가이드" },
   { href: "/insurance", label: "실손보험" },
   { href: "/billing", label: "급여 청구" },
-  { href: "/xray", label: "무릎 X-ray (데모)" },
   { href: "/faq", label: "FAQ" },
 ];
 
