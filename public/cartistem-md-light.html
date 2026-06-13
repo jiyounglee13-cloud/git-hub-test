@@ -530,10 +530,6 @@ function rehabPF(){
   h+=callout('info','🔑 PF 재활의 생체역학적 핵심',
     '<b>무릎 신전(0°)</b>에서는 슬개골이 활차(trochlea)와 거의 접촉하지 않아 <b>체중을 실어도 안전</b>. 반면 <b>굴곡 >45°</b>에서는 슬개대퇴 관절(PFJ) 접촉 스트레스가 급증 → 초기 가동범위·개방형 운동(OKC) 제한이 필수.');
 
-  // 시각 PDF (원본 제공 자료)
-  h+=secHead('','📖 슬개대퇴 재활 마스터플랜 — 시각 자료 (원본 PDF)');
-  h+=rehabGallery();
-
   h+=secHead('','슬개대퇴(PF) 재활의 5가지 절대 원칙');
   h+='<div class="principles">'+
     pr('','원칙 1','신전 시 체중부하 (즉시)','무릎을 완전히 편 상태에서는 100% 체중부하 허용',false)+
@@ -954,11 +950,9 @@ function paperHTML(p){
   if(p.pmid)meta.push('PMID '+p.pmid);
   var links='';
   if(p.pmid)links+='<a class="plink" href="https://pubmed.ncbi.nlm.nih.gov/'+p.pmid+'/" target="_blank" rel="noopener">🔗 PubMed (PMID '+p.pmid+')</a>';
-  var embed='';
   if(p.pdf){
     if(MODE==='full'&&PAPER_PDF[p.pdf]){
       links+='<a class="plink pdf" href="'+PAPER_PDF[p.pdf]+'" download="'+p.pdf+'.pdf">⬇ PDF 다운로드</a>';
-      embed='<div class="pdfembed"><iframe loading="lazy" src="'+PAPER_PDF[p.pdf]+'#view=FitH" title="'+p.pdf+'"></iframe></div>';
     }else{
       links+='<span class="plink pdf">📄 PDF는 Full 버전에서 제공</span>';
     }
@@ -967,7 +961,7 @@ function paperHTML(p){
     '<div class="pmain"><div class="ptitle">'+p.title+'</div><div class="pmeta">'+meta.join(' · ')+'</div>'+
     (p.authors?'<div class="pmeta au">'+p.authors+'</div>':'')+'</div><span class="car">▶</span></summary>'+
     '<div class="pbody"><div class="pkey">'+p.key+'</div>'+
-    '<div class="ptags">'+p.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+links+embed+'</div></details>';
+    '<div class="ptags">'+p.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div>'+links+'</div></details>';
 }
 
 /* ---------- 6. 환자 Q&A ---------- */
