@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  computeAlignment,
   computeCorrection,
   currentWblPercent,
   FUJISAWA_TARGET_PCT,
@@ -25,8 +26,27 @@ interface Analysis {
   varus_valgus_impression: string;
   reasoning: string;
   limitations: string;
+  view_adequacy: string;
+  backend: string;
+  agreement: number | null;
   mock: boolean;
 }
+
+type Laterality = "left" | "right" | "unknown";
+type ViewType =
+  | "ap_weightbearing"
+  | "ap_supine"
+  | "lateral"
+  | "rosenberg"
+  | "unknown";
+
+const VIEW_LABELS: Record<ViewType, string> = {
+  ap_weightbearing: "체중부하 AP (표준)",
+  ap_supine: "비체중부하 AP",
+  lateral: "측면상",
+  rosenberg: "Rosenberg(굴곡 PA)",
+  unknown: "미지정",
+};
 
 const MAX_W = 560;
 const MAX_H = 620;
@@ -56,6 +76,9 @@ export default function KneeTool() {
   const [targetPct, setTargetPct] = useState(FUJISAWA_TARGET_PCT);
   const [tibiaWidthMm, setTibiaWidthMm] = useState(75);
   const [view, setView] = useState<"before" | "after">("before");
+
+  const [laterality, setLaterality] = useState<Laterality>("unknown");
+  const [viewType, setViewType] = useState<ViewType>("ap_weightbearing");
 
   // ---------- 이미지 업로드 ----------
   const handleFile = useCallback((file: File) => {
@@ -92,7 +115,12 @@ export default function KneeTool() {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ imageBase64, mediaType }),
+        body: JSON.stringify({
+          imageBase64,
+          mediaType,
+          laterality,
+          view: viewType,
+        }),
       });
       const data = await res.json();
       setAnalysis(data);
@@ -101,7 +129,7 @@ export default function KneeTool() {
     } finally {
       setAnalyzing(false);
     }
-  }, [imageBase64, mediaType]);
+  }, [imageBase64, mediaType, laterality, viewType]);
 
   // ---------- 캔버스 클릭 → 랜드마크 ----------
   const handleCanvasClick = useCallback(
@@ -125,6 +153,7 @@ export default function KneeTool() {
 
   const correction = computeCorrection(landmarks, targetPct, tibiaWidthMm);
   const curPct = currentWblPercent(landmarks);
+  const alignment = computeAlignment(landmarks);
 
   // ---------- 캔버스 렌더 ----------
   const draw = useCallback(() => {
@@ -235,6 +264,39 @@ export default function KneeTool() {
             화면 캡처/사진 대신 업로드 방식 (데모 안정성)
           </span>
         </div>
+        <div className="mt-3 flex flex-wrap gap-4 text-xs">
+          <label className="flex items-center gap-1.5">
+            <span className="text-gray-500">무릎</span>
+            <select
+              value={laterality}
+              onChange={(e) => setLaterality(e.target.value as Laterality)}
+              className="rounded border border-gray-300 px-2 py-1 dark:border-gray-700 dark:bg-gray-800"
+            >
+              <option value="unknown">미지정</option>
+              <option value="left">좌 (Left)</option>
+              <option value="right">우 (Right)</option>
+            </select>
+          </label>
+          <label className="flex items-center gap-1.5">
+            <span className="text-gray-500">촬영자세</span>
+            <select
+              value={viewType}
+              onChange={(e) => setViewType(e.target.value as ViewType)}
+              className="rounded border border-gray-300 px-2 py-1 dark:border-gray-700 dark:bg-gray-800"
+            >
+              {(Object.keys(VIEW_LABELS) as ViewType[]).map((v) => (
+                <option key={v} value={v}>
+                  {VIEW_LABELS[v]}
+                </option>
+              ))}
+            </select>
+          </label>
+          {viewType !== "ap_weightbearing" && (
+            <span className="self-center text-amber-600">
+              ⚠ K&amp;L은 체중부하 AP가 표준 — 다른 자세는 등급 신뢰도가 낮습니다.
+            </span>
+          )}
+        </div>
       </section>
 
       {imageLoaded && (
@@ -337,6 +399,56 @@ export default function KneeTool() {
                     />
                   </div>
 
+                  {/* 정렬 각도 */}
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <Stat
+                      label="HKA 편위"
+                      value={
+                        alignment
+                          ? `${Math.abs(alignment.hkaDeviation).toFixed(1)}° ${
+                              alignment.side === "varus"
+                                ? "내반"
+                                : alignment.side === "valgus"
+                                ? "외반"
+                                : "중립"
+                            }`
+                          : "—"
+                      }
+                    />
+                    <Stat
+                      label="현재 MPTA"
+                      value={
+                        correction.currentMpta != null
+                          ? `${correction.currentMpta.toFixed(1)}°`
+                          : "—"
+                      }
+                    />
+                    <Stat
+                      label="교정 후 MPTA"
+                      value={
+                        correction.predictedMpta != null
+                          ? `${correction.predictedMpta.toFixed(1)}°`
+                          : "—"
+                      }
+                    />
+                  </div>
+
+                  {/* 안전·금기 경고 */}
+                  {(correction.warnings.length > 0 ||
+                    analysis?.kl_grade === 4) && (
+                    <ul className="space-y-1 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
+                      {analysis?.kl_grade === 4 && (
+                        <li>
+                          ⛔ K&amp;L 4등급(연골 소실): 내측 개방 HTO는 일반적
+                          금기 — 관절치환술 등 대안을 우선 고려.
+                        </li>
+                      )}
+                      {correction.warnings.map((w, i) => (
+                        <li key={i}>⚠ {w}</li>
+                      ))}
+                    </ul>
+                  )}
+
                   <div className="space-y-2">
                     <label className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                       <span>목표 WBL 위치 (Fujisawa 62%)</span>
@@ -382,7 +494,8 @@ export default function KneeTool() {
                   </div>
                   <p className="text-[11px] text-gray-400">
                     ※ After 영상은 경첩 중심 회전 <b>기하 시뮬레이션</b>이며 실제
-                    수술 결과 예측이 아닙니다.
+                    수술 결과 예측이 아닙니다. 각도·쐐기 값은 손으로 찍은 랜드마크에
+                    민감하므로 0.5° / 0.5mm 단위로 반올림해 표기합니다.
                   </p>
                 </div>
               )}
@@ -452,9 +565,17 @@ function KLPanel({ analysis }: { analysis: Analysis }) {
   const color = GRADE_COLORS[analysis.kl_grade] ?? "#6b7280";
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="text-base font-bold">K&L 등급 판독</h3>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap justify-end gap-1.5">
+          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+            backend: {analysis.backend}
+          </span>
+          {analysis.agreement != null && (
+            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+              표본 일치율 {(analysis.agreement * 100).toFixed(0)}%
+            </span>
+          )}
           {analysis.mock && (
             <span className="rounded-full bg-gray-200 px-2 py-0.5 text-[11px] font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
               모의 추론
@@ -510,6 +631,9 @@ function KLPanel({ analysis }: { analysis: Analysis }) {
 
       <p className="mt-3 rounded-lg bg-gray-50 p-2.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
         <b>근거:</b> {analysis.reasoning}
+      </p>
+      <p className="mt-2 rounded-lg bg-sky-50 p-2 text-[11px] text-sky-700 dark:bg-sky-950/40 dark:text-sky-300">
+        <b>영상 적합성:</b> {analysis.view_adequacy}
       </p>
       <p className="mt-2 text-[11px] text-amber-600 dark:text-amber-500">
         ⚠ {analysis.limitations}

@@ -88,6 +88,52 @@ function lineCircleIntersection(
   return dist(c1, near) <= dist(c2, near) ? c1 : c2;
 }
 
+/** 무릎 중심 = 평탄부 내측·외측 중점 (별도 랜드마크 없이 유도) */
+export function kneeCenter(lm: Landmarks): Point | null {
+  const { medial, lateral } = lm;
+  if (!medial || !lateral) return null;
+  return { x: (medial.x + lateral.x) / 2, y: (medial.y + lateral.y) / 2 };
+}
+
+/** 두 벡터 사이 각도 (0~180도) */
+function angleBetween(v1: Point, v2: Point): number {
+  const dot = v1.x * v2.x + v1.y * v2.y;
+  const m = Math.hypot(v1.x, v1.y) * Math.hypot(v2.x, v2.y);
+  if (m === 0) return 0;
+  const c = Math.min(1, Math.max(-1, dot / m));
+  return (Math.acos(c) * 180) / Math.PI;
+}
+
+export interface Alignment {
+  /** HKA 편위각 (도, 양수=내반 varus, 음수=외반 valgus) */
+  hkaDeviation: number;
+  side: "varus" | "valgus" | "neutral";
+  /** 내측 근위 경골각 MPTA (도) — 정상 약 85~90° */
+  mpta: number;
+}
+
+/** HKA(역학적 대퇴경골각 편위) 및 MPTA 계산 */
+export function computeAlignment(lm: Landmarks): Alignment | null {
+  const { hip, ankle } = lm;
+  const knee = kneeCenter(lm);
+  const pct = currentWblPercent(lm);
+  if (!hip || !ankle || !knee || !lm.medial || !lm.lateral || pct === null)
+    return null;
+
+  // HKA 편위 = 180 - ∠(hip-knee-ankle)
+  const hkaInner = angleBetween(sub(hip, knee), sub(ankle, knee));
+  const hkaDeviation = 180 - hkaInner;
+  // 부호/측: WBL이 내측(<50%)이면 내반
+  const side: Alignment["side"] =
+    pct < 48 ? "varus" : pct > 52 ? "valgus" : "neutral";
+  const signed = side === "valgus" ? -hkaDeviation : hkaDeviation;
+
+  // MPTA = 경골 역학축(knee→ankle)과 관절선(lateral→medial) 사이 내측각
+  const mpta = angleBetween(sub(ankle, knee), sub(lm.medial, lm.lateral));
+
+  return { hkaDeviation: signed, side, mpta };
+}
+
 export interface CorrectionResult {
   currentPct: number;
   targetPct: number;
@@ -101,6 +147,12 @@ export interface CorrectionResult {
   rotationRad: number;
   /** 개대 쐐기 높이 (mm). 캘리브레이션 없으면 null */
   wedgeHeightMm: number | null;
+  /** 교정 전 MPTA (도) */
+  currentMpta: number | null;
+  /** 교정 후 예상 MPTA (도) = 교정 전 + 교정각 */
+  predictedMpta: number | null;
+  /** 안전·금기 경고 메시지 */
+  warnings: string[];
 }
 
 /**
@@ -137,24 +189,64 @@ export function computeCorrection(
   while (rotationRad > Math.PI) rotationRad -= 2 * Math.PI;
   while (rotationRad < -Math.PI) rotationRad += 2 * Math.PI;
 
-  const correctionDeg = Math.abs((rotationRad * 180) / Math.PI);
+  const correctionDeg = round(Math.abs((rotationRad * 180) / Math.PI), 0.5);
 
-  // 개대 쐐기 높이: gap = 절골선 폭 × tan(교정각)
-  // 절골선 폭은 경골 평탄부 폭(medial-lateral)으로 근사 (데모 근사).
+  // 개대 쐐기 높이: gap = 절골선 길이 × tan(교정각)
+  // px/mm 는 평탄부 폭(medial-lateral) 픽셀 ↔ 입력 mm 로 캘리브레이션.
+  // 절골선 길이는 외측 경첩→내측 피질 거리(기하)로 산출(평탄부 폭 직접 대입보다 정확).
   let wedgeHeightMm: number | null = null;
   if (tibiaWidthMm && tibiaWidthMm > 0) {
-    wedgeHeightMm = tibiaWidthMm * Math.tan((correctionDeg * Math.PI) / 180);
+    const mlPx = dist(medial, lateral);
+    const pxPerMm = mlPx / tibiaWidthMm;
+    if (pxPerMm > 0) {
+      const osteotomyLenMm = dist(hinge, medial) / pxPerMm;
+      wedgeHeightMm = round(
+        osteotomyLenMm * Math.tan((correctionDeg * Math.PI) / 180),
+        0.5
+      );
+    }
+  }
+
+  // 정렬 각도 및 안전 경고
+  const align = computeAlignment(lm);
+  const currentMpta = align ? round(align.mpta, 0.5) : null;
+  const predictedMpta =
+    currentMpta !== null ? round(currentMpta + correctionDeg, 0.5) : null;
+
+  const warnings: string[] = [];
+  if (predictedMpta !== null && predictedMpta > 95) {
+    warnings.push(
+      `교정 후 MPTA ${predictedMpta}° (>95°): 관절선 경사 과도 — 과교정/이중 절골술 고려.`
+    );
+  }
+  if (correctionDeg > 12) {
+    warnings.push(
+      `교정각 ${correctionDeg}° (>12°): 개방 폭 과대로 외측 경첩 골절 위험 — 대안 술식 고려.`
+    );
+  }
+  if (targetPct > 50 && currentPct >= 50) {
+    warnings.push(
+      "현재 정렬이 이미 중립~외반입니다. 내측 개방 HTO 적응증을 재확인하세요."
+    );
   }
 
   return {
-    currentPct,
+    currentPct: round(currentPct, 1),
     targetPct,
     fujisawa,
     newAnkle,
     correctionDeg,
     rotationRad,
     wedgeHeightMm,
+    currentMpta,
+    predictedMpta,
+    warnings,
   };
+}
+
+/** value 를 step 단위로 반올림 (거짓 정밀도 방지) */
+function round(value: number, step: number): number {
+  return Math.round(value / step) * step;
 }
 
 export interface ScenarioCard {
