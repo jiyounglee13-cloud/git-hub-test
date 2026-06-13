@@ -259,6 +259,18 @@ export function computeCorrection(
     currentMpta !== null ? round(currentMpta + correctionDeg, 0.5) : null;
 
   const warnings: string[] = [];
+  // 랜드마크 배치 정합성 가드 (잘못 찍었을 때 조용히 틀린 값이 나오는 것 방지)
+  if (currentPct < -5 || currentPct > 105) {
+    warnings.push(
+      "역학축이 경골 평탄부 폭을 벗어났습니다 — Hip·Ankle·평탄부 랜드마크 배치를 재확인하세요."
+    );
+  }
+  const kneeC = kneeCenter(lm);
+  if (kneeC && (hip.y > kneeC.y || kneeC.y > ankle.y)) {
+    warnings.push(
+      "근위-원위(상하) 순서가 비정상입니다 — Hip이 가장 위, Ankle이 가장 아래가 되도록 확인하세요."
+    );
+  }
   if (predictedMpta !== null && predictedMpta > 95) {
     warnings.push(
       `교정 후 MPTA ${predictedMpta}° (>95°): 관절선 경사 과도 — 과교정/이중 절골술 고려.`

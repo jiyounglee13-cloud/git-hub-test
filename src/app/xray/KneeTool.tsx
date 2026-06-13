@@ -142,11 +142,11 @@ export default function KneeTool() {
       const x = ((e.clientX - rect.left) / rect.width) * canvas.width;
       const y = ((e.clientY - rect.top) / rect.height) * canvas.height;
       setLandmarks((prev) => ({ ...prev, [placing]: { x, y } }));
-      // 다음 미배치 랜드마크로 자동 이동
-      const order = LANDMARK_DEFS.map((d) => d.key);
-      const next = order.find(
-        (k) => k !== placing && !landmarks[k]
+      // 다음 미배치 '필수' 랜드마크로만 자동 이동 (선택 항목은 강제하지 않음)
+      const requiredOrder = LANDMARK_DEFS.filter((d) => !d.optional).map(
+        (d) => d.key
       );
+      const next = requiredOrder.find((k) => k !== placing && !landmarks[k]);
       setPlacing(next ?? null);
     },
     [placing, landmarks]
@@ -155,6 +155,12 @@ export default function KneeTool() {
   const correction = computeCorrection(landmarks, targetPct, tibiaWidthMm);
   const curPct = currentWblPercent(landmarks);
   const alignment = computeAlignment(landmarks);
+
+  const requiredKeys = LANDMARK_DEFS.filter((d) => !d.optional).map(
+    (d) => d.key
+  );
+  const requiredPlaced = requiredKeys.filter((k) => landmarks[k]).length;
+  const placingDef = LANDMARK_DEFS.find((d) => d.key === placing);
 
   // ---------- 캔버스 렌더 ----------
   const draw = useCallback(() => {
@@ -319,9 +325,31 @@ export default function KneeTool() {
             />
             {/* 랜드마크 컨트롤 */}
             <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-800 dark:bg-gray-900/50">
-              <p className="mb-2 text-xs font-semibold text-gray-600 dark:text-gray-400">
-                ② 랜드마크 보정 (버튼 클릭 후 영상 위를 클릭) · 대퇴 과 2점은
-                JLCA·mLDFA 산출용 <b>선택</b>
+              <p className="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400">
+                ② 랜드마크 보정 · 필수{" "}
+                <span
+                  className={
+                    requiredPlaced === requiredKeys.length
+                      ? "text-[var(--primary)]"
+                      : "text-amber-600"
+                  }
+                >
+                  {requiredPlaced}/{requiredKeys.length}
+                </span>{" "}
+                · 대퇴 과 2점은 JLCA·mLDFA 산출용 <b>선택</b>
+              </p>
+              <p className="mb-2 text-[11px] text-gray-500">
+                {placingDef ? (
+                  <>
+                    <b style={{ color: placingDef.color }}>
+                      {placingDef.label}
+                    </b>{" "}
+                    위치를 영상에서 클릭하세요. 잘못 찍으면 해당 버튼을 다시 눌러
+                    재배치합니다.
+                  </>
+                ) : (
+                  "버튼을 누른 뒤 영상 위를 클릭해 배치합니다."
+                )}
               </p>
               <div className="flex flex-wrap gap-2">
                 {LANDMARK_DEFS.map((d) => (
@@ -497,7 +525,9 @@ export default function KneeTool() {
                     />
                     <div className="flex flex-wrap gap-4">
                       <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                        경골 평탄부 폭(캘리브레이션):
+                        <span title="찍은 내측·외측 평탄부 두 점의 실제 좌우 폭. 픽셀→mm 환산 기준이 되어 쐐기 높이에 직접 영향합니다 (성인 약 70~85mm).">
+                          경골 평탄부 폭(캘리브레이션) ⓘ:
+                        </span>
                         <input
                           type="number"
                           value={tibiaWidthMm}
@@ -644,6 +674,14 @@ function KLPanel({ analysis }: { analysis: Analysis }) {
           </span>
         </div>
       </div>
+
+      {analysis.mock && (
+        <p className="mb-3 rounded-lg border border-gray-300 bg-gray-100 p-2 text-[11px] text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+          ※ <b>모의(placeholder) 결과</b> — 아래 등급은 업로드한 영상과
+          무관하게 고정 출력됩니다. 실제 추정은 서버에 ANTHROPIC_API_KEY 설정
+          시 동작합니다.
+        </p>
+      )}
 
       <div className="flex items-center gap-4">
         <div
