@@ -52,6 +52,49 @@ export const LANDMARK_DEFS = [
 export type LandmarkKey = (typeof LANDMARK_DEFS)[number]["key"];
 export type Landmarks = Partial<Record<LandmarkKey, Point>>;
 
+// 측면상(lateral) 후방 경골 경사 측정용 랜드마크
+export const SLOPE_LANDMARK_DEFS = [
+  {
+    key: "axisProximal",
+    label: "근위 경골축 상단 (Proximal shaft)",
+    color: "#0ea5e9",
+  },
+  {
+    key: "axisDistal",
+    label: "근위 경골축 하단 (Distal shaft)",
+    color: "#0ea5e9",
+  },
+  {
+    key: "plateauAnterior",
+    label: "경골 평탄부 전연 (Anterior)",
+    color: "#22c55e",
+  },
+  {
+    key: "plateauPosterior",
+    label: "경골 평탄부 후연 (Posterior)",
+    color: "#22c55e",
+  },
+] as const;
+
+export type SlopeLandmarkKey = (typeof SLOPE_LANDMARK_DEFS)[number]["key"];
+export type SlopeLandmarks = Partial<Record<SlopeLandmarkKey, Point>>;
+
+/**
+ * 후방 경골 경사(Posterior Tibial Slope) 계산.
+ * 경골 평탄부 선과 '근위 경골축에 수직인 선' 사이 각도.
+ * 정상 약 7~10°(후방). 측면(lateral) 영상에서만 유효.
+ */
+export function computeTibialSlope(lm: SlopeLandmarks): number | null {
+  const { axisProximal, axisDistal, plateauAnterior, plateauPosterior } = lm;
+  if (!axisProximal || !axisDistal || !plateauAnterior || !plateauPosterior)
+    return null;
+  const axis = sub(axisDistal, axisProximal); // 원위 방향 축
+  const plateau = sub(plateauPosterior, plateauAnterior);
+  // 평탄부와 축 사이 각 → 90°와의 차이가 경사
+  const a = angleBetween(axis, plateau);
+  return Math.round(Math.abs(90 - a) * 10) / 10;
+}
+
 function sub(a: Point, b: Point): Point {
   return { x: a.x - b.x, y: a.y - b.y };
 }

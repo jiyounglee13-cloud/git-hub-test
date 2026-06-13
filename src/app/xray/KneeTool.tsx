@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   computeAlignment,
   computeCorrection,
+  computeTibialSlope,
   currentWblPercent,
   FUJISAWA_TARGET_PCT,
   LANDMARK_DEFS,
@@ -11,7 +12,11 @@ import {
   type Landmarks,
   type Point,
   SCENARIOS,
+  SLOPE_LANDMARK_DEFS,
+  type SlopeLandmarkKey,
+  type SlopeLandmarks,
 } from "@/lib/hto";
+import { isDicomFile, renderDicomToDataUrl } from "@/lib/dicom";
 
 interface Analysis {
   kl_grade: number;
@@ -80,15 +85,22 @@ export default function KneeTool() {
   const [laterality, setLaterality] = useState<Laterality>("unknown");
   const [viewType, setViewType] = useState<ViewType>("ap_weightbearing");
   const [tibialSlopeDeg, setTibialSlopeDeg] = useState("");
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // ---------- 이미지 업로드 ----------
-  const handleFile = useCallback((file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
+  // 드래그 미세조정 / 측면상 슬로프 모드
+  const draggingRef = useRef<{ kind: "ap" | "slope"; key: string } | null>(null);
+  const [slopeMode, setSlopeMode] = useState(false);
+  const [slopeLandmarks, setSlopeLandmarks] = useState<SlopeLandmarks>({});
+  const [slopePlacing, setSlopePlacing] = useState<SlopeLandmarkKey | null>(
+    null
+  );
+
+  // ---------- 이미지/DICOM 로드 ----------
+  const loadImageFromDataUrl = useCallback(
+    (dataUrl: string, mt: string) => {
       const base64 = dataUrl.split(",")[1] ?? "";
       setImageBase64(base64);
-      setMediaType(file.type || "image/jpeg");
+      setMediaType(mt);
       const img = new Image();
       img.onload = () => {
         const scale = Math.min(MAX_W / img.width, MAX_H / img.height, 1);
@@ -99,13 +111,44 @@ export default function KneeTool() {
         imgRef.current = img;
         setImageLoaded(true);
         setLandmarks({});
+        setSlopeLandmarks({});
         setAnalysis(null);
         setView("before");
       };
       img.src = dataUrl;
-    };
-    reader.readAsDataURL(file);
-  }, []);
+    },
+    []
+  );
+
+  const handleFile = useCallback(
+    (file: File) => {
+      setLoadError(null);
+      if (isDicomFile(file)) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const url = renderDicomToDataUrl(reader.result as ArrayBuffer);
+            // 서버 추론에는 PNG로 변환된 영상을 전달
+            loadImageFromDataUrl(url, "image/png");
+          } catch (err) {
+            setLoadError(
+              err instanceof Error ? err.message : "DICOM 로드 실패"
+            );
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = () =>
+          loadImageFromDataUrl(
+            reader.result as string,
+            file.type || "image/jpeg"
+          );
+        reader.readAsDataURL(file);
+      }
+    },
+    [loadImageFromDataUrl]
+  );
 
   // ---------- LLM 추론 호출 ----------
   const analyze = useCallback(async () => {
@@ -132,25 +175,89 @@ export default function KneeTool() {
     }
   }, [imageBase64, mediaType, laterality, viewType]);
 
-  // ---------- 캔버스 클릭 → 랜드마크 ----------
+  // 화면 좌표 → 캔버스 좌표
+  const toCanvasCoords = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current!;
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: ((e.clientX - rect.left) / rect.width) * canvas.width,
+      y: ((e.clientY - rect.top) / rect.height) * canvas.height,
+    };
+  }, []);
+
+  // ---------- 캔버스 클릭 → 랜드마크 배치 ----------
   const handleCanvasClick = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (!canvasRef.current) return;
+      const p = toCanvasCoords(e);
+      if (slopeMode) {
+        if (!slopePlacing) return;
+        setSlopeLandmarks((prev) => ({ ...prev, [slopePlacing]: p }));
+        const order = SLOPE_LANDMARK_DEFS.map((d) => d.key);
+        const next = order.find(
+          (k) => k !== slopePlacing && !slopeLandmarks[k]
+        );
+        setSlopePlacing(next ?? null);
+        return;
+      }
       if (!placing) return;
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * canvas.width;
-      const y = ((e.clientY - rect.top) / rect.height) * canvas.height;
-      setLandmarks((prev) => ({ ...prev, [placing]: { x, y } }));
-      // 다음 미배치 '필수' 랜드마크로만 자동 이동 (선택 항목은 강제하지 않음)
+      setLandmarks((prev) => ({ ...prev, [placing]: p }));
       const requiredOrder = LANDMARK_DEFS.filter((d) => !d.optional).map(
         (d) => d.key
       );
       const next = requiredOrder.find((k) => k !== placing && !landmarks[k]);
       setPlacing(next ?? null);
     },
-    [placing, landmarks]
+    [placing, landmarks, slopeMode, slopePlacing, slopeLandmarks, toCanvasCoords]
   );
+
+  // ---------- 드래그 미세조정 ----------
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if ((slopeMode && slopePlacing) || (!slopeMode && placing)) return; // 배치 모드 중엔 드래그 안 함
+      const p = toCanvasCoords(e);
+      const HIT = 12;
+      if (slopeMode) {
+        for (const d of SLOPE_LANDMARK_DEFS) {
+          const lp = slopeLandmarks[d.key];
+          if (lp && Math.hypot(lp.x - p.x, lp.y - p.y) <= HIT) {
+            draggingRef.current = { kind: "slope", key: d.key };
+            return;
+          }
+        }
+      } else {
+        for (const d of LANDMARK_DEFS) {
+          const lp = landmarks[d.key];
+          if (lp && Math.hypot(lp.x - p.x, lp.y - p.y) <= HIT) {
+            draggingRef.current = { kind: "ap", key: d.key };
+            return;
+          }
+        }
+      }
+    },
+    [slopeMode, slopePlacing, placing, landmarks, slopeLandmarks, toCanvasCoords]
+  );
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      const drag = draggingRef.current;
+      if (!drag) return;
+      const p = toCanvasCoords(e);
+      if (drag.kind === "slope") {
+        setSlopeLandmarks((prev) => ({
+          ...prev,
+          [drag.key as SlopeLandmarkKey]: p,
+        }));
+      } else {
+        setLandmarks((prev) => ({ ...prev, [drag.key as LandmarkKey]: p }));
+      }
+    },
+    [toCanvasCoords]
+  );
+
+  const endDrag = useCallback(() => {
+    draggingRef.current = null;
+  }, []);
 
   const correction = computeCorrection(landmarks, targetPct, tibiaWidthMm);
   const curPct = currentWblPercent(landmarks);
@@ -161,6 +268,14 @@ export default function KneeTool() {
   );
   const requiredPlaced = requiredKeys.filter((k) => landmarks[k]).length;
   const placingDef = LANDMARK_DEFS.find((d) => d.key === placing);
+
+  const slopeValue = computeTibialSlope(slopeLandmarks);
+  // 유효 후방 경사: 측면상 자동 계측값 우선, 없으면 수동 입력값
+  const manualSlope =
+    tibialSlopeDeg.trim() !== "" && isFinite(Number(tibialSlopeDeg))
+      ? Number(tibialSlopeDeg)
+      : null;
+  const effectiveSlope = slopeValue != null ? slopeValue : manualSlope;
 
   // ---------- 캔버스 렌더 ----------
   const draw = useCallback(() => {
@@ -174,7 +289,7 @@ export default function KneeTool() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const showAfter = view === "after" && correction;
+    const showAfter = !slopeMode && view === "after" && correction;
 
     if (showAfter && correction) {
       // 절골선: 경첩(hinge)을 지나며 평탄부(medial-lateral) 방향과 평행
@@ -197,37 +312,44 @@ export default function KneeTool() {
       ctx.drawImage(img, 0, 0, drawSize.w, drawSize.h);
     }
 
-    // ----- 오버레이 -----
+    // ----- 측면상 슬로프 모드 오버레이 -----
+    if (slopeMode) {
+      const { axisProximal, axisDistal, plateauAnterior, plateauPosterior } =
+        slopeLandmarks;
+      if (axisProximal && axisDistal)
+        strokeLine(ctx, axisProximal, axisDistal, "#0ea5e9", 2);
+      if (plateauAnterior && plateauPosterior)
+        strokeLine(ctx, plateauAnterior, plateauPosterior, "#22c55e", 2);
+      for (const def of SLOPE_LANDMARK_DEFS) {
+        const p = slopeLandmarks[def.key];
+        if (p) drawDot(ctx, p, def.color);
+      }
+      if (slopeValue != null && plateauAnterior)
+        drawDot(ctx, plateauPosterior!, "#22c55e", `slope ${slopeValue}°`);
+      return;
+    }
+
+    // ----- AP 정렬 오버레이 -----
     const { hip, ankle, medial, lateral, hinge, femMedial, femLateral } =
       landmarks;
 
-    // 경골 평탄부 선
-    if (medial && lateral) {
-      strokeLine(ctx, medial, lateral, "#f59e0b", 2);
-    }
-    // 대퇴 관절선 (JLCA/mLDFA)
-    if (femMedial && femLateral) {
+    if (medial && lateral) strokeLine(ctx, medial, lateral, "#f59e0b", 2);
+    if (femMedial && femLateral)
       strokeLine(ctx, femMedial, femLateral, "#ec4899", 2);
-    }
 
-    // 역학축 (before: 현재, after: 교정)
-    if (hip && ankle) {
-      if (view === "before" || !correction) {
-        strokeLine(ctx, hip, ankle, "#ef4444", 2, [6, 4]);
-      }
+    if (hip && ankle && (view === "before" || !correction)) {
+      strokeLine(ctx, hip, ankle, "#ef4444", 2, [6, 4]);
     }
     if (view === "after" && correction && hip) {
       strokeLine(ctx, hip, correction.newAnkle, "#22c55e", 2.5);
       drawDot(ctx, correction.fujisawa, "#22c55e", "목표");
     }
 
-    // 현재 WBL 점
     if (hip && ankle && medial && lateral && curPct !== null) {
       const p = lerp(medial, lateral, curPct / 100);
       drawDot(ctx, p, "#ef4444", `${curPct.toFixed(0)}%`);
     }
 
-    // 절골선 (after)
     if (view === "after" && correction && hinge && medial && lateral) {
       const dir = norm(sub(lateral, medial));
       const a = { x: hinge.x - dir.x * 200, y: hinge.y - dir.y * 200 };
@@ -235,12 +357,21 @@ export default function KneeTool() {
       strokeLine(ctx, a, b, "#a855f7", 1.5, [4, 4]);
     }
 
-    // 랜드마크 점
     for (const def of LANDMARK_DEFS) {
       const p = landmarks[def.key];
       if (p) drawDot(ctx, p, def.color);
     }
-  }, [imageLoaded, drawSize, landmarks, view, correction, curPct]);
+  }, [
+    imageLoaded,
+    drawSize,
+    landmarks,
+    view,
+    correction,
+    curPct,
+    slopeMode,
+    slopeLandmarks,
+    slopeValue,
+  ]);
 
   useEffect(() => {
     draw();
@@ -254,10 +385,10 @@ export default function KneeTool() {
         <h2 className="mb-3 text-lg font-bold">① 무릎 X-ray 업로드 & 스캔</h2>
         <div className="flex flex-wrap items-center gap-3">
           <label className="cursor-pointer rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
-            이미지 선택
+            이미지 / DICOM 선택
             <input
               type="file"
-              accept="image/*"
+              accept="image/*,.dcm,.dicom,application/dicom"
               className="hidden"
               onChange={(e) => {
                 const f = e.target.files?.[0];
@@ -273,9 +404,14 @@ export default function KneeTool() {
             {analyzing ? "스캔 중…" : "🔍 스캔하기 (K&L 판독)"}
           </button>
           <span className="text-xs text-gray-500">
-            화면 캡처/사진 대신 업로드 방식 (데모 안정성)
+            JPG/PNG 또는 비압축 DICOM(.dcm)
           </span>
         </div>
+        {loadError && (
+          <p className="mt-2 rounded-lg border border-red-300 bg-red-50 p-2 text-xs text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300">
+            ⚠ {loadError}
+          </p>
+        )}
         <div className="mt-3 flex flex-wrap gap-4 text-xs">
           <label className="flex items-center gap-1.5">
             <span className="text-gray-500">무릎</span>
@@ -318,12 +454,83 @@ export default function KneeTool() {
             <canvas
               ref={canvasRef}
               onClick={handleCanvasClick}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={endDrag}
+              onMouseLeave={endDrag}
               className={`rounded-xl border border-gray-300 dark:border-gray-700 ${
-                placing ? "cursor-crosshair" : "cursor-default"
+                (slopeMode ? slopePlacing : placing)
+                  ? "cursor-crosshair"
+                  : "cursor-grab"
               }`}
               style={{ width: drawSize.w, height: drawSize.h, maxWidth: "100%" }}
             />
-            {/* 랜드마크 컨트롤 */}
+            <p className="text-[11px] text-gray-400">
+              점을 배치한 뒤에는 <b>드래그</b>로 미세조정할 수 있습니다.
+            </p>
+            {/* 측면상 슬로프 모드 토글 */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setSlopeMode((v) => !v);
+                  setPlacing(null);
+                  setSlopePlacing(null);
+                }}
+                className={`rounded-md px-3 py-1 text-xs font-semibold ${
+                  slopeMode
+                    ? "bg-sky-600 text-white"
+                    : "border border-sky-400 text-sky-600"
+                }`}
+              >
+                {slopeMode ? "← AP 정렬 모드로" : "측면상 슬로프 측정 모드"}
+              </button>
+              {slopeMode && slopeValue != null && (
+                <span className="text-xs font-semibold text-sky-600">
+                  후방 경골 경사 {slopeValue}° (자동 반영됨)
+                </span>
+              )}
+            </div>
+            {/* 측면상 슬로프 랜드마크 컨트롤 */}
+            {slopeMode && (
+              <div className="rounded-xl border border-sky-200 bg-sky-50 p-3 dark:border-sky-900 dark:bg-sky-950/30">
+                <p className="mb-2 text-xs font-semibold text-sky-700 dark:text-sky-300">
+                  측면(lateral) 영상에서 4점을 찍으면 후방 경골 경사가 자동
+                  계측됩니다. (경골축 2점 + 평탄부 전/후연 2점)
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {SLOPE_LANDMARK_DEFS.map((d) => (
+                    <button
+                      key={d.key}
+                      onClick={() => setSlopePlacing(d.key)}
+                      className={`rounded-md px-2.5 py-1 text-xs font-medium ${
+                        slopePlacing === d.key
+                          ? "ring-2 ring-offset-1"
+                          : slopeLandmarks[d.key]
+                          ? "opacity-100"
+                          : "opacity-60"
+                      }`}
+                      style={{
+                        backgroundColor: slopeLandmarks[d.key]
+                          ? d.color + "22"
+                          : "#e5e7eb44",
+                        color: d.color,
+                      }}
+                    >
+                      {slopeLandmarks[d.key] ? "✓ " : "○ "}
+                      {d.label}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setSlopeLandmarks({})}
+                    className="rounded-md px-2.5 py-1 text-xs text-gray-500 underline"
+                  >
+                    초기화
+                  </button>
+                </div>
+              </div>
+            )}
+            {/* AP 랜드마크 컨트롤 */}
+            {!slopeMode && (
             <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-800 dark:bg-gray-900/50">
               <p className="mb-1 text-xs font-semibold text-gray-600 dark:text-gray-400">
                 ② 랜드마크 보정 · 필수{" "}
@@ -386,6 +593,7 @@ export default function KneeTool() {
                 </button>
               </div>
             </div>
+            )}
           </section>
 
           {/* 결과 패널 */}
@@ -487,8 +695,10 @@ export default function KneeTool() {
                     <Stat
                       label="후방 경골 경사"
                       value={
-                        tibialSlopeDeg.trim() !== ""
-                          ? `${tibialSlopeDeg}° (측면상)`
+                        effectiveSlope != null
+                          ? `${effectiveSlope}°${
+                              slopeValue != null ? " (자동)" : " (수동)"
+                            }`
                           : "측면상 필요"
                       }
                     />
@@ -555,9 +765,9 @@ export default function KneeTool() {
                     후방 경골 경사는 <b>측면(lateral) 영상</b>에서만 측정됩니다(정면상
                     불가). 내측 개방 HTO는 경사를 <b>증가</b>시키는 경향이 있어
                     ACL 부족 슬관절에서 주의가 필요합니다
-                    {tibialSlopeDeg.trim() !== "" &&
-                      Number(tibialSlopeDeg) >= 12 &&
-                      " — 입력값이 이미 높아 추가 증가에 유의."}
+                    {effectiveSlope != null &&
+                      effectiveSlope >= 12 &&
+                      " — 현재 경사가 이미 높아 추가 증가에 유의."}
                     .
                   </p>
 
