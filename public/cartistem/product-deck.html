@@ -29,6 +29,7 @@
   .toc{max-width:880px;margin:0 auto;display:flex;gap:7px;overflow-x:auto;padding:0 16px 11px;-webkit-overflow-scrolling:touch}
   .toc a{flex:none;font-size:12px;font-weight:600;color:var(--sub);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;white-space:nowrap}
   .toc a:hover{border-color:var(--accent);color:var(--accent)}
+  .toc a.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 8px -2px var(--accent)}
 
   .hero{margin:18px 0 6px}
   .hero .badge{display:inline-block;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid #c3e6ef;border-radius:999px;padding:4px 12px;margin-bottom:10px}
@@ -100,6 +101,22 @@
   });
   toc.innerHTML=tHTML; deck.innerHTML=dHTML;
 
+  /* 현재 위치 표시: 목차 칩 강조(스크롤 스파이) */
+  var tocLinks={};
+  SECTIONS.forEach(function(s){ tocLinks[s.id]=toc.querySelector('a[href="#sec-'+s.id+'"]'); });
+  function setActive(id){
+    var a=tocLinks[id]; if(!a) return;
+    Object.keys(tocLinks).forEach(function(k){ if(tocLinks[k]) tocLinks[k].classList.toggle('active', k===id); });
+    toc.scrollTo({left:a.offsetLeft-(toc.clientWidth-a.clientWidth)/2, behavior:'smooth'});
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting) setActive(en.target.id.replace('sec-','')); });
+    },{rootMargin:'-12% 0px -80% 0px', threshold:0});
+    SECTIONS.forEach(function(s){ var el=document.getElementById('sec-'+s.id); if(el) io.observe(el); });
+  }
+  if(SECTIONS[0]) setActive(SECTIONS[0].id);
+
   /* 목차/맨위로 이동: URL 앵커 대신 JS 스크롤.
      (단일 파일에서는 이 문서가 iframe srcdoc로 열려 base URL을 부모에서 상속하므로
       '#sec-..' 앵커가 부모 파일로 이동해 버린다. JS 스크롤로 그 문제를 회피.) */
@@ -109,6 +126,7 @@
     var el=document.getElementById(id); if(!el) return;
     e.preventDefault();
     el.scrollIntoView({behavior:'smooth',block:'start'});
+    if(id.indexOf('sec-')===0) setActive(id.slice(4));
   });
 </script>
 </body>

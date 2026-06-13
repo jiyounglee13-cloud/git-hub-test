@@ -172,8 +172,14 @@ header .brand h1{font-size:17px}
 .tabbar button[data-active="true"].r{color:var(--no)}
 .tabbar button[data-active="true"].g{color:var(--ok)}
 .tabbar button[data-active="true"].p{color:#0d7490}
-/* 6탭 대응: 좁은 화면에서 글자 축소 */
-.tabbar button{font-size:10.5px;padding:8px 2px}
+/* 활성 탭 강조: 색 + 연한 배경 + 상단 인디케이터(현재 위치 표시) */
+.tabbar button{font-size:10.5px;padding:10px 2px 8px;position:relative;margin:0 1px;transition:color .15s,background .18s}
+.tabbar button[data-active="true"]{background:var(--a-soft)}
+.tabbar button[data-active="true"].p{background:#e0f2f7}
+.tabbar button[data-active="true"].b{background:var(--b-soft)}
+.tabbar button[data-active="true"].g{background:var(--ok-soft)}
+.tabbar button[data-active="true"].r{background:var(--no-soft)}
+.tabbar button[data-active="true"]::before{content:"";position:absolute;top:2px;left:50%;transform:translateX(-50%);width:22px;height:3px;border-radius:3px;background:currentColor}
 .tabbar button .ic{font-size:18px}
 .tabbar button .tsub{font-size:8px}
 @media(max-width:380px){.tabbar button{font-size:9.5px} .tabbar button .ic{font-size:16px}}

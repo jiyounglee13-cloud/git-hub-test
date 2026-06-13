@@ -48,8 +48,8 @@ iframe(srcdoc)으로 묶어 **인터넷 없이 열리는 단일 HTML**을 생성
 
 ```
 python3 build_standalone.py
-# → consult-standalone.html       (전체, 44p deck 포함 · 약 13.8MB)
-# → consult-standalone-lite.html  (deck 제외 + 제품정보 탭의 '전체보기' 버튼 제거 · 약 8.8MB, 메신저용)
+# → consult-standalone.html  (전체, 44p deck 포함 · 약 13.8MB)
+# (라이트 버전은 미사용으로 폐기. 필요하면 build(False, ...)로 재생성 가능)
 ```
 
 deck 슬라이드는 런타임에 `IMG` 맵으로 조회하므로, `prep_deck`에서는 `inline_static`을

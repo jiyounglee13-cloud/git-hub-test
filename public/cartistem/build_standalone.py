@@ -91,4 +91,4 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
 if __name__ == '__main__':
     print(f"images inlined: {len(URI)}")
     build(True, 'consult-standalone.html')
-    build(False, 'consult-standalone-lite.html')
+    # 라이트 버전은 미사용으로 폐기(필요 시 build(False, ...)로 재생성 가능)
