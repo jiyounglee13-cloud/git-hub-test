@@ -77,7 +77,7 @@ export function currentWblPercent(lm: Landmarks): number | null {
   const s = sub(lateral, medial);
   const denom = r.x * s.y - r.y * s.x;
   if (Math.abs(denom) < 1e-9) return null;
-  const qp = sub(medial, hip);
+  const qp = sub(hip, medial); // 기준점: hip − medial (교점의 medial→lateral 파라미터 부호)
   const u = (qp.x * r.y - qp.y * r.x) / -denom; // 파라미터 on medial->lateral
   return u * 100;
 }

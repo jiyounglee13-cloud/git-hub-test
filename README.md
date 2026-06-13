@@ -42,6 +42,15 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 > ⚠ 본 도구는 진단·치료 목적으로 사용할 수 없습니다. 연골 상태는 X-ray로 직접 평가할 수 없으며, 정렬·교정각 평가에는 전장하지 기립영상이 필요합니다.
 
+### 화면 예시 & 문서
+
+![데모 화면](docs/screenshot-xray-demo.png)
+
+*(위 이미지는 실제 `src/lib/hto.ts` 기하 함수로 계산한 값을 반영한 렌더링입니다. 샌드박스에서 브라우저 캡처가 불가해 목업으로 생성했습니다.)*
+
+- 임상 검증 로드맵: [`docs/CLINICAL_VALIDATION_ROADMAP.md`](docs/CLINICAL_VALIDATION_ROADMAP.md)
+- 데모용 샘플 X-ray(합성): `public/sample-knee-xray.png`
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
