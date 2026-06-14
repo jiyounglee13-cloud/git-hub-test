@@ -14,6 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#ffffff; --bg:#e9edf1; --ink:#15202e; --sub:#5c6775; --faint:#8b95a1; --line:#e4e9ee;
@@ -381,6 +383,90 @@ header .brand h1{font-size:17px}
   .card,.faq,.case,.genc,.know,.term{break-inside:avoid;box-shadow:none}
 }
 
+
+/* ===== PREMIUM SKIN · quiet luxury medical (override, appended) ===== */
+:root{
+  --ink:#14181D; --paper:#FBFAF8; --bg:#F1EDE7; --sub:#565D64; --faint:#6A7079;
+  --line:rgba(20,24,29,.10);
+  --brand:#16243B; --navy:#16243B; --hair:#C2A36B;
+  --accent:#7C5E2E; --accent-soft:#F3ECDD; --accent-bar:#B9975B;
+  --a:#16243B; --a-bar:#26304A; --a-soft:#ECEFF3;
+  --b:#7E5F2E; --b-bar:#B9975B; --b-soft:#F4EEE1;
+  --e:#3B4252; --e-bar:#4A5160; --e-soft:#EDEEF1;
+  --ok:#3F6B57; --ok-soft:#E9EFEB;
+  --no:#A8392F; --no-soft:#F6EAE7;
+  --staff:#16243B; --staff-soft:#ECEFF3; --warn:#8A6A39; --warn-soft:#F4EEE1;
+  --teal:#16243B; --esc:#3B4252; --esc-soft:#EDEEF1; --turn:#565D64; --turn-soft:#EEEEEC;
+  --note:#8A6A39; --note-soft:#F4EEE1;
+  --radius:16px;
+  --shadow:0 1px 2px rgba(20,24,29,.05),0 14px 34px -16px rgba(20,24,29,.16);
+}
+body{
+  font-family:'Pretendard','Pretendard Variable',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  background:
+    radial-gradient(55rem 55rem at 108% -12%, #F8F3EB 0%, transparent 55%),
+    radial-gradient(48rem 48rem at -12% -4%, #F6F1E9 0%, transparent 52%),
+    var(--bg);
+}
+h1,h2,h3,.brand h1,.hero h1,.phero h2{ font-family:'Noto Serif KR','Nanum Myeongjo',serif; letter-spacing:-.02em; font-weight:600; }
+.mono,.ver,.pg,.gp,.cnt,.s,.stn{ font-variant-numeric:tabular-nums; }
+::selection{ background:rgba(185,151,91,.25); }
+button,a,.tile,.pmcard,.mcard,.instile,.prl,.card,.faq{ transition:color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease; }
+@media (prefers-reduced-motion: reduce){ *{ transition:none!important; animation:none!important; scroll-behavior:auto!important; } }
+
+/* 헤더 글래스(랜딩 히어로 header.hero는 제외) */
+header:not(.hero){ background:rgba(251,250,248,.82)!important; border-bottom:1px solid var(--line)!important; box-shadow:0 1px 0 rgba(185,151,91,.18); }
+
+/* 골든룰/핵심 메시지/히어로 — 딥네이비 */
+.golden,.phero,.keymsg,.usenote{ background:linear-gradient(135deg,#101826,#1C2C46)!important; border:1px solid rgba(185,151,91,.18); }
+.pdeckbtn{ background:linear-gradient(135deg,#16243B,#23364F)!important; }
+
+/* 하단 탭바 — 네이비 1색 + 샴페인 언더라인 */
+.tabbar{ background:rgba(251,250,248,.9)!important; border-top:1px solid var(--line)!important; -webkit-backdrop-filter:saturate(140%) blur(12px); backdrop-filter:saturate(140%) blur(12px); }
+.tabbar button{ color:var(--faint); }
+.tabbar button[data-active="true"],
+.tabbar button[data-active="true"].b,.tabbar button[data-active="true"].g,
+.tabbar button[data-active="true"].r,.tabbar button[data-active="true"].p{ color:var(--ink)!important; background:transparent!important; }
+.tabbar button[data-active="true"]::before{ background:var(--accent-bar)!important; width:26px!important; height:2px!important; top:0!important; }
+
+/* 제품정보 히어로/스펙 */
+.phero .pb{ color:#E7D6B0!important; background:rgba(185,151,91,.14)!important; border-color:rgba(185,151,91,.34)!important; }
+.pfact{ border-left:2px solid var(--accent-bar)!important; }
+.pfact .fl{ color:var(--accent)!important; } .pfact .fv b{ color:var(--brand)!important; }
+.pmthumb .pmtag{ background:rgba(22,36,59,.92)!important; }
+.pmcard:hover,.prl:hover,.tile:hover,.instile:hover{ border-color:var(--hair)!important; }
+
+/* 섹션 바 — 샴페인 */
+.sec .bar,.seclabel .bar{ background:var(--accent-bar)!important; }
+
+/* 배지(브론즈 텍스트, AA) */
+.hero .badge,.pmintro .pmh,.legend .ll,.feature .fl{ color:var(--accent)!important; }
+
+/* 이미지 액자(임상사진 색 변형 없음 — 프레이밍만) */
+.slide{ border:1px solid var(--line)!important; box-shadow:var(--shadow)!important; border-radius:14px; }
+.casec,.trial{ border-radius:16px; }
+
+/* 공식자료 목차 활성칩 — 네이비(대비 AA) */
+.toc a.active{ background:var(--brand)!important; color:#fff!important; border-color:var(--brand)!important; box-shadow:0 2px 10px -3px rgba(22,36,59,.5)!important; }
+
+/* 랜딩 — 샴페인 액센트 1색 */
+.tile::before{ background:var(--accent-bar)!important; }
+.tile .tt{ color:var(--brand); }
+.mcard .ic{ background:#F1ECE2!important; }
+.cta{ box-shadow:0 10px 26px -10px rgba(0,0,0,.5),0 0 0 1px rgba(185,151,91,.4)!important; }
+
+/* 라인 SVG 아이콘 크기 */
+.tabbar .ic svg.nic{ width:21px; height:21px; display:block; margin:0 auto; }
+.tile .ic svg.nic{ width:24px; height:24px; }
+.mcard .ic svg.nic{ width:22px; height:22px; }
+
+/* 인쇄 — 레터헤드 톤 */
+@media print{
+  header,.tabbar,nav.tabbar,.search,.tools,#docview{ display:none!important; }
+  body{ background:#fff!important; }
+  .golden,.phero,.keymsg,.pdeckbtn,.usenote{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+
 </style>
 </head>
 <body>
@@ -413,12 +499,12 @@ header .brand h1{font-size:17px}
 </main>
 
 <nav class="tabbar">
-  <button data-tab="product" class="p" data-active="true"><span class="ic">🧬</span>제품정보<span class="tsub">카티스템</span></button>
-  <button data-tab="staff"><span class="ic">🩺</span>상담원<span class="tsub">수술전 일반</span></button>
-  <button data-tab="faq" class="b"><span class="ic">💬</span>상담실 FAQ</button>
-  <button data-tab="ptmat" class="g"><span class="ic">🖼️</span>환자자료<span class="tsub">시각자료</span></button>
-  <button data-tab="search"><span class="ic">🔎</span>통합검색</button>
-  <button data-tab="denial" class="r"><span class="ic">🛡️</span>실손정보</button>
+  <button data-tab="product" class="p" data-active="true"><span class="ic"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="8.5" width="19" height="7" rx="3.5"/><line x1="12" y1="8.5" x2="12" y2="15.5"/></svg></span>제품정보<span class="tsub">카티스템</span></button>
+  <button data-tab="staff"><span class="ic"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3v5a4 4 0 0 0 8 0V3"/><path d="M10 16a6 6 0 0 0 6 6 3 3 0 0 0 3-3v-2.2"/><circle cx="19" cy="13.5" r="2.2"/></svg></span>상담원<span class="tsub">수술전 일반</span></button>
+  <button data-tab="faq" class="b"><span class="ic"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-10.8 6.7L4 20l1.8-5.2A7.5 7.5 0 1 1 20 11.5z"/></svg></span>상담실 FAQ</button>
+  <button data-tab="ptmat" class="g"><span class="ic"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="10" r="1.5"/><path d="M3.5 17l4.5-4.5 4 4 3-3 5.5 5.5"/></svg></span>환자자료<span class="tsub">시각자료</span></button>
+  <button data-tab="search"><span class="ic"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><line x1="21" y1="21" x2="16" y2="16"/></svg></span>통합검색</button>
+  <button data-tab="denial" class="r"><span class="ic"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 2.7v5.3c0 4.6-3.1 7.8-7 9-3.9-1.2-7-4.4-7-9V5.7z"/></svg></span>실손정보</button>
 </nav>
 
 <div class="toast" id="toast"></div>

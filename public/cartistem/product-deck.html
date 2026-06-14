@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#fff;--bg:#e9edf1;--ink:#15202e;--sub:#5c6775;--faint:#8b95a1;--line:#e4e9ee;
@@ -48,6 +50,90 @@
   .disc{font-size:11.5px;color:var(--faint);line-height:1.72;border-top:1px solid var(--line);padding-top:16px;margin-top:24px}
   .disc b{color:var(--sub)}
   .totop{display:block;text-align:center;font-size:12px;color:var(--accent);text-decoration:none;margin:16px 0 0;font-weight:600}
+
+/* ===== PREMIUM SKIN · quiet luxury medical (override, appended) ===== */
+:root{
+  --ink:#14181D; --paper:#FBFAF8; --bg:#F1EDE7; --sub:#565D64; --faint:#6A7079;
+  --line:rgba(20,24,29,.10);
+  --brand:#16243B; --navy:#16243B; --hair:#C2A36B;
+  --accent:#7C5E2E; --accent-soft:#F3ECDD; --accent-bar:#B9975B;
+  --a:#16243B; --a-bar:#26304A; --a-soft:#ECEFF3;
+  --b:#7E5F2E; --b-bar:#B9975B; --b-soft:#F4EEE1;
+  --e:#3B4252; --e-bar:#4A5160; --e-soft:#EDEEF1;
+  --ok:#3F6B57; --ok-soft:#E9EFEB;
+  --no:#A8392F; --no-soft:#F6EAE7;
+  --staff:#16243B; --staff-soft:#ECEFF3; --warn:#8A6A39; --warn-soft:#F4EEE1;
+  --teal:#16243B; --esc:#3B4252; --esc-soft:#EDEEF1; --turn:#565D64; --turn-soft:#EEEEEC;
+  --note:#8A6A39; --note-soft:#F4EEE1;
+  --radius:16px;
+  --shadow:0 1px 2px rgba(20,24,29,.05),0 14px 34px -16px rgba(20,24,29,.16);
+}
+body{
+  font-family:'Pretendard','Pretendard Variable',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  background:
+    radial-gradient(55rem 55rem at 108% -12%, #F8F3EB 0%, transparent 55%),
+    radial-gradient(48rem 48rem at -12% -4%, #F6F1E9 0%, transparent 52%),
+    var(--bg);
+}
+h1,h2,h3,.brand h1,.hero h1,.phero h2{ font-family:'Noto Serif KR','Nanum Myeongjo',serif; letter-spacing:-.02em; font-weight:600; }
+.mono,.ver,.pg,.gp,.cnt,.s,.stn{ font-variant-numeric:tabular-nums; }
+::selection{ background:rgba(185,151,91,.25); }
+button,a,.tile,.pmcard,.mcard,.instile,.prl,.card,.faq{ transition:color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease; }
+@media (prefers-reduced-motion: reduce){ *{ transition:none!important; animation:none!important; scroll-behavior:auto!important; } }
+
+/* 헤더 글래스(랜딩 히어로 header.hero는 제외) */
+header:not(.hero){ background:rgba(251,250,248,.82)!important; border-bottom:1px solid var(--line)!important; box-shadow:0 1px 0 rgba(185,151,91,.18); }
+
+/* 골든룰/핵심 메시지/히어로 — 딥네이비 */
+.golden,.phero,.keymsg,.usenote{ background:linear-gradient(135deg,#101826,#1C2C46)!important; border:1px solid rgba(185,151,91,.18); }
+.pdeckbtn{ background:linear-gradient(135deg,#16243B,#23364F)!important; }
+
+/* 하단 탭바 — 네이비 1색 + 샴페인 언더라인 */
+.tabbar{ background:rgba(251,250,248,.9)!important; border-top:1px solid var(--line)!important; -webkit-backdrop-filter:saturate(140%) blur(12px); backdrop-filter:saturate(140%) blur(12px); }
+.tabbar button{ color:var(--faint); }
+.tabbar button[data-active="true"],
+.tabbar button[data-active="true"].b,.tabbar button[data-active="true"].g,
+.tabbar button[data-active="true"].r,.tabbar button[data-active="true"].p{ color:var(--ink)!important; background:transparent!important; }
+.tabbar button[data-active="true"]::before{ background:var(--accent-bar)!important; width:26px!important; height:2px!important; top:0!important; }
+
+/* 제품정보 히어로/스펙 */
+.phero .pb{ color:#E7D6B0!important; background:rgba(185,151,91,.14)!important; border-color:rgba(185,151,91,.34)!important; }
+.pfact{ border-left:2px solid var(--accent-bar)!important; }
+.pfact .fl{ color:var(--accent)!important; } .pfact .fv b{ color:var(--brand)!important; }
+.pmthumb .pmtag{ background:rgba(22,36,59,.92)!important; }
+.pmcard:hover,.prl:hover,.tile:hover,.instile:hover{ border-color:var(--hair)!important; }
+
+/* 섹션 바 — 샴페인 */
+.sec .bar,.seclabel .bar{ background:var(--accent-bar)!important; }
+
+/* 배지(브론즈 텍스트, AA) */
+.hero .badge,.pmintro .pmh,.legend .ll,.feature .fl{ color:var(--accent)!important; }
+
+/* 이미지 액자(임상사진 색 변형 없음 — 프레이밍만) */
+.slide{ border:1px solid var(--line)!important; box-shadow:var(--shadow)!important; border-radius:14px; }
+.casec,.trial{ border-radius:16px; }
+
+/* 공식자료 목차 활성칩 — 네이비(대비 AA) */
+.toc a.active{ background:var(--brand)!important; color:#fff!important; border-color:var(--brand)!important; box-shadow:0 2px 10px -3px rgba(22,36,59,.5)!important; }
+
+/* 랜딩 — 샴페인 액센트 1색 */
+.tile::before{ background:var(--accent-bar)!important; }
+.tile .tt{ color:var(--brand); }
+.mcard .ic{ background:#F1ECE2!important; }
+.cta{ box-shadow:0 10px 26px -10px rgba(0,0,0,.5),0 0 0 1px rgba(185,151,91,.4)!important; }
+
+/* 라인 SVG 아이콘 크기 */
+.tabbar .ic svg.nic{ width:21px; height:21px; display:block; margin:0 auto; }
+.tile .ic svg.nic{ width:24px; height:24px; }
+.mcard .ic svg.nic{ width:22px; height:22px; }
+
+/* 인쇄 — 레터헤드 톤 */
+@media print{
+  header,.tabbar,nav.tabbar,.search,.tools,#docview{ display:none!important; }
+  body{ background:#fff!important; }
+  .golden,.phero,.keymsg,.pdeckbtn,.usenote{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+
 </style>
 </head>
 <body>
