@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1B30">
+<title>카티스템 실손보험 지급거절 대응 시스템</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:#f0f2f7;color:#222;line-height:1.6}
+.header{background:linear-gradient(135deg,#0d1b2a,#1b2838,#0f3460);color:#fff;padding:26px 32px 20px}
+.header h1{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.header-sub{font-size:12px;color:#8899bb;margin-top:3px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 12px;font-size:11px}
+.badge em{color:#8899bb;font-style:normal}
+.badge strong{font-weight:700}
+.tabs{background:#fff;border-bottom:2px solid #e8e8f0;padding:0 32px;display:flex;gap:2px;overflow-x:auto}
+.tabs button{border:none;background:none;padding:14px 16px;cursor:pointer;font-size:13px;font-weight:500;color:#888;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:inherit;transition:all .2s}
+.tabs button.active{font-weight:800;color:#0f3460;border-bottom-color:#0f3460}
+.content{padding:24px 32px 40px;max-width:1100px;margin:0 auto}
+.card{background:#fff;border-radius:16px;padding:28px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card-title{font-size:16px;font-weight:800;color:#0d1b2a;margin-bottom:4px}
+.card-desc{font-size:13px;color:#888;margin-bottom:20px;line-height:1.7}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group label{display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:6px}
+.form-group input,.form-group textarea{width:100%;padding:10px 14px;border:2px solid #dde3f0;border-radius:10px;font-size:14px;outline:none;font-family:inherit;transition:border-color .2s}
+.form-group input:focus,.form-group textarea:focus{border-color:#0f3460}
+textarea.denial-input{border-color:#e8c1c1}
+textarea.denial-input:focus{border-color:#c0392b}
+.required-badge{background:#c0392b;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;margin-left:6px}
+.info-box{border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;line-height:1.7}
+.info-yellow{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.info-red{background:#fef2f2;border:2px solid #c0392b;color:#333}
+.case-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.case-card{border:2px solid #dde3f0;border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .2s;position:relative}
+.case-card.selected{background:rgba(15,52,96,.03)}
+.case-check{width:22px;height:22px;border-radius:6px;border:2px solid #ccc;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;font-size:14px;font-weight:800;color:#fff}
+.case-check.checked{background:#0f3460;border-color:#0f3460}
+.case-tag{color:#fff;border-radius:6px;font-size:10px;font-weight:700;padding:2px 8px;display:inline-block}
+.severity-dots span{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:2px;background:#ddd}
+.severity-dots span.on{background:#e74c3c}
+.btn{border:none;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,#0f3460,#1a5276);color:#fff;box-shadow:0 4px 16px rgba(15,52,96,.3)}
+.btn-primary:disabled{background:#ccc;box-shadow:none;cursor:not-allowed}
+.btn-green{background:#27ae60;color:#fff;padding:10px 20px;font-size:13px;font-weight:700;border-radius:10px}
+.btn-blue{background:#2980b9;color:#fff;padding:10px 20px;font-size:13px;font-weight:700;border-radius:10px}
+
+/* 생성된 문서 영역 */
+.gen-header{background:linear-gradient(135deg,#0d1b2a,#0f3460);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0}
+.gen-tabs{border-bottom:1px solid #eee;padding:0 28px;display:flex;gap:4px}
+.gen-tabs button{border:none;background:none;padding:12px 16px;cursor:pointer;font-size:13px;font-weight:400;color:#888;border-bottom:2px solid transparent;font-family:inherit}
+.gen-tabs button.active{font-weight:700;color:#0f3460;border-bottom-color:#0f3460}
+.preview-frame{border:1px solid #eee;border-radius:8px;padding:24px;max-height:500px;overflow:auto;background:#fafbff;font-size:13px;line-height:1.8}
+
+/* 이의신청서 (환자 어투) */
+.appeal-letter{background:#fffff8;border:2px solid #d4a574;border-radius:12px;padding:28px 32px;font-size:14px;line-height:2;color:#333;font-family:'Batang','Noto Serif KR','Apple Myungjo',serif;white-space:pre-wrap}
+.appeal-letter h3{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:18px;font-weight:800;color:#0f3460;text-align:center;margin-bottom:24px;letter-spacing:1px}
+
+/* 케이스 상세 */
+.case-detail-header{border-radius:16px 16px 0 0;padding:20px 24px;color:#fff}
+.case-detail-body{background:#fff;border-radius:0 0 16px 16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.denial-box{border-radius:10px;padding:14px 16px;margin-bottom:18px}
+.counter-card{background:#f0faf4;border:1px solid #a9dfbf;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.counter-card strong{font-size:12px;font-weight:800;color:#1a6aa5;display:block;margin-bottom:5px}
+.counter-card p{font-size:13px;color:#2c3e50;line-height:1.7;margin:0}
+.evidence-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.evidence-box{border-radius:10px;padding:12px 14px}
+.evidence-box div.item{font-size:12px;color:#444;padding:4px 0;border-bottom:1px dashed #dde}
+.evidence-box div.item:last-child{border-bottom:none}
+.strategy-box{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;border-radius:12px;padding:14px 18px;margin-bottom:14px}
+.win-bar-track{background:#eee;border-radius:8px;height:8px;overflow:hidden;margin-top:5px}
+.win-bar-fill{height:8px;border-radius:8px;transition:width .8s ease}
+
+/* 적응증 */
+.indication-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.indication-card{border:2px solid #e8eaf6;border-radius:14px;padding:18px 16px;background:#fafbff}
+.indication-card .icon{font-size:28px;margin-bottom:10px}
+.indication-card .label{font-size:11px;font-weight:700;color:#999;letter-spacing:1px;margin-bottom:4px}
+.indication-card .value{font-size:17px;font-weight:800;color:#0f3460;margin-bottom:8px}
+.indication-card .detail{font-size:12px;color:#555;line-height:1.6}
+table.data-table{width:100%;border-collapse:collapse}
+table.data-table thead tr{background:#1a1a2e;color:#fff}
+table.data-table th{padding:10px 14px;text-align:left;font-size:12px;font-weight:700}
+table.data-table td{padding:10px 14px;font-size:12px;border-bottom:1px solid #f0f0f0}
+table.data-table tr:nth-child(even){background:#fafbff}
+
+/* 로드맵 */
+.roadmap-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.step-item{display:flex;gap:14px;margin-bottom:20px;position:relative}
+.step-num{width:34px;height:34px;border-radius:50%;background:#0f3460;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;z-index:1}
+.step-line{position:absolute;left:16px;top:38px;width:2px;height:calc(100% + 4px);background:#dde3f0}
+.step-content{background:#f8f9ff;border-radius:12px;padding:12px 14px;flex:1}
+.gen-bar{background:#eee;border-radius:6px;height:10px;overflow:hidden}
+.gen-bar-fill{height:10px;border-radius:6px}
+
+.footer{text-align:center;padding:16px 32px;color:#aaa;font-size:11px;border-top:1px solid #e0e0e0}
+.hidden{display:none}
+
+/* 첨부 참고자료 스타일 */
+.ref-attachment{background:#f8f9ff;border:2px dashed #0f3460;border-radius:12px;padding:20px 24px;margin-top:16px}
+.ref-attachment h4{font-size:14px;font-weight:800;color:#0f3460;margin-bottom:12px}
+.ref-case{border:1px solid #e8eaf6;border-radius:10px;padding:14px;margin-bottom:10px;background:#fff}
+.ref-case:last-child{margin-bottom:0}
+
+@media(max-width:768px){
+  .form-grid,.case-grid,.evidence-col,.roadmap-grid,.indication-grid{grid-template-columns:1fr}
+  .content{padding:16px}
+  .header{padding:20px 16px}
+  .tabs{padding:0 16px}
+  .gen-header{flex-direction:column;gap:12px;align-items:flex-start}
+}
+.val-error{border-color:#e74c3c !important;animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.val-msg{font-size:11px;color:#e74c3c;margin-top:4px;display:none}
+.strength-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px}
+.str-high{background:#d4efdf;color:#1d8348}
+.str-mid{background:#fef9e7;color:#b7950b}
+.str-low{background:#fadbd8;color:#922b21}
+.source-card{background:#fff;border:1px solid #dde3f0;border-radius:12px;padding:16px 18px;margin-bottom:12px;transition:border-color .2s}
+.source-card:hover{border-color:#0f3460}
+.source-card a{color:#0f3460;text-decoration:none;font-weight:700;font-size:14px;display:block;margin-bottom:4px}
+.source-card a:hover{text-decoration:underline}
+.source-card .meta{font-size:12px;color:#888;line-height:1.6}
+.source-cat{font-size:12px;font-weight:700;color:#fff;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:12px}
+.privacy-notice{background:#fff5f5;border:1px solid #f5c6cb;border-radius:10px;padding:12px 16px;margin-top:12px;font-size:12px;color:#922b21;line-height:1.7}
+.style-btn{border:2px solid #dde3f0;background:#fff;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600;color:#555;cursor:pointer;font-family:inherit;transition:all .2s}
+.style-btn:hover{border-color:#0f3460;color:#0f3460}
+.style-btn.active{border-color:#0f3460;background:#0f3460;color:#fff}
+.form-group select{width:100%;padding:10px 14px;border:2px solid #dde3f0;border-radius:10px;font-size:14px;outline:none;font-family:inherit;transition:border-color .2s;background:#fff;cursor:pointer;appearance:auto}
+.form-group select:focus{border-color:#0f3460}
+.filter-warn{background:#fff5f5;border:1px solid #f5c6cb;border-radius:8px;padding:6px 12px;font-size:12px;color:#922b21;margin-top:4px;display:flex;align-items:center;gap:6px}
+.filter-ok{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:6px 12px;font-size:12px;color:#166534;margin-top:4px;display:flex;align-items:center;gap:6px}
+.case-card.incompatible{opacity:0.5;border-style:dashed}
+.case-card.incompatible::after{content:"⚠ 환자 상태와 불일치";position:absolute;top:6px;right:10px;font-size:10px;color:#922b21;font-weight:700}
+
+/* ════════════════════════════════════════════════════════════
+   PREMIUM DESIGN SYSTEM  ·  v2 (override layer)
+   ──────────────────────────────────────────────────────────── */
+:root{
+  --navy-900:#0B1B30; --navy-800:#0F2742; --navy-700:#143258; --navy-600:#1B4570;
+  --brand:#0F3460; --brand-2:#1A5276; --accent:#C8A04D; --accent-2:#E3C27E;
+  --ink:#1B2A3D; --ink-soft:#5A6B80; --ink-faint:#8B98AB;
+  --line:#E4E9F2; --line-soft:#EEF1F8;
+  --bg:#EEF1F7; --surface:#FFFFFF; --surface-2:#F8FAFD;
+  --ok:#1E8E5A; --ok-soft:#E7F6EE; --warn:#B7791F; --danger:#C0392B;
+  --r-lg:20px; --r-md:14px; --r-sm:10px;
+  --sh-sm:0 1px 2px rgba(16,32,58,.06), 0 2px 8px rgba(16,32,58,.05);
+  --sh-md:0 4px 14px rgba(16,32,58,.08), 0 12px 32px rgba(16,32,58,.06);
+  --sh-lg:0 8px 24px rgba(16,32,58,.10), 0 24px 60px rgba(16,32,58,.10);
+  --sh-brand:0 8px 24px rgba(15,52,96,.28);
+}
+body{
+  font-family:'Pretendard','Pretendard Variable','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+  background:
+    radial-gradient(1200px 480px at 100% -8%, rgba(15,52,96,.07), transparent 60%),
+    radial-gradient(900px 420px at -10% 0%, rgba(200,160,77,.07), transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-.01em;
+}
+
+/* ── Header ── */
+.header{
+  background:
+    radial-gradient(800px 300px at 88% -40%, rgba(200,160,77,.22), transparent 60%),
+    linear-gradient(135deg,#0A1726 0%,#0F2742 48%,#143A66 100%);
+  padding:30px 34px 24px;position:relative;overflow:hidden;
+  border-bottom:1px solid rgba(200,160,77,.25);
+}
+.header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.7}
+.header h1{font-size:21px;font-weight:800;letter-spacing:-.4px;line-height:1.3}
+.header-sub{font-size:12.5px;color:#9DB0CC;margin-top:5px;letter-spacing:0}
+.badges{gap:9px;margin-top:15px}
+.badge{
+  background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:7px 13px;font-size:11px;
+  backdrop-filter:blur(6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.badge em{color:#9DB0CC}.badge strong{color:#F2E6C7;font-weight:800}
+
+/* ── Tabs ── */
+.tabs{
+  background:rgba(255,255,255,.85);backdrop-filter:saturate(1.4) blur(10px);
+  border-bottom:1px solid var(--line);padding:0 26px;gap:4px;
+  position:sticky;top:0;z-index:30;box-shadow:0 1px 0 rgba(16,32,58,.04);
+}
+.tabs button{font-size:13px;font-weight:600;color:var(--ink-faint);padding:15px 16px;border-radius:10px 10px 0 0;letter-spacing:-.01em}
+.tabs button:hover{color:var(--brand);background:linear-gradient(180deg,rgba(15,52,96,.05),transparent)}
+.tabs button.active{color:var(--brand);border-bottom-color:var(--accent);font-weight:800}
+
+/* ── Cards ── */
+.content{padding:26px 28px 56px}
+.card{
+  background:var(--surface);border-radius:var(--r-lg);padding:26px 28px;margin-bottom:18px;
+  box-shadow:var(--sh-sm);border:1px solid var(--line);position:relative;
+  transition:box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+}
+.card:hover{box-shadow:var(--sh-md);border-color:#D7DEEC}
+.card-title{font-size:16.5px;font-weight:800;color:var(--navy-900);letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.card-desc{font-size:13px;color:var(--ink-soft);margin-bottom:20px;line-height:1.75}
+
+/* ── Forms ── */
+.form-group label{font-size:12px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.form-group input,.form-group textarea,.form-group select{
+  border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--surface-2);
+  transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{
+  border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px rgba(15,52,96,.10)}
+textarea.denial-input{background:#FFFBFB;border-color:#E9C9C9}
+textarea.denial-input:focus{border-color:var(--danger);box-shadow:0 0 0 4px rgba(192,57,43,.10)}
+.required-badge{background:linear-gradient(135deg,#C0392B,#A5281C);border-radius:7px;letter-spacing:.3px;box-shadow:0 2px 6px rgba(192,57,43,.3)}
+
+/* ── Info boxes ── */
+.info-box{border-radius:12px;padding:13px 16px}
+.info-yellow{background:linear-gradient(180deg,#FFFBEB,#FFF7DB);border:1px solid #F2D58C;color:#7A5712}
+.info-red{background:#FEF4F2;border:1.5px solid #E6B3AC;color:#5A2A23}
+
+/* ── Case selection cards ── */
+.case-card{border:1.5px solid var(--line);border-radius:var(--r-md);padding:16px 18px;background:var(--surface);box-shadow:var(--sh-sm);transition:all .2s ease}
+.case-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:#CFD8EA}
+.case-card.selected{box-shadow:var(--sh-md)}
+.case-check{border-radius:7px;border:2px solid #C7D0E0}
+.case-check.checked{background:linear-gradient(135deg,var(--brand),var(--brand-2));border-color:var(--brand);box-shadow:0 2px 8px rgba(15,52,96,.35)}
+.case-tag{border-radius:7px;letter-spacing:.3px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.severity-dots span{width:7px;height:7px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
+.severity-dots span.on{background:#E0533F;box-shadow:0 0 0 1px rgba(224,83,63,.25)}
+
+/* ── Buttons ── */
+.btn{border-radius:14px;letter-spacing:-.01em;transition:transform .15s ease, box-shadow .2s ease, filter .2s ease}
+.btn:not(:disabled):hover{transform:translateY(-2px)}
+.btn:not(:disabled):active{transform:translateY(0)}
+.btn-primary{background:linear-gradient(135deg,#123C6E,#0F3460 55%,#0C2A4E);box-shadow:var(--sh-brand);position:relative;overflow:hidden}
+.btn-primary::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 45%);pointer-events:none}
+.btn-primary:not(:disabled):hover{box-shadow:0 12px 30px rgba(15,52,96,.4);filter:saturate(1.08)}
+.btn-primary:disabled{background:#C5CCD9;color:#fff}
+.btn-green{background:linear-gradient(135deg,#1FA463,#138A52);border-radius:11px;box-shadow:0 4px 14px rgba(31,164,99,.32);transition:transform .15s ease,box-shadow .2s ease}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(31,164,99,.4)}
+.btn-blue{background:linear-gradient(135deg,#2C82C9,#1F6CAE);border-radius:11px;box-shadow:0 4px 14px rgba(41,128,185,.32);transition:transform .15s ease,box-shadow .2s ease}
+.btn-blue:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(41,128,185,.4)}
+.style-btn{border:1.5px solid var(--line);border-radius:12px;font-weight:600;transition:all .18s ease}
+.style-btn:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px);box-shadow:var(--sh-sm)}
+.style-btn.active{background:linear-gradient(135deg,var(--brand),var(--brand-2));border-color:var(--brand);box-shadow:var(--sh-brand)}
+
+/* ── Generated doc ── */
+.gen-header{background:linear-gradient(135deg,#0A1726,#0F3460);padding:20px 28px;border-radius:var(--r-lg) var(--r-lg) 0 0;border-bottom:1px solid rgba(200,160,77,.3)}
+.gen-tabs{padding:0 28px;gap:6px}
+.gen-tabs button{font-weight:600;border-radius:9px 9px 0 0}
+.gen-tabs button.active{border-bottom-color:var(--accent);color:var(--brand)}
+.appeal-letter{
+  background:linear-gradient(180deg,#FFFFFC,#FCFBF5);border:1px solid #E4D6B8;border-radius:14px;
+  padding:34px 38px;box-shadow:inset 0 1px 0 #fff, var(--sh-sm);
+  font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;line-height:2.05;
+}
+.appeal-letter h3{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;font-size:19px;letter-spacing:2px;
+  padding-bottom:16px;border-bottom:2px solid #E4D6B8;margin-bottom:26px}
+
+/* ── Case detail ── */
+.case-detail-body{box-shadow:var(--sh-md)}
+.counter-card{background:linear-gradient(180deg,#F1FAF5,#EAF6EF);border:1px solid #B7E0C8;border-radius:12px;padding:13px 15px}
+.counter-card strong{color:#15775A}
+.evidence-box{border-radius:12px;border:1px solid var(--line)}
+.strategy-box{background:linear-gradient(135deg,#10233B,#0F3460);border-radius:14px;box-shadow:var(--sh-md);position:relative;overflow:hidden}
+.strategy-box::before{content:"";position:absolute;top:-30%;right:-10%;width:180px;height:180px;background:radial-gradient(circle,rgba(200,160,77,.18),transparent 70%)}
+.strength-badge{border-radius:7px;letter-spacing:-.01em}
+.str-high{background:var(--ok-soft);color:#15775A}
+.win-bar-track{height:9px;border-radius:9px;background:#E9EDF4}
+.win-bar-fill{height:9px}
+
+/* ── Indications / tables ── */
+.indication-card{border:1px solid var(--line);border-radius:var(--r-md);background:linear-gradient(180deg,#FCFDFF,#F6F8FD);transition:transform .2s ease,box-shadow .2s ease}
+.indication-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.indication-card .value{color:var(--brand);letter-spacing:-.3px}
+table.data-table{border-radius:12px;overflow:hidden;box-shadow:var(--sh-sm)}
+table.data-table thead tr{background:linear-gradient(135deg,#13233A,#0F3460)}
+table.data-table th{font-weight:700;letter-spacing:-.01em}
+table.data-table tr:nth-child(even){background:var(--surface-2)}
+
+/* ── Roadmap ── */
+.step-num{background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 4px 12px rgba(15,52,96,.3)}
+.step-content{background:var(--surface-2);border:1px solid var(--line);border-radius:12px}
+.gen-bar{height:11px;border-radius:7px;background:#E9EDF4}
+.gen-bar-fill{height:11px}
+
+/* ── Sources ── */
+.source-card{border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh-sm);transition:transform .18s ease,box-shadow .2s ease,border-color .2s ease}
+.source-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:#CFD8EA}
+.source-card a{color:var(--brand)}
+.source-cat{border-radius:8px;letter-spacing:.2px;box-shadow:var(--sh-sm)}
+
+/* ── Misc ── */
+.privacy-notice{border-radius:12px;background:linear-gradient(180deg,#FFF6F5,#FDEDEB);border:1px solid #EFC9C3}
+.filter-ok{border-radius:10px;background:var(--ok-soft);border-color:#9FDCBC}
+.filter-warn{border-radius:10px}
+.footer{border-top:1px solid var(--line);color:var(--ink-faint);font-size:11.5px;line-height:1.7;padding:22px 32px}
+.verified-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#15775A;background:var(--ok-soft);border:1px solid #9FDCBC;border-radius:999px;padding:2px 9px;vertical-align:middle}
+.warn-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#9A4A1A;background:#FCEFE2;border:1px solid #F0C9A3;border-radius:999px;padding:2px 9px;vertical-align:middle}
+::selection{background:rgba(200,160,77,.28)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media(max-width:768px){.header{padding:22px 18px}.tabs{padding:0 14px}.content{padding:16px 14px 40px}.card{padding:20px 18px}.appeal-letter{padding:24px 20px}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+    <div style="width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e94560,#c0392b);font-size:24px">🛡️</div>
+    <div style="flex:1">
+      <h1>카티스템 실손보험 지급거절 대응 시스템</h1>
+      <div class="header-sub">거절 사유 분석 → 이의신청서 자동 생성 → 다운로드·인쇄 | 2026 기준</div>
+    </div>
+  </div>
+  <div class="badges">
+    <div class="badge"><em>식약처 허가 </em><strong>2012년</strong></div>
+    <div class="badge"><em>품목기준코드 </em><strong>201200401</strong></div>
+    <div class="badge"><em>적응증 </em><strong>ICRS Grade IV</strong></div>
+    <div class="badge"><em>연령제한 </em><strong>없음</strong></div>
+    <div class="badge"><em>누적 시술 </em><strong>3만+ 명</strong></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tabBar">
+  <button class="active" onclick="switchTab('mycase')">✍️ 나의 사례 입력</button>
+  <button onclick="switchTab('cases')">📂 케이스별 대응 논리</button>
+  <button onclick="switchTab('indications')">🔬 적응증 기준</button>
+  <button onclick="switchTab('roadmap')">🗺️ 대응 로드맵</button>
+  <button onclick="switchTab('insurance')">💰 실손보험 안내</button>
+  <button onclick="switchTab('sources')">📚 출처·참고문헌</button>
+</div>
+
+<div class="content">
+
+<!-- ═══════════ TAB: MY CASE ═══════════ -->
+<div id="tab-mycase">
+  <!-- 환자 정보 -->
+  <div class="card">
+    <div class="card-title">환자·보험 정보 입력</div>
+    <div class="card-desc">아래 정보를 입력하면 보험사 제출용 이의신청서가 자동 생성됩니다.</div>
+    <div class="form-grid">
+      <div class="form-group"><label>환자명</label><input id="f_name" placeholder="홍길동"></div>
+      <div class="form-group"><label>보험사</label><input id="f_insurer" placeholder="○○화재, ○○생명 등"></div>
+      <div class="form-group"><label>증권번호</label><input id="f_policy" placeholder="보험증권 번호"></div>
+      <div class="form-group"><label>수술일</label><input id="f_surgDate" placeholder="2026-01-15"></div>
+      <div class="form-group"><label>수술 병원</label><input id="f_hospital" placeholder="○○대학교병원"></div>
+      <div class="form-group"><label>집도의</label><input id="f_surgeon" placeholder="김○○ 교수"></div>
+      <div class="form-group"><label>거절 통보일</label><input id="f_denialDate" placeholder="2026-02-10"></div>
+      <div class="form-group"><label>청구 금액</label><input id="f_amount" placeholder="1,200만 원"></div>
+    </div>
+  </div>
+
+  <!-- 환자 임상 정보 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <div class="card-title">환자 임상 정보 (수술 기록 기준)</div>
+      <span style="background:#0f3460;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px">권장</span>
+    </div>
+    <div class="card-desc">수술기록지에 기재된 임상 정보를 입력하면, 환자 상태에 <strong>부적합한 반박 논리를 자동으로 제외</strong>합니다. 모르는 항목은 "확인 전"으로 두시면 됩니다.</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>ICRS 등급 (관절경 확인)</label>
+        <select id="f_icrs" onchange="updateClinicalFilter()">
+          <option value="">확인 전</option>
+          <option value="4">Grade IV (전층 결손 — 카티스템 적응증)</option>
+          <option value="3">Grade III (50% 이상 결손)</option>
+          <option value="2">Grade II (50% 미만 결손)</option>
+          <option value="1">Grade I (연성 함몰)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>KL 등급 (X-ray 기준)</label>
+        <select id="f_kl" onchange="updateClinicalFilter()">
+          <option value="">확인 전</option>
+          <option value="1">Grade 1</option>
+          <option value="2">Grade 2</option>
+          <option value="3">Grade 3</option>
+          <option value="4">Grade 4 (말기)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>결손 면적 (cm²)</label>
+        <select id="f_defect" onchange="updateClinicalFilter()">
+          <option value="">확인 전</option>
+          <option value="under2">2cm² 미만</option>
+          <option value="2to9">2~9cm² (카티스템 적응증)</option>
+          <option value="over9">9cm² 초과</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>환자 연령</label>
+        <select id="f_age" onchange="updateClinicalFilter()">
+          <option value="">확인 전</option>
+          <option value="under50">50세 미만</option>
+          <option value="50to65">50~65세</option>
+          <option value="over65">65세 이상</option>
+        </select>
+      </div>
+    </div>
+    <div id="clinicalFilterResult"></div>
+  </div>
+
+  <!-- 주요 거절 사유 입력 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <div class="card-title" style="color:#c0392b">보험사로부터 받은 주요 거절 사유 입력</div>
+      <span class="required-badge">필수</span>
+    </div>
+    <div class="card-desc">보험사로부터 통보받은 거절 사유를 가능한 구체적으로 입력해 주세요.<br>이 내용이 이의신청서의 <strong style="color:#c0392b">핵심 반박 대상</strong>이 됩니다.</div>
+    <div class="form-group">
+      <textarea id="f_denialReason" class="denial-input" rows="4" placeholder="예: MRI상 ICRS grade 3에 해당하여 카티스템 적응증에 부합하지 않으므로 지급이 불가합니다.&#10;예: KL grade 4는 카티스템 금기사항으로 보험금 지급이 어렵습니다."></textarea>
+    </div>
+    <div id="autoSuggest"></div>
+  </div>
+
+  <!-- 참고 거절 사유 선택 -->
+  <div class="card">
+    <div class="card-title">관련 거절 사유 선택 (참고 항목)</div>
+    <div class="info-yellow info-box">
+      💡 위에서 입력하신 <strong>보험사의 실제 거절 사유</strong>가 이의신청서의 주된 반박 대상입니다. 아래 항목은 거절 사유와 관련된 추가 대응 논리를 보강하기 위한 <strong>참고 선택</strong>입니다. 해당되는 항목을 선택하시면 더 강력한 이의신청서가 생성됩니다.
+    </div>
+    <div class="case-grid" id="caseCheckboxes"></div>
+
+    <div style="margin-top:20px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:#555;margin-bottom:8px">문서 스타일 선택</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="styleSelector">
+        <button class="style-btn active" onclick="selectStyle('general',this)" data-style="general">📄 일반</button>
+        <button class="style-btn" onclick="selectStyle('professional',this)" data-style="professional">🔬 전문적</button>
+        <button class="style-btn" onclick="selectStyle('formal',this)" data-style="formal">📜 격식</button>
+        <button class="style-btn" onclick="selectStyle('concise',this)" data-style="concise">⚡ 간결</button>
+        <button class="style-btn" onclick="selectStyle('detailed',this)" data-style="detailed">📋 구체적</button>
+      </div>
+      <div id="styleDesc" style="font-size:12px;color:#888;margin-top:6px;line-height:1.5">환자가 이해하기 쉬운 표준적인 톤으로 작성됩니다.</div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-primary" id="generateBtn" onclick="handleGenerate()" disabled>🛡️ 이의신청서 생성</button>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#555;user-select:none">
+        <input type="checkbox" id="includeFootnotes" style="width:18px;height:18px;accent-color:#0f3460;cursor:pointer"> 주석(근거 출처) 포함
+      </label>
+      <span id="genHint" style="font-size:13px;color:#e74c3c">주요 거절 사유를 입력해주세요</span>
+    </div>
+  </div>
+
+  <!-- 생성 결과 -->
+  <div id="generatedArea" class="hidden"></div>
+  <div class="privacy-notice" id="privacyNotice" style="display:none">
+    ⚠️ <strong>개인정보 보호 안내:</strong> 다운로드한 파일에는 입력하신 개인정보(성명, 증권번호 등)가 포함되어 있습니다. 보험사 제출 후에는 파일을 삭제하시기 바랍니다. 본 도구는 모든 데이터를 사용자의 브라우저에서만 처리하며, 외부 서버로 전송하지 않습니다.
+  </div>
+</div>
+
+<!-- ═══════════ TAB: CASES ═══════════ -->
+<div id="tab-cases" class="hidden">
+  <div style="display:grid;grid-template-columns:260px 1fr;gap:20px">
+    <div>
+      <div style="font-size:12px;font-weight:700;color:#999;letter-spacing:1px;margin-bottom:10px;padding-left:4px">거절 사유 선택</div>
+      <div id="caseList"></div>
+    </div>
+    <div id="caseDetail"></div>
+  </div>
+</div>
+
+<!-- ═══════════ TAB: INDICATIONS ═══════════ -->
+<div id="tab-indications" class="hidden"></div>
+
+<!-- ═══════════ TAB: ROADMAP ═══════════ -->
+<div id="tab-roadmap" class="hidden"></div>
+
+<!-- ═══════════ TAB: INSURANCE ═══════════ -->
+<div id="tab-insurance" class="hidden"></div>
+
+<!-- ═══════════ TAB: SOURCES ═══════════ -->
+<div id="tab-sources" class="hidden"></div>
+
+</div>
+
+<div class="footer">
+  근거: 식약처 품목허가(2012, 201200401) · 금융감독원 표준약관 · 약관규제법 · 관련 판례 · 주요 임상논문<br>
+  본 도구는 환자 교육용 참고 자료이며, 법률 자문을 대체하지 않습니다. 생성 문서는 초안이므로 전문의 상의 후 제출하십시오. | 2026년 기준
+</div>
+
+<script>
+// ─── DATA ───
+const CASES=[
+{id:1,tag:"CASE 01",color:"#c0392b",title:"줄기세포는 실손보험 지급이 거부될 수 있다",subtitle:"줄기세포 치료 전반에 대한 포괄적 거절",severity:3,denialLogic:"줄기세포를 이용한 치료는 보험사 내부 기준상 지급 거절 대상에 해당할 수 있으며, 실손보험 약관상 보상 범위에 포함되지 않는다.",counterPoints:[{point:"카티스템은 식약처 정식 품목허가 의약품 (2012년, 품목기준코드 201200401)",detail:"카티스템은 2012년 1월 식약처로부터 품목허가를 취득한 전문의약품입니다. 3상 임상시험(Level I evidence)을 거쳤고, 6년간 615명 대상 시판 후 조사를 통과하여 재심사도 완료했습니다. 무허가 줄기세포 시술과는 법적으로 완전히 구분됩니다."},{point:"실손보험 표준약관에 '줄기세포 제외' 조항 없음 — 포괄주의 원칙",detail:"실손의료보험은 포괄주의(negative list) 방식을 채택하여, '보상하지 않는 사항'을 약관에 열거하고 그 외 의료비는 보상하는 구조입니다. 표준약관의 면책 사항에 '줄기세포 치료'를 특정하여 배제하는 조항은 존재하지 않습니다."},{point:"약관규제법 제5조 제2항 — 작성자 불이익의 원칙 적용",detail:"약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석되어야 합니다. 약관에 명시적 제외 조항이 없는 상황에서 보험사가 임의로 지급을 거절하면, 이 원칙에 의해 피보험자에게 유리하게 해석해야 합니다."}],evidence:["식약처 품목허가서 (카티스템, 2012년 1월)","실손보험 표준약관 원문 (면책 사항 부분)","임상 3상 논문 (Lim et al., 2021, OJSM)","약관규제법 조문"],laws:["약관규제법 제5조 제2항 (작성자 불이익의 원칙)","약관규제법 제6조 (불공정약관 조항 무효)","약관규제법 제3조 (설명의무 위반 시 주장 불가)","의정부지방법원 판결 — 주치의 진단 우선 인정"],winRate:90,cumulative:"가장 먼저, 가장 강하게 반박할 수 있는 사유입니다. 식약처 품목허가서 사본과 실손보험 표준약관의 면책 조항 목록을 함께 첨부하면 보험사가 스스로 번복하는 경우가 많습니다."},
+{id:2,tag:"CASE 02",color:"#d35400",title:"카티스템은 고령 환자에게 적합하지 않다",subtitle:"연령을 이유로 한 적응증 외 치료 주장",severity:3,denialLogic:"카티스템 수술은 고령 환자에게 적합하지 않은 치료이며, 해당 환자의 연령을 고려할 때 적응증에서 벗어난 시술로 보험금 지급이 불가하다.",counterPoints:[{point:"카티스템 허가사항에 연령 제한 없음",detail:"식약처 품목허가 사항에 연령 상한 또는 하한이 명시되어 있지 않습니다. 허가 적응증은 '퇴행성 또는 반복적 외상으로 인한 골관절염 환자'이며, 특정 연령대를 배제하는 문구가 없습니다."},{point:"임상시험 평균 연령 55.9세 — 고령 환자 유효성 확인",detail:"3상 임상시험(Lim et al., 2021) 평균 환자 연령 55.9세. Park et al.(2017) 7년 장기 추적에서 KL Grade 3 환자 안전성·유효성 확인."},{point:"의사의 재량권 — 대법원 94다13046",detail:"대법원 법리: '의사는 환자의 상황과 당시 의료 수준, 전문적 지식과 경험에 따라 적절하다고 판단되는 진료방법을 선택할 수 있다.'"}],evidence:["식약처 허가 사항 원문 (연령 제한 조항 부재 확인)","3상 임상시험 논문 (Lim et al., 2021)","고령 환자 장기추적 논문 (Park et al., 2017)","담당의 소견서"],laws:["대법원 94다13046 (의사의 진료방법 선택 재량권)","약관규제법 제6조 제2항 제1호","약관규제법 제5조"],winRate:92,cumulative:"식약처 허가 사항을 출력하여 '연령 제한 없음'을 직접 확인시켜 주십시오."},
+{id:3,tag:"CASE 03",color:"#1a6aa5",title:"MRI상 ICRS 등급·결손 크기가 불분명하다",subtitle:"ICRS 등급 경계 모호성을 이유로 한 지급 거절",severity:3,denialLogic:"MRI 영상 판독 결과, 연골 결손 등급이 ICRS 3등급과 4등급의 경계에 있어 4등급으로 단정하기 어려우며, 결손 크기 역시 기준(2cm²)에 미달할 수 있다.",counterPoints:[{point:"관절경 소견이 MRI보다 우선 — Gold Standard",detail:"ICRS 등급 분류의 gold standard는 관절경 직접 육안 소견입니다. MRI의 연골 손상 등급 평가 정확도는 60~85% 수준이며, 특히 Grade III와 IV 구분에서 불일치가 발생할 수 있습니다."},{point:"결손 크기는 수술 중 직접 계측 — 가장 정확한 기록",detail:"카티스템 시술 과정에서 결손 부위를 노출하고 직접 측정하므로, 수술기록지에 기재된 결손 면적은 직접 관찰에 의한 기록입니다."},{point:"보험사 측 재판독은 '사후 추정'에 불과",detail:"보험사 자문의는 환자를 직접 진찰하지 않고 서류만으로 판단합니다. 관절경으로 직접 관찰한 수술의의 소견보다 정확도가 떨어집니다."}],evidence:["수술기록지 (ICRS 4등급 및 결손 크기 명시)","관절경 수술 중 사진·영상 자료","수술 전 MRI 판독 소견서","집도의 ICRS 등급 판단 근거 추가 소견서"],laws:["의료법 제22조 (진료기록부 작성 의무 및 법적 효력)","약관규제법 제5조","ICRS Cartilage Injury Evaluation Package"],winRate:78,cumulative:"수술기록지가 핵심 무기입니다. 집도의에게 'ICRS 4등급 확인 및 결손 크기 재확인 소견서'를 별도 발급받아 첨부하면 보험사의 MRI 재판독 주장을 무력화할 수 있습니다."},
+{id:4,tag:"CASE 04",color:"#6c3483",title:"KL 3등급을 제3기관이 4등급(말기)으로 판정",subtitle:"보험사 측 자문의가 KL 4등급 판정 → 적응증 외 주장",severity:3,denialLogic:"진료 기관은 KL 3등급으로 진단했으나, 보험사가 의뢰한 제3기관이 KL 4등급(말기)으로 판정하여 카티스템 적응증에서 제외된다.",counterPoints:[{point:"KL Grade와 ICRS Grade는 완전히 다른 평가 체계",detail:"KL Grade는 X-ray 기반 골관절염 전반적 진행 정도를, ICRS Grade는 관절경 기반 국소 연골 결손 심각도를 평가합니다."},{point:"KL 3↔4 경계는 판독자 간 신뢰도 차이가 큰 영역 (kappa 0.5~0.7)",detail:"KL 등급은 반정량적 지표로, 동일 영상이라도 판독자에 따라 3등급 또는 4등급으로 달리 해석될 수 있습니다."},{point:"보험사 자문의 이해충돌 — 10건 중 7건 이상 미지급 통계",detail:"2025년 통계에 따르면 생명보험 의료자문 건 중 10건 중 7건 이상에서 보험금이 일부 또는 전부 미지급되었습니다."}],evidence:["수술 전 X-ray 영상 및 원본 판독 소견서","집도의 KL 등급 판단 근거 소견서","독립 제3기관(대학병원) 재판독 소견서","KL 분류 판독자 간 신뢰도 관련 의학 문헌"],laws:["약관규제법 제5조","민사소송법 제202조 (자유심증주의)","의정부지법 판결 — 주치의 진단 우선 인정","부산지법 판결 — 미지급 보험금 1,068만 원 지급"],winRate:70,cumulative:"독립적인 대학병원 영상의학과에 재판독을 의뢰하여 KL 3등급 확인서를 받으면 보험사 주장에 정면 대응할 수 있습니다."},
+{id:5,tag:"CASE 05",color:"#117a65",title:"사용량(바이알 수)에 대한 지급 보류",subtitle:"카티스템 투여량이 과다하다는 주장",severity:2,denialLogic:"사용된 카티스템의 바이알 수 또는 투여 용량이 기준을 초과하거나 의학적 근거 없이 과다 사용되었다.",counterPoints:[{point:"용량은 결손 면적에 의해 객관적으로 결정 — 허가 용법·용량",detail:"카티스템의 허가 투여량은 결손 면적 1cm²당 500μL이며, 최대 3바이알 세트까지 사용 가능합니다."},{point:"다발성 결손 시 총 면적 합계에 따라 바이알 수 증가는 합리적",detail:"한 무릎 관절 내에 내측과, 슬개골, 활차구 등 다발성 결손이 존재할 수 있습니다."},{point:"식약처 허가 용법·용량이 유일한 공식 기준",detail:"현재 학회 차원의 용량 기준이 확립 전이므로, 식약처 허가 용법·용량이 유일한 공식 기준입니다."}],evidence:["수술기록지 (결손 부위별 면적 및 카티스템 사용량)","식약처 허가사항 원문 — 용법·용량 항목","진료비 세부내역서","집도의 사용량 결정 근거 소견서"],laws:["약관규제법 제5조","실손보험 표준약관 (실제 발생 의료비 보상 원칙)","3상 임상시험 프로토콜 (NCT01041001)"],winRate:73,cumulative:"수술기록지에 결손 크기와 투여량이 함께 기재되어 있는지 반드시 확인하십시오."},
+{id:6,tag:"CASE 06",color:"#2980b9",title:"건강보험 비급여 항목이라 지급 대상이 아니다",subtitle:"비급여 = 실손 보상 제외라는 잘못된 약관 해석",severity:2,denialLogic:"카티스템이 건강보험 비급여 항목에 해당하므로, 실손보험 약관상 지급 대상이 아니다.",counterPoints:[{point:"실손보험의 핵심 목적 자체가 비급여 의료비 보상",detail:"실손의료보험은 건강보험이 보장하지 않는 비급여 항목까지 보장하기 위해 존재합니다."},{point:"세대별 비급여 보장 비율 확인 — 0% 보상 약관은 존재하지 않음",detail:"1세대(~2009): 비급여 거의 100% 보장, 2세대: 80~90%, 3세대: 80%, 4세대: 70%, 5세대: 50%."},{point:"카티스템은 식약처 허가 의약품 — 비인가 시술이 아님",detail:"카티스템은 식약처 품목허가를 받은 전문의약품이므로, 보상 대상인 '치료 목적의 의료비'에 해당합니다."}],evidence:["보험 가입 약관 원본","진료비 세부내역서","실손보험 표준약관 제3조","금융위원회(2025) 비급여 분쟁조정기준"],laws:["실손보험 표준약관 (비급여 의료비 보상 원칙)","약관규제법 제5조 제2항","금소법 제19조"],winRate:82,cumulative:"약관 원본을 보험사에 서면으로 교부 요청하십시오."},
+{id:7,tag:"CASE 07",color:"#8e44ad",title:"제3의료기관 자문으로 보험사 측에 유리한 지급거부 증가",subtitle:"보험사 의뢰 의료자문이 집도의 소견을 일방적으로 부정하는 구조적 문제",severity:3,denialLogic:"보험사가 의뢰한 제3의료기관(자문의)의 의견에 따르면, 해당 환자의 카티스템 시술은 적응증에 부합하지 않거나 의학적 필요성이 인정되지 않으므로 보험금 지급이 불가하다.",counterPoints:[{point:"보험사 의료자문의 구조적 이해충돌 — 10건 중 7건 이상 미지급",detail:"보험사가 자문의를 선정하고, 자문료를 지급하며, 질문 항목도 보험사가 설계하는 구조에서 자문 결과가 보험사에 유리하게 나오는 것은 구조적으로 예견된 결과입니다."},{point:"자문의는 환자를 직접 진찰하지 않은 '서류 심사'에 불과",detail:"집도의는 환자의 임상 증상, 이학적 검사, MRI, 관절경 직접 소견을 종합하여 치료를 결정했습니다. 법적·의학적으로 직접 진찰·수술한 의사의 판단이 서류 심사보다 높은 증거력을 가집니다."},{point:"보험사가 자문의에게 불리한 자료를 선택적으로 미전달하는 사례 다수",detail:"관절경 사진, 수술 중 영상, 집도의 상세 소견서 등 환자에게 유리한 자료를 누락하는 경우가 빈번합니다."},{point:"법원 판례: 주치의 진단이 보험사 자문의보다 우선",detail:"의정부지법, 부산지법 모두 일관되게 직접 진료한 의사의 판단을 서류 자문보다 신뢰합니다."}],evidence:["보험사 손해사정결과 안내서","의료자문 회신서 원본","자문 의뢰 시 전달 자료 목록","집도의 반박 소견서","관절경 사진·수술 중 영상","독립 제3기관 재판독 소견서"],laws:["보험업법 제95조의3 (의료자문 남용 방지 의무)","약관규제법 제5조","민사소송법 제202조","의정부지법 판결","부산지법 판결","보험협회 의료자문 표준내부통제기준"],winRate:72,cumulative:"① 의료자문 회신서 원본과 전달 자료 목록을 서면으로 요청 ② 집도의에게 항목별 반박 소견서 ③ 누락 자료 보완 제출"},
+{id:8,tag:"CASE 08",color:"#2c3e50",title:"카티스템은 실험적·연구적 치료에 해당한다",subtitle:"약관상 '실험적 치료' 면책 조항을 근거로 한 거절",severity:3,denialLogic:"카티스템은 아직 충분히 검증되지 않은 실험적·연구적 치료에 해당하며, 약관상 면책 조항에 의거하여 보험금 지급이 불가하다.",counterPoints:[{point:"카티스템은 3상 임상시험 완료 + 식약처 허가 = 실험적 치료가 아님",detail:"카티스템은 Phase 1/2/3 임상시험을 모두 거쳐 2012년 정식 허가를 받았으며, 이후 시판 후 조사(PMS)와 재심사까지 완료했습니다."},{point:"누적 3만 명 이상 시술 — 13년간 상용화된 치료",detail:"2012년 허가 이후 13년간 누적 3만 명 이상의 환자에게 시술된 상용 의약품입니다."},{point:"약관상 '실험적 치료' 정의에 식약처 허가 의약품은 포함 불가",detail:"'실험적 치료'란 통상 '관련 기관의 승인을 받지 않은 치료'를 의미합니다. 카티스템은 식약처 승인을 받은 전문의약품입니다."}],evidence:["식약처 품목허가서 (2012년)","시판 후 조사(PMS) 완료 보고서","3상 임상시험 논문","보험 약관 원문"],laws:["약관규제법 제5조 제2항","약관규제법 제3조","약관규제법 제6조"],winRate:88,cumulative:"보험사에 '실험적 치료의 정의'를 서면으로 제시하도록 요청하십시오."},
+{id:9,tag:"CASE 09",color:"#16a085",title:"미세천공술로 충분 — 카티스템은 과잉진료다",subtitle:"더 저렴한 치료로 충분하다는 의학적 필요성 부정",severity:3,denialLogic:"해당 환자의 연골 결손은 미세천공술로 충분히 치료 가능하며, 고가의 카티스템 사용은 과잉진료에 해당한다.",counterPoints:[{point:"3상 RCT에서 카티스템이 미세천공술 대비 통계적으로 우월",detail:"Lim et al.(2021) RCT 114명: ICRS 등급 개선율 카티스템 97.7% vs 미세천공술 71.7% (p=0.001)."},{point:"미세천공술은 결손 면적 2cm² 이상에서 효과 급감",detail:"ICRS 국제 가이드라인에서 미세천공술의 효과는 결손 면적 2cm² 이상에서 급격히 떨어집니다."},{point:"치료법 선택은 의사의 재량권 — 보험사가 대체 치료를 강제할 수 없음",detail:"대법원 94다13046 판결에 따라, 의사는 적절한 진료방법을 선택할 재량이 있습니다."}],evidence:["3상 RCT 논문 (Lim et al., 2021)","ICRS 국제 가이드라인","집도의 소견서","수술기록지"],laws:["대법원 94다13046","약관규제법 제5조","실손보험 표준약관"],winRate:80,cumulative:"핵심은 '미세천공술로 충분하지 않은 의학적 이유'를 구체적으로 제시하는 것입니다."},
+{id:10,tag:"CASE 10",color:"#b71c1c",title:"MRI로 측정한 병변 크기가 적응증 기준 미달이라는 주장",subtitle:"MRI 결손 면적 기준 2cm² 미달 판정 → 적응증 외 주장 (최신 이슈)",severity:3,denialLogic:"수술 전 MRI에서 측정한 연골 결손 면적이 카티스템 적응증 기준인 2cm²에 미달하므로 적응증 외 사용에 해당한다.",counterPoints:[{point:"MRI는 결손 크기를 평균 65~78% 과소평가 — 국제 논문 다수 확인",detail:"Gomoll et al.(2011): 평균 65% 과소평가, 85%에서 실제 결손이 더 큼. Campbell et al.(2013): 관절경 결손이 MRI 대비 평균 70% 더 큼. Perry et al.(2023): 전층 연골 결손 면적을 평균 78.3% 과소평가."},{point:"정확한 결손 크기는 관절경 데브리드먼트 후 직접 계측이 gold standard",detail:"카티스템 시술 시 손상된 연골을 데브리드먼트하여 건강한 연골 경계까지 정리한 후 실제 결손 면적을 직접 계측합니다."},{point:"MRI의 부분층 손상은 연골 변성을 반영하지 못함",detail:"MRI에서 Grade II~III로 판독되는 부분층 손상이 수술 시 데브리드먼트하면 전층 결손으로 드러나는 경우가 매우 흔합니다."},{point:"보험사는 MRI 측정 한계를 알면서 이를 거절 근거로 악용",detail:"MRI의 결손 크기 과소평가는 영상의학계에서 널리 알려진 사실입니다."}],evidence:["수술기록지 — 데브리드먼트 후 결손 면적","관절경 수술 중 사진·영상","수술 전 MRI 판독 소견서","집도의 소견서","Gomoll, Campbell, Perry 논문 사본"],laws:["약관규제법 제5조","의료법 제22조","대법원 94다13046","약관규제법 제6조"],winRate:82,cumulative:"핵심은 '수술기록지의 데브리드먼트 후 결손 면적'이 MRI 측정치보다 우선한다는 점입니다."},
+{id:11,tag:"CASE 11",color:"#7B241C",title:"3세대 보험 '비급여 주사료 250만 원 한도'를 적용하여 삭감",subtitle:"카티스템을 일반 비급여 주사로 분류하여 연간 250만 원 한도 적용 (3세대 이슈)",severity:3,denialLogic:"카티스템은 주사제에 해당하므로, 3세대 실손보험의 '3대 비급여 특약 — 비급여 주사료' 항목에 따라 연간 250만 원 한도가 적용된다. 따라서 250만 원을 초과하는 금액은 보상하지 않는다.",counterPoints:[{point:"카티스템은 '비급여 주사료'가 아니라 수술 중 결손부에 이식·도포하는 약제 — 250만 원 주사료 한도의 적용 대상 자체가 아님",detail:"3세대 실손의 '비급여 주사료 연 250만 원·50회 한도'는 도수치료·체외충격파·증식치료와 함께, 외래에서 반복 시행되는 통증·영양·증식 주사의 과잉진료를 관리하기 위한 항목입니다. 반면 카티스템은 관절경 또는 관절 절개 하에 연골 결손부를 데브리드먼트한 뒤 그 부위에 직접 이식·도포하는, 수술에 수반된 치료재료성 약제입니다. 단순 정맥·근육·관절강 내 주입 주사와는 시술 형태가 본질적으로 다르므로, 약관상 '비급여 주사료' 한도 항목에 당연히 포섭된다고 볼 수 없습니다. 보험사에 '카티스템을 250만 원 주사료 한도 대상으로 분류한 약관상 근거 조항'을 서면으로 제시하도록 먼저 요구하십시오."},{point:"[보조 논거] 약관상 '항암제·희귀의약품 등' 비급여 주사료 예외 규정의 해석을 다툴 여지가 있음",detail:"3·4세대 특별약관에는 '항암제, 항생제(항진균제 포함), 희귀의약품에 사용된 비급여 주사료는 주계약 질병 비급여에서 보상한다'는 예외가 있습니다. 카티스템은 식약처가 허가한 고가의 첨단바이오의약품(세포치료제)으로, 일반적인 통증·영양 주사와는 성격이 전혀 다릅니다. 다만 카티스템을 약관상 '항암제'로 곧바로 등치시키는 해석(예: 분류코드 439번을 항암제군으로 보는 주장)은 보험사나 법원이 받아들이지 않을 수 있는 '다툼의 여지가 있는 주장'입니다. 따라서 위 1번(수술 수반 약제론)을 주된 논거로 삼고, 이 예외 규정은 보조적으로만 제기하십시오. 약관 문구가 불명확한 경우 약관규제법 제5조 제2항에 따라 피보험자에게 유리하게 해석되어야 합니다."},{point:"주사료 한도가 적용되지 않으면 주계약 '질병 비급여' 한도에서 보상",detail:"카티스템이 250만 원 주사료 한도 항목에서 제외되면, 보상은 주계약의 '질병 비급여' 항목으로 넘어갑니다. 이 항목의 연간 한도는 통상 5,000만 원 수준이며, 자기부담률을 적용하여 비급여 비용의 약 70~80%(3·4세대 기준)를 보상합니다. 예컨대 수술비가 1,500만 원이라면 자기부담률 적용 후 약 1,050만~1,200만 원 보상이 가능합니다(실제 한도·비율은 가입 약관에 따라 다르므로 반드시 본인 약관으로 확인)."},{point:"입원/통원 구분에 따라 한도가 크게 달라지므로 실제 진료 형태를 정확히 확인",detail:"주계약 질병 비급여의 높은 연간 한도는 통상 '입원'에 적용되고, 통원(외래)은 회당 한도(20만~30만 원 내외)가 적용되어 실질 보상이 크게 줄어듭니다. 따라서 카티스템 시술이 의학적 필요에 따라 입원으로 시행된 경우에는, 입원 사실이 진료기록·영수증에 정확히 기재되었는지 확인하십시오. 다만 보상 한도를 늘릴 목적으로 의학적 필요가 없는 입원을 임의로 만드는 것은 부적절하며, 입원 여부는 어디까지나 담당 전문의의 의학적 판단에 따라야 합니다."}],evidence:["보험 가입 약관 원본 — '비급여 주사료 한도' 및 예외 규정 조항 확인","수술기록지 — 카티스템을 결손부에 이식·도포한 수술 과정 기재 확인","식약처 카티스템 품목허가 사항 — 첨단바이오의약품(세포치료제) 분류 확인","진료비 세부내역서 — 입원/통원 구분 및 약제·치료재료 항목 확인","보험사에 '250만 원 한도 분류 근거 조항' 서면 제시 요청"],laws:["실손보험 표준약관 (비급여 주사료 한도 및 예외 규정)","약관규제법 제5조 제2항 (불명확 시 고객 유리 해석)","약관규제법 제3조 (설명의무 위반 시 주장 불가)","금소법 제19조 (설명의무 위반 시 입증책임 전환)"],winRate:72,cumulative:"핵심은 보험사에 '카티스템을 250만 원 비급여 주사료 한도 대상으로 분류한 약관상 근거 조항을 서면으로 제시하라'고 먼저 요구하는 것입니다. 가장 방어력 높은 논거는 ① 카티스템이 외래 반복 주사가 아니라 수술 중 결손부에 이식·도포하는 치료재료성 약제라는 점이며, ② 약관상 '항암제 등' 예외 규정 해석은 다툼의 여지가 있으므로 보조 논거로만 활용하십시오. 입원으로 시행된 경우 입원 기록의 정확성을 확인하되, 보상만을 목적으로 한 임의 입원은 권하지 않습니다. 약관 문구가 불명확하면 약관규제법 제5조 제2항(고객 유리 해석)을 원용하십시오."},
+{id:12,tag:"CASE 12",color:"#4A235A",title:"제3의료기관 자문에서 '수술 부적정' 소견 → 과잉진료 주장",subtitle:"보험사 의뢰 자문 정형외과 전문의가 '카티스템 수술은 과잉 진료이며 의학적으로 타당하지 않다'고 소견",severity:3,denialLogic:"보험사가 의뢰한 제3의료기관 정형외과 전문의 자문 결과, '제출된 의무기록을 바탕으로 검토한 결과, 해당 환자의 상태에 카티스템 수술은 과잉 진료이며 의학적으로 타당하지 않다'는 소견이 나왔으므로 보험금 지급이 불가하다.",counterPoints:[{point:"자문의는 '서류 검토'만 했을 뿐, 환자를 직접 진찰하거나 관절경을 확인하지 않음",detail:"보험사 자문의는 보험사가 전달한 의무기록과 영상 일부만으로 '부적정' 소견을 내렸습니다. 환자를 직접 진찰하지 않았고, 관절경으로 연골 상태를 직접 확인하지도 않았습니다. 반면, 집도의는 환자의 병력·이학적 검사·MRI·관절경 직접 소견을 종합적으로 검토하여 카티스템이 필요하다고 판단했습니다. 의정부지방법원은 보험사 감정의 의견이 '확정적 감정이 아니라 가까워 보인다는 취지에 불과하다'고 판단하여 주치의 진단을 우선 인정한 바 있습니다."},{point:"'과잉진료' 주장의 의학적 근거가 불충분 — 자문의의 대안 치료 제시 여부 확인 필요",detail:"자문의가 '과잉진료'라고 주장하려면, ① 해당 환자에게 카티스템이 아닌 어떤 치료가 적절했는지, ② 그 대안 치료가 카티스템과 동등하거나 더 나은 결과를 보인다는 의학적 근거를 함께 제시해야 합니다. 단순히 '타당하지 않다'는 결론만 있고 대안 치료와 그 근거가 없다면, 이는 구체적 의학적 판단이 아닌 보험사에 유리한 결론을 위한 자문입니다. 카티스템은 3상 RCT에서 미세천공술 대비 ICRS 개선율 97.7% vs 71.7%(p=0.001)로 우월성이 입증되었습니다(Lim et al., 2021)."},{point:"자문 의뢰 시 보험사가 전달한 자료의 완전성 검증 필요",detail:"보험사가 자문 의뢰 시 관절경 사진, 수술 중 영상, 집도의 상세 소견서 등 환자에게 유리한 자료를 누락하고 MRI 영상과 기본 진료기록만 전달한 경우가 다수 보고되어 있습니다. 자문 의뢰 시 전달 자료 목록을 보험사에 서면 요청하여, 어떤 자료가 자문의에게 전달되었는지 확인해야 합니다. 불완전한 자료에 기반한 '부적정' 소견은 신뢰도가 떨어집니다."},{point:"의료자문의 구조적 이해충돌 — 보험업법 제95조의3 남용 방지 의무",detail:"2025년 통계에 따르면 생명보험 의료자문 건 중 10건 중 7건 이상에서 보험금이 일부 또는 전부 미지급되었습니다. 보험사가 자문의를 선정하고, 자문료를 지급하며, 질문 항목도 보험사가 설계하는 구조입니다. 보험협회 의료자문 표준내부통제기준 자체가 '보험금 부지급 또는 삭감 수단으로 남용되지 않도록' 경고하고 있습니다."},{point:"집도의의 항목별 반박 소견서가 자문의 의견을 무력화",detail:"가장 효과적인 대응은 집도의에게 자문의 소견서 원본을 보여주고, 항목별로 반박하는 소견서를 받는 것입니다. 예: '자문의는 OO라고 판단하였으나, 본인이 관절경으로 직접 확인한 결과 ICRS 4등급 전층 결손이 확인되었으며, 결손 면적 OOcm²로 카티스템 적응증에 정확히 부합합니다. 환자의 연령·전신 상태·기저질환을 종합 고려하여 카티스템이 가장 적절한 치료라고 판단하였습니다.'"}],evidence:["보험사 손해사정결과 안내서 (자문 결과 원문)","의료자문 회신서 원본 (보험사에 서면 교부 요청)","자문 의뢰 시 전달 자료 목록 (누락 자료 확인)","집도의 반박 소견서 — 자문의 '부적정' 의견에 대한 항목별 반박","수술기록지 (관절경 소견, ICRS 등급, 결손 면적)","관절경 사진·수술 중 영상","3상 RCT 논문 (Lim et al., 2021) — 의학적 필요성 근거"],laws:["보험업법 제95조의3 (의료자문 남용 방지 의무)","약관규제법 제5조 (불명확 시 피보험자 유리 해석)","대법원 94다13046 (의사의 진료방법 선택 재량권)","민사소송법 제202조 (자유심증주의)","의정부지법 판결 — 주치의 진단 우선 인정","부산지법 판결 — 미지급 보험금 지급 명령"],winRate:70,cumulative:"대응의 핵심은 4단계입니다. ① 보험사에 의료자문 회신서 원본과 자문 의뢰 시 전달 자료 목록을 서면으로 요청합니다. ② 자문의가 '과잉진료'라고 판단한 구체적 근거(대안 치료 제시 여부, 의학적 논거)를 확인합니다. ③ 집도의에게 자문의 소견에 대한 항목별 반박 소견서를 받습니다. ④ 관절경 사진 등 자문 시 누락된 자료를 보완 제출합니다. 자문 자체의 공정성과 완전성에 의문을 제기하면 보험사가 재심사에 응하는 경우가 많습니다."}
+];
+
+const STEPS=[
+{step:"STEP 1",title:"거절 통보서 서면 요청",desc:"반드시 서면 거절 사유서 수령 후 정확한 조항 번호 확인.",days:"수령 즉시"},
+{step:"STEP 2",title:"병원 서류 일체 발급",desc:"수술기록지·MRI 소견서·진료비 세부내역서·담당의 소견서·식약처 허가사항 사본.",days:"1~2주"},
+{step:"STEP 3",title:"이의신청서 작성·내용증명 발송",desc:"반박 논리를 근거로 작성. 내용증명 우편으로 증거력 확보.",days:"서류 완비 즉시"},
+{step:"STEP 4",title:"금융감독원 분쟁조정 신청",desc:"무료. 조정 결정은 재판상 화해 효력. 시효중단 효력.",days:"거절 후 30일 이내"},
+{step:"STEP 5",title:"소액심판 또는 민사소송",desc:"분쟁조정 불성립 시. 3,000만 원 이하 소액사건심판법 적용.",days:"조정 불성립 후"}
+];
+
+const INDICATIONS=[
+{label:"연골 결손 등급",value:"ICRS Grade IV",detail:"전층(Full-thickness) 연골 결손만 해당. 연골하골 노출 상태.",icon:"🦴"},
+{label:"관절염 등급",value:"KL Grade 1~3",detail:"Kellgren-Lawrence 1~3등급. Grade 4(말기)는 인공관절 권장.",icon:"🔬"},
+{label:"결손 크기",value:"2~9cm²",detail:"결손 면적 2~9cm² 범위가 허가 적응증 대상.",icon:"📐"},
+{label:"연령 제한",value:"제한 없음",detail:"식약처 허가사항에 연령 상한·하한 없음.",icon:"👤"},
+{label:"부위 제한",value:"무릎 관절",detail:"슬관절(knee joint) 전용 치료제.",icon:"🦵"},
+{label:"투여량",value:"1cm²당 500μL",detail:"결손 면적 비례 용량. 최대 3바이알 세트.",icon:"💉"}
+];
+
+// ─── STATE ───
+let selectedDenials=[];
+let activeCaseId=1;
+let activeGenTab="appeal";
+let selectedStyle="general";
+
+// 환자 임상 정보 기반 케이스 호환성 검사
+function getClinicalData(){
+  return {
+    icrs: document.getElementById('f_icrs')?.value || '',
+    kl: document.getElementById('f_kl')?.value || '',
+    defect: document.getElementById('f_defect')?.value || '',
+    age: document.getElementById('f_age')?.value || ''
+  };
+}
+
+function getIncompatibleCases(){
+  const cd = getClinicalData();
+  const incompatible = [];
+  const warnings = {};
+
+  // ICRS 등급 필터링
+  if(cd.icrs === '3' || cd.icrs === '2' || cd.icrs === '1'){
+    // ICRS 4가 아니면 CASE 03(ICRS 모호 반박)의 "관절경에서 4등급 확인" 논리가 부적합
+    // 단, 보험사가 등급을 낮게 판정한 것에 대한 반박은 여전히 유효할 수 있으므로 경고만
+    warnings[3] = "환자의 ICRS 등급이 "+cd.icrs+"등급입니다. CASE 03의 반박 논리는 'ICRS 4등급임을 입증'하는 것이므로, 관절경 소견이 실제로 4등급인지 재확인이 필요합니다.";
+  }
+
+  // KL 등급 필터링
+  if(cd.kl === '4'){
+    // KL 4 환자에게 CASE 04("KL 3→4 재판정 반박")은 부적합
+    // KL 4가 맞다면 "3등급인데 4로 잘못 판정"이라는 반박이 성립 안 됨
+    incompatible.push(4);
+    warnings[4] = "환자의 KL 등급이 4등급(말기)입니다. CASE 04는 'KL 3인데 보험사가 4로 잘못 판정했다'는 반박이므로, 실제 KL 4 환자에게는 적용할 수 없습니다.";
+  }
+
+  // 결손 면적 필터링
+  if(cd.defect === 'under2'){
+    // 2cm² 미만이면 카티스템 적응증(2~9cm²) 자체가 문제
+    warnings[5] = "결손 면적이 2cm² 미만으로 확인되었습니다. 카티스템 허가 적응증은 2~9cm²이므로, 수술기록지상 데브리드먼트 후 면적이 2cm² 이상인지 재확인이 필요합니다.";
+    warnings[10] = "결손 면적 2cm² 미만 시 CASE 10(MRI 과소평가 반박)의 논리가 약화될 수 있습니다. 관절경 데브리드먼트 후 실측값을 확인하십시오.";
+  }
+  if(cd.defect === 'over9'){
+    warnings[5] = "결손 면적이 9cm² 초과입니다. 카티스템 허가 적응증은 2~9cm²이므로, 바이알 수 관련 반박(CASE 05) 시 주의가 필요합니다.";
+  }
+
+  // 연령 필터링
+  if(cd.age === 'under50'){
+    // 50세 미만이면 CASE 02(고령 부적합 반박)가 불필요
+    incompatible.push(2);
+    warnings[2] = "환자가 50세 미만입니다. CASE 02는 '고령 환자 부적합' 거절에 대한 반박이므로, 50세 미만 환자에게는 해당되지 않습니다.";
+  }
+
+  return { incompatible, warnings };
+}
+
+function updateClinicalFilter(){
+  const { incompatible, warnings } = getIncompatibleCases();
+  const el = document.getElementById('clinicalFilterResult');
+  
+  if(Object.keys(warnings).length === 0){
+    const cd = getClinicalData();
+    if(cd.icrs || cd.kl || cd.defect || cd.age){
+      el.innerHTML = '<div class="filter-ok"><i class="ti ti-circle-check" style="font-size:16px" aria-hidden="true"></i> 입력된 임상 정보 기준으로, 모든 케이스가 환자 상태와 호환됩니다.</div>';
+    } else {
+      el.innerHTML = '';
+    }
+  } else {
+    let html = '';
+    if(incompatible.length > 0){
+      const names = incompatible.map(id=>{const c=CASES.find(x=>x.id===id);return c?c.tag:''}).join(', ');
+      html += `<div class="filter-warn"><i class="ti ti-alert-triangle" style="font-size:16px" aria-hidden="true"></i> <strong>${names}</strong>은(는) 환자 상태와 맞지 않아 이의신청서에서 자동 제외됩니다.</div>`;
+    }
+    for(const [caseId, msg] of Object.entries(warnings)){
+      if(!incompatible.includes(parseInt(caseId))){
+        html += `<div class="filter-warn" style="margin-top:4px"><i class="ti ti-info-circle" style="font-size:16px" aria-hidden="true"></i> ${msg}</div>`;
+      }
+    }
+    el.innerHTML = html;
+  }
+  
+  // 체크박스에서 비호환 케이스 자동 해제
+  incompatible.forEach(id => {
+    const idx = selectedDenials.indexOf(id);
+    if(idx >= 0) selectedDenials.splice(idx, 1);
+  });
+  
+  renderCaseCheckboxes();
+  updateGenButton();
+}
+
+const STYLE_DESC={
+  general:"<strong>일반</strong> · 환자가 직접 쓴 듯한 표준적이고 정중한 어투. 문장이 평이해 읽기 쉽습니다. <em style='color:#0f3460'>추천: 보험사에 보내는 1차 이의신청.</em>",
+  professional:"<strong>전문적</strong> · 의학 용어·임상 근거·법률 조문을 정확히 인용하는 학술/실무가 톤(원형 번호 ①②③, p값·증거등급 표기). <em style='color:#0f3460'>추천: 손해사정사·자문의 소견을 정면 반박할 때.</em>",
+  formal:"<strong>격식</strong> · '제○항', 경어체 중심의 공문서 형식. 항목별 번호로 정돈됩니다. <em style='color:#0f3460'>추천: 보험사 본사·민원실 공식 접수, 내용증명.</em>",
+  concise:"<strong>간결</strong> · 핵심 논점만 불릿으로 압축한 1페이지 분량. 군더더기를 제거합니다. <em style='color:#0f3460'>추천: 이미 서류를 제출한 뒤의 재이의·독촉.</em>",
+  detailed:"<strong>구체적</strong> · 모든 반박 근거·증거·판례를 구분선으로 빠짐없이 전개하는 최장문. <em style='color:#0f3460'>추천: 금감원 분쟁조정·소송 대비 종합 제출용.</em>"
+};
+function selectStyle(style,btn){
+  selectedStyle=style;
+  document.querySelectorAll('.style-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('styleDesc').innerHTML=STYLE_DESC[style];
+}
+
+// ─── TAB SWITCHING ───
+function switchTab(tabId){
+  document.querySelectorAll('[id^="tab-"]').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('tab-'+tabId).classList.remove('hidden');
+  document.querySelectorAll('.tabs button').forEach((btn,i)=>{
+    btn.classList.toggle('active',['mycase','cases','indications','roadmap','insurance','sources'][i]===tabId);
+  });
+  if(tabId==='cases') renderCaseList();
+  if(tabId==='indications') renderIndications();
+  if(tabId==='roadmap') renderRoadmap();
+  if(tabId==='insurance') renderInsurance();
+  if(tabId==='sources') renderSources();
+}
+
+// ─── MY CASE TAB ───
+function renderCaseCheckboxes(){
+  const { incompatible, warnings } = getIncompatibleCases();
+  const el=document.getElementById('caseCheckboxes');
+  el.innerHTML=CASES.map(c=>{
+    const sel=selectedDenials.includes(c.id);
+    const isIncompat=incompatible.includes(c.id);
+    const hasWarn=warnings[c.id] && !isIncompat;
+    const dots=[1,2,3].map(i=>`<span class="${i<=c.severity?'on':''}"></span>`).join('');
+    return `<div class="case-card ${sel?'selected':''} ${isIncompat?'incompatible':''}" style="border-color:${isIncompat?'#f5c6cb':sel?c.color:'#dde3f0'};background:${isIncompat?'#fef2f2':sel?c.color+'08':'#fff'}" onclick="${isIncompat?'':'toggleDenial('+c.id+')'}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <div class="case-check ${sel&&!isIncompat?'checked':''}" style="${isIncompat?'background:#f5c6cb;border-color:#f5c6cb':''}">
+          ${isIncompat?'✕':sel?'✓':''}
+        </div>
+        <span class="case-tag" style="background:${isIncompat?'#999':c.color}">${c.tag}</span>
+        <span class="severity-dots">${dots}</span>
+        ${hasWarn?'<span style="color:#b7950b;font-size:14px" title="주의 필요">⚠</span>':''}
+      </div>
+      <div style="font-size:14px;font-weight:700;color:${isIncompat?'#999':'#1a1a2e'};line-height:1.5;margin-left:32px;${isIncompat?'text-decoration:line-through':''}">
+        ${c.title}
+      </div>
+      <div style="font-size:12px;color:#888;margin-top:4px;margin-left:32px">${c.subtitle}</div>
+      ${isIncompat?'<div style="font-size:11px;color:#922b21;margin-top:6px;margin-left:32px">⚠ 환자 임상 정보와 불일치 — 자동 제외됨</div>':''}
+    </div>`;
+  }).join('');
+}
+function toggleDenial(id){
+  const { incompatible } = getIncompatibleCases();
+  if(incompatible.includes(id)) return; // 비호환 케이스 선택 차단
+  const i=selectedDenials.indexOf(id);
+  if(i>=0) selectedDenials.splice(i,1); else selectedDenials.push(id);
+  renderCaseCheckboxes();
+  updateGenButton();
+}
+function updateGenButton(){
+  const reason=document.getElementById('f_denialReason').value.trim();
+  const btn=document.getElementById('generateBtn');
+  const hint=document.getElementById('genHint');
+  const canGen=reason.length>0||selectedDenials.length>0;
+  btn.disabled=!canGen;
+  btn.textContent=canGen?`🛡️ 이의신청서 생성${selectedDenials.length>0?' (참고 '+selectedDenials.length+'건)':''}`:'🛡️ 이의신청서 생성';
+  hint.textContent=canGen?'':'주요 거절 사유를 입력해주세요';
+  hint.style.display=canGen?'none':'inline';
+
+  // 자동 키워드 매칭 안내
+  if(reason.length>5){
+    const matched=autoMatchCases(reason);
+    const unmatchedIds=matched.filter(id=>!selectedDenials.includes(id));
+    const suggestEl=document.getElementById('autoSuggest');
+    if(suggestEl){
+      if(unmatchedIds.length>0){
+        const names=unmatchedIds.map(id=>{const c=CASES.find(x=>x.id===id);return c?c.tag:''}).join(', ');
+        suggestEl.innerHTML=`<div class="info-box" style="background:#eef6ff;border:1px solid #85b8e8;color:#1a5276;margin-top:12px">💡 입력하신 거절 사유에서 <strong>${names}</strong>과(와) 관련된 키워드가 감지되었습니다. 아래에서 해당 항목을 선택하시면 더 구체적인 반박 논리가 이의신청서에 포함됩니다.</div>`;
+      } else if(matched.length>0){
+        suggestEl.innerHTML=`<div class="info-box" style="background:#e8f8f0;border:1px solid #82cdb0;color:#1d6b4d;margin-top:12px">✅ 입력하신 거절 사유와 관련된 참고 항목이 이미 선택되어 있습니다. 이의신청서에 구체적 반박 논리가 포함됩니다.</div>`;
+      } else {
+        suggestEl.innerHTML='';
+      }
+    }
+  } else {
+    const suggestEl=document.getElementById('autoSuggest');
+    if(suggestEl) suggestEl.innerHTML='';
+  }
+}
+
+// 환자 입력 거절 사유에서 키워드를 감지하여 관련 CASE 자동 매칭
+function autoMatchCases(text){
+  const t=text.toLowerCase().replace(/\s+/g,' ');
+  const matched=[];
+  const keywords={
+    1:[['줄기세포','거절'],['줄기세포','보상'],['줄기세포','거부'],['줄기세포','보험'],['세포치료','거절'],['세포 치료제','보상'],['생물학적 제제','거절'],['stem cell','거절'],['줄기세포','제외'],['세포치료','보험']],
+    2:[['고령','적합하지'],['연령','적응증'],['나이','부적합'],['고령','부적합'],['연령','제한'],['나이','많'],['고령','권장'],['연령','초과'],['나이가 많아']],
+    3:[['icrs','3'],['icrs','불분명'],['icrs','모호'],['icrs','grade'],['등급','불분명'],['결손 크기','미달'],['결손','불분명'],['연골 등급','경계'],['연골 손상','등급'],['grade 3','grade 4'],['등급이 불분명'],['등급 경계']],
+    4:[['kl','4'],['kl','grade 4'],['kl','말기'],['kellgren','4'],['제3기관','등급'],['자문','kl'],['kl','금기'],['말기 관절염'],['4등급','관절염']],
+    5:[['바이알','과다'],['사용량','초과'],['투여량','과다'],['용량','기준'],['바이알 수'],['투여량','많'],['사용량','과다'],['vial','과다']],
+    6:[['비급여','지급'],['비급여','보상'],['비급여','대상'],['비급여','제외'],['비급여','불가'],['비급여','항목'],['급여 목록','미등재'],['비급여','미보장']],
+    7:[['자문','부적합'],['자문','적응증'],['자문의','의견'],['제3','의료기관'],['의료자문','지급'],['자문','부정'],['자문 결과','부적합'],['의료자문','적응증']],
+    8:[['실험적','치료'],['연구적','치료'],['실험','보상'],['검증되지'],['실험','단계'],['연구','목적'],['임상시험','단계'],['검증','안'],['확립되지']],
+    9:[['과잉진료'],['미세천공','충분'],['과잉','시술'],['의학적 필요성','인정'],['과잉','치료'],['필요성','없'],['다른 치료','충분'],['대체 치료']],
+    10:[['mri','크기','미달'],['mri','면적','미달'],['mri','2cm'],['mri','병변','크기'],['결손 면적','미달'],['mri','사이즈'],['mri','작'],['면적','부족'],['크기','미만']],
+    11:[['250만'],['주사료','한도'],['주사제','한도'],['3대 비급여'],['주사료','250'],['비급여 주사','한도'],['주사','250'],['250','한도'],['주사료','초과']],
+    12:[['부적정'],['과잉 진료','자문'],['자문','타당하지'],['자문','과잉'],['의학적으로 타당하지'],['수술 부적정'],['자문','과잉진료'],['자문','불필요']],
+  };
+  for(const [caseId, kwSets] of Object.entries(keywords)){
+    for(const kwSet of kwSets){
+      if(kwSet.every(kw=>t.includes(kw.toLowerCase()))){
+        matched.push(parseInt(caseId));
+        break;
+      }
+    }
+  }
+  // CASE 07과 12가 동시 매칭되면 더 구체적인 12만 유지
+  if(matched.includes(7) && matched.includes(12)){
+    matched.splice(matched.indexOf(7), 1);
+  }
+  return matched;
+}
+
+// 거절 사유 텍스트 분석 → 스타일에 맞는 반박 논리 생성
+function generateDenialRebuttal(reason, manualIds, fn){
+  const matched = reason ? autoMatchCases(reason) : [];
+  const allIds = [...new Set([...matched, ...manualIds])];
+  const style = selectedStyle;
+  
+  // 환자 임상 정보 기반 비호환 케이스 필터링
+  const { incompatible, warnings } = getIncompatibleCases();
+  const filteredIds = allIds.filter(id => !incompatible.includes(id));
+  
+  if(filteredIds.length === 0 && !reason) return '';
+  if(filteredIds.length === 0 && reason) return '';
+
+  let rebuttal = '';
+  
+  // 필터링 안내
+  const excludedIds = allIds.filter(id => incompatible.includes(id));
+  if(excludedIds.length > 0 && style !== 'concise'){
+    rebuttal += '\n\n[참고] 환자의 임상 정보에 비추어, 부적합한 반박 논리(' + excludedIds.map(id=>{const c=CASES.find(x=>x.id===id);return c?c.tag:''}).join(', ') + ')는 본 이의신청서에서 제외하였습니다.\n';
+  }
+
+  filteredIds.forEach((id, idx) => {
+    const c = CASES.find(x => x.id === id);
+    if(!c) return;
+    
+    // ── 케이스 도입부 (스타일별) ──
+    if(style === 'concise'){
+      rebuttal += `\n\n(${idx+1}) ${c.title}\n`;
+      rebuttal += `→ 귀사 주장: "${c.denialLogic}"\n→ 반박:\n`;
+    } else if(style === 'formal'){
+      rebuttal += `\n\n제${idx+1}항. ${c.title}에 관한 건\n\n`;
+      rebuttal += `귀사께서는 "${c.denialLogic}"라는 사유로 보험금 지급을 거절하셨습니다. 이에 대하여 아래와 같이 이의를 제기합니다.\n\n`;
+    } else if(style === 'professional'){
+      rebuttal += `\n\n[${idx+1}] ${c.title}\n\n`;
+      rebuttal += `귀사의 거절 논리: "${c.denialLogic}"\n\n상기 주장은 아래의 임상적·법적 근거에 의해 기각되어야 합니다.\n\n`;
+    } else if(style === 'detailed'){
+      rebuttal += `\n\n━━ (${idx+1}) ${c.title} ━━\n\n`;
+      rebuttal += `[귀사의 거절 사유 원문]\n"${c.denialLogic}"\n\n[위 거절 사유에 대한 반박]\n이 주장은 아래의 의학적 근거, 법적 논거, 판례에 비추어 타당하지 않습니다.\n\n`;
+    } else { // general
+      rebuttal += `\n\n(${idx+1}) ${c.title}\n\n`;
+      rebuttal += `귀사는 "${c.denialLogic}"라는 사유로 보험금 지급을 거절하였습니다. 그러나 이 주장은 다음과 같은 이유로 타당하지 않습니다.\n\n`;
+    }
+    
+    // ── 반박 논거 (스타일별) ──
+    c.counterPoints.forEach((cp, i) => {
+      const fnMark = fn.ref(cp.point + " — " + cp.detail.substring(0, 80) + "...");
+      
+      if(style === 'concise'){
+        // 간결: 핵심만 한 줄
+        rebuttal += `  • ${cp.point}${fnMark}\n`;
+      } else if(style === 'formal'){
+        // 격식: 번호 + 경어체
+        rebuttal += `  ${i+1}. ${cp.point}${fnMark}\n`;
+        rebuttal += `     ${cp.detail}\n\n`;
+      } else if(style === 'professional'){
+        // 전문적: 학술적 서술
+        rebuttal += `${String.fromCharCode(9312+i)} ${cp.point}${fnMark}\n`;
+        rebuttal += `  근거: ${cp.detail}\n\n`;
+      } else if(style === 'detailed'){
+        // 구체적: 모든 디테일 + 증거 매핑
+        rebuttal += `  반박 ${i+1}: ${cp.point}${fnMark}\n`;
+        rebuttal += `  ──────\n`;
+        rebuttal += `  ${cp.detail}\n\n`;
+      } else { // general
+        rebuttal += `${String.fromCharCode(9312+i)} ${cp.point}${fnMark}\n`;
+        rebuttal += `${cp.detail}\n\n`;
+      }
+    });
+    
+    // ── 증거·법령 (스타일별) ──
+    if(style === 'detailed'){
+      if(c.evidence && c.evidence.length > 0){
+        rebuttal += `  [입증 서류]\n`;
+        c.evidence.forEach(e => { fn.ref(e); rebuttal += `    - ${e}\n`; });
+        rebuttal += `\n`;
+      }
+      if(c.laws && c.laws.length > 0){
+        rebuttal += `  [법적 근거]\n`;
+        c.laws.forEach(l => { fn.ref(l); rebuttal += `    - ${l}\n`; });
+        rebuttal += `\n`;
+      }
+    } else if(style === 'professional'){
+      if(c.evidence && c.evidence.length > 0){
+        rebuttal += `  관련 증거: ${c.evidence.slice(0,3).join('; ')}\n`;
+        c.evidence.forEach(e => fn.ref(e));
+      }
+      if(c.laws && c.laws.length > 0){
+        rebuttal += `  적용 법령: ${c.laws.slice(0,3).join('; ')}\n`;
+        c.laws.forEach(l => fn.ref(l));
+      }
+      rebuttal += `\n`;
+    } else {
+      // general, formal, concise: 증거를 주석에만 등록
+      if(c.evidence) c.evidence.forEach(e => fn.ref(e));
+      if(c.laws) c.laws.forEach(l => fn.ref(l));
+    }
+  });
+  
+  return rebuttal;
+}
+
+// 주석(각주) 관리 객체 — enabled가 false이면 주석 마커와 출처 목록을 생략
+function createFootNotes(enabled){
+  const sources = [];
+  return {
+    ref(source){
+      if(!enabled) return '';
+      const existing = sources.findIndex(s => s === source);
+      if(existing >= 0) return '[주'+(existing+1)+']';
+      sources.push(source);
+      return '[주'+sources.length+']';
+    },
+    getAll(){ return sources; },
+    generateSection(){
+      if(!enabled || sources.length === 0) return '';
+      let section = '\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+      section += '[근거 출처 목록]\n\n';
+      sources.forEach((s, i) => {
+        section += `  주${i+1}. ${s}\n`;
+      });
+      return section;
+    }
+  };
+}
+
+function generateAppealLetter(fd){
+  const today = new Date();
+  const dateStr = today.getFullYear()+'년 '+(today.getMonth()+1)+'월 '+today.getDate()+'일';
+  const style = selectedStyle;
+  
+  const useFn = document.getElementById('includeFootnotes').checked;
+  const fn = createFootNotes(useFn);
+  
+  const fn1 = fn.ref("식품의약품안전처 품목허가 정보 — 카티스템(CARTISTEM®), 품목기준코드 201200401, 허가일 2012년 1월");
+  const fn2 = fn.ref("Lim HC, Park YB, Ha CW, Cole BJ et al. (2021). Orthopaedic Journal of Sports Medicine, 9(1). Phase 3 RCT, 114명, 5년 추적");
+  const fn3 = fn.ref("식약처 시판 후 조사(PMS) — 카티스템, 615명 대상, 6년간 안전성·유효성 확인 후 재심사 완료");
+  const fn4 = fn.ref("약관의 규제에 관한 법률 제5조 제2항 — 작성자 불이익의 원칙");
+  const fn5 = fn.ref("대법원 94다13046 판결 — 의사의 진료방법 선택 재량권");
+  const fn6 = fn.ref("실손의료보험 표준약관 — 면책 사항 목록. 줄기세포 치료 제외 조항 부재");
+  const fn7 = fn.ref("의정부지방법원 판결 — 주치의 진단 우선 인정");
+  const fn8 = fn.ref("부산지방법원 판결 — 미지급 보험금 지급 명령");
+  const fn9 = fn.ref("약관의 규제에 관한 법률 제6조 — 불공정 약관 무효");
+  const fn10 = fn.ref("약관의 규제에 관한 법률 제3조 — 설명의무 위반");
+  const fn11 = fn.ref("상법 제662조 — 보험금청구권 소멸시효 3년");
+  const fn12 = fn.ref("금융소비자 보호에 관한 법률 제40조 — 분쟁조정 시효중단");
+  
+  const rebuttalSection = generateDenialRebuttal(fd.denialReason, selectedDenials, fn);
+  const hasRebuttal = rebuttalSection.trim().length > 0;
+  const matched = fd.denialReason ? autoMatchCases(fd.denialReason) : [];
+  const { incompatible: incompatIds } = getIncompatibleCases();
+  const allRefIds = [...new Set([...matched, ...selectedDenials])].filter(id => !incompatIds.includes(id));
+  
+  // 환자 임상 정보 텍스트 생성
+  const cd = getClinicalData();
+  let clinicalText = '';
+  if(cd.icrs || cd.kl || cd.defect || cd.age){
+    clinicalText = '\n\n참고로, 저의 수술기록지상 임상 정보는 다음과 같습니다.';
+    if(cd.icrs) clinicalText += `\n  - ICRS 등급: Grade ${cd.icrs} (관절경 확인)`;
+    if(cd.kl) clinicalText += `\n  - KL 등급: Grade ${cd.kl} (X-ray 기준)`;
+    if(cd.defect){
+      const defectMap = {under2:'2cm² 미만','2to9':'2~9cm²',over9:'9cm² 초과'};
+      clinicalText += `\n  - 결손 면적: ${defectMap[cd.defect]}`;
+    }
+    if(cd.age){
+      const ageMap = {under50:'50세 미만','50to65':'50~65세',over65:'65세 이상'};
+      clinicalText += `\n  - 연령대: ${ageMap[cd.age]}`;
+    }
+    clinicalText += '\n';
+  }
+
+  // ── 스타일별 인사말 ──
+  const greetings = {
+    general: `안녕하세요. 저는 ${fd.surgDate||'○○년 ○월 ○일'}에 ${fd.hospital||'○○병원'}에서 ${fd.surgeon||'담당 전문의'} 선생님의 집도 하에 카티스템(CARTISTEM®) 수술을 받은 ${fd.name||'(성명)'}입니다.\n\n수술 후 실손의료비 ${fd.amount?fd.amount+'을':'보험금을'} 청구하였으나, ${fd.denialDate||'○○년 ○월 ○일'}자로 보험금 지급이 거절되었다는 안내를 받았습니다. 거절 사유를 면밀히 검토한 결과, 사실관계 및 법적 근거에 비추어 부당한 거절에 해당한다고 판단되어 이의를 신청합니다.`,
+    professional: `본인 ${fd.name||'(성명)'}은(는) ${fd.surgDate||'○○년 ○월 ○일'} ${fd.hospital||'○○병원'} ${fd.surgeon||'담당 전문의'} 집도 하에 카티스템(CARTISTEM®, 식약처 품목기준코드 201200401, 동종 제대혈유래 중간엽줄기세포 치료제) 시술을 받았습니다.${fn1}\n\n실손의료비 ${fd.amount?fd.amount+'을':'보험금을'} 청구하였으나 ${fd.denialDate||'○○년 ○월 ○일'}자로 지급거절 통보를 받았습니다. 아래에 의학적 근거 및 법적 논거를 제시하오니, 전문적 검토를 요청드립니다.`,
+    formal: `귀사의 무궁한 발전을 기원합니다.\n\n본인 ${fd.name||'(성명)'}은(는) 귀사 실손의료보험(증권번호: ${fd.policy||'미입력'}) 피보험자로서, ${fd.surgDate||'○○년 ○월 ○일'} ${fd.hospital||'○○병원'}에서 카티스템(CARTISTEM®) 수술을 받고 실손의료비 ${fd.amount||'해당 금액'}을 청구하였으나, ${fd.denialDate||'○○년 ○월 ○일'}자 귀사의 지급거절 결정을 통보받았습니다.\n\n이에 아래와 같이 이의를 신청하오니 재검토하여 주시기 바랍니다.`,
+    concise: `${fd.name||'(성명)'}입니다. ${fd.surgDate||'○○'} ${fd.hospital||'○○병원'}에서 카티스템 수술 후 실손의료비를 청구하였으나 ${fd.denialDate||'○○'}자로 거절되었습니다. 아래 근거에 따라 이의를 신청합니다.`,
+    detailed: `안녕하세요. 저는 ${fd.surgDate||'○○년 ○월 ○일'}에 ${fd.hospital||'○○병원'} ${fd.surgeon||'담당 전문의'} 선생님의 집도 하에 카티스템(CARTISTEM®) 수술을 받은 ${fd.name||'(성명)'}입니다.\n\n수술 후 실손의료비 ${fd.amount?fd.amount+'을':'보험금을'} 청구하였으나, ${fd.denialDate||'○○년 ○월 ○일'}자로 보험금 지급이 거절되었다는 안내를 받았습니다. 귀사가 통보하신 거절 사유를 면밀히 검토하고, 관련 의학 문헌, 식약처 허가사항, 약관 규정 및 판례를 종합적으로 조사한 결과, 아래와 같이 거절 사유 각각에 대해 구체적 반박 근거를 제시하오니 재검토를 요청드립니다.`
+  };
+
+  // ── 스타일별 카티스템 지위 설명 ──
+  const statusSection = {
+    general: `\n\n2. 카티스템(CARTISTEM®)의 의학적·법적 지위\n\n카티스템은 2012년 1월 식품의약품안전처로부터 품목허가(품목기준코드 201200401)를 받은 전문의약품입니다.${fn1}\n\n  - Phase 3 RCT 완료: ICRS 등급 개선율 97.7% vs 미세천공술 71.7% (p=0.001)${fn2}\n  - 6년간 615명 대상 시판 후 조사(PMS) 및 재심사 완료${fn3}\n  - 누적 3만 명 이상 환자 시술\n\n미인가 줄기세포 시술과는 법적·의학적으로 완전히 구분되는 정식 의약품입니다.`,
+    professional: `\n\n2. 카티스템(CARTISTEM®)의 의학적·규제적 지위\n\n카티스템(동종 제대혈유래 중간엽줄기세포-히알루론산 복합체)은 식약처 품목허가(201200401)를 취득한 전문의약품으로, 아래의 임상적 근거에 의해 유효성과 안전성이 확인되었습니다.${fn1}\n\n  - Phase 3 다기관 RCT(n=114, 5년 추적): ICRS Grade 개선율 97.7% vs microfracture 71.7%, p=0.001 (Level I evidence)${fn2}\n  - Phase 1/2 장기추적(n=7, 7년): 히알린양 연골 재생 지속 확인 (Park et al., SCTM, 2017)\n  - PMS(n=615, 6년) 완료 후 재심사 통과: 누적 안전성 데이터 확보${fn3}\n  - Type II collagen 양성률 93.3% vs microfracture 60% (Jung et al., KSSTA, 2024)\n\n이상의 근거에 비추어 카티스템은 의학적으로 확립된(established) 치료제이며, 미인가 줄기세포 시술과는 약사법상 완전히 구분됩니다.`,
+    formal: `\n\n2. 카티스템의 법적 지위\n\n카티스템은 식품의약품안전처 품목허가 의약품(품목기준코드 201200401)으로서${fn1}, 3상 임상시험 및 시판 후 조사를 완료하고 재심사를 통과한 전문의약품입니다.${fn3} 약사법상 정식 허가를 받은 의약품이며, 실손의료보험 표준약관의 면책 사항에 해당하지 않습니다.${fn6}`,
+    concise: `\n\n2. 카티스템 지위: 식약처 허가 전문의약품(201200401)${fn1}, Phase 3 RCT 통과(ICRS 개선 97.7%)${fn2}, PMS 재심사 완료${fn3}`,
+    detailed: `\n\n2. 카티스템(CARTISTEM®)의 의학적·법적 지위\n\n카티스템은 메디포스트가 제조하는 동종 제대혈유래 중간엽줄기세포 치료제로, 2012년 1월 식품의약품안전처로부터 품목허가(품목기준코드 201200401)를 받은 전문의약품입니다.${fn1}\n\n아래의 객관적 사실에 의해 정식 허가 의약품으로서의 지위가 확인됩니다.\n\n  - Phase 3 무작위 대조 임상시험(RCT) 완료: 114명 대상, 5년 추적\n  - ICRS 등급 개선율 97.7% — 미세천공술 71.7% 대비 통계적 우위 (p=0.001)${fn2}\n  - Phase 1/2 시험: 7명 대상, 7년 장기 추적에서 히알린양 연골 재생 확인\n  - 6년간 615명 대상 시판 후 조사(PMS) 및 재심사 완료${fn3}\n  - 125명 2차 관절경 연구: Grade IV 잔존 0%, 58.4%에서 Grade I 달성\n  - 25명 비교연구: Type II collagen 양성률 93.3% vs 미세천공 60%\n  - 누적 3만 명 이상 환자 시술 (2012년 이후 13년간)\n  - 미국 FDA Phase 1/2a 임상(NCT01733186) 진행\n\n이상의 근거에 의하여 카티스템은 미인가 줄기세포 시술과는 법적·의학적으로 완전히 구분되며, 담당 전문의가 환자의 상태를 종합적으로 검토하여 처방한 적법한 치료입니다.`
+  };
+
+  // ── 스타일별 기본 반박 (케이스 미매칭 시) ──
+  const defaultRebuttal = {
+    general: `\n\n실손의료보험 표준약관은 포괄주의(negative list) 방식을 채택하고 있어, '보상하지 않는 사항'에 명시되지 않은 치료 목적의 의료비는 보상 대상입니다. 카티스템을 특정하여 배제하는 면책 조항은 존재하지 않습니다.${fn6}\n\n약관규제법 제5조 제2항은 "약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석하여야 한다"고 규정하고 있습니다.${fn4}\n\n또한 저를 직접 진찰하고 관절경으로 연골 상태를 확인한 담당 전문의의 의학적 판단은, 환자를 진찰하지 않고 서류만으로 판단한 보험사 자문의보다 법적으로 높은 증거력을 가집니다.${fn5}${fn7}${fn8}`,
+    professional: `\n\n귀사의 거절 사유는 다음의 법리에 의해 부당합니다.\n\n첫째, 실손의료보험은 포괄주의(negative list)를 채택하고 있으며, 면책 사항에 카티스템이 명시되어 있지 않습니다.${fn6} 둘째, 약관규제법 제5조 제2항의 작성자 불이익의 원칙에 의해, 불명확한 약관은 고객에게 유리하게 해석되어야 합니다.${fn4} 셋째, 담당 전문의의 관절경 기반 직접 소견은 보험사 자문의의 서류 심사보다 법적 증명력이 우월합니다(대법원 94다13046).${fn5}`,
+    formal: `\n\n실손의료보험 표준약관상 면책 사항에 카티스템 관련 제외 조항이 없으며${fn6}, 약관규제법 제5조 제2항에 의거 불명확한 약관은 피보험자에게 유리하게 해석되어야 합니다.${fn4} 또한 주치의의 직접 진찰 소견이 보험사 자문의의 서류 심사보다 법적으로 우선합니다.${fn5}`,
+    concise: `\n\n약관 면책 사항에 카티스템 제외 조항 없음${fn6}. 불명확 시 고객 유리 해석 원칙 적용${fn4}. 주치의 직접 소견이 자문의 서류 심사보다 우선${fn5}.`,
+    detailed: `\n\n귀사의 거절 사유에 대해 아래와 같이 반박합니다.\n\n첫째, 실손의료보험 표준약관은 포괄주의(negative list) 방식을 채택하고 있어, '보상하지 않는 사항'에 명시적으로 열거되지 않은 치료 목적의 의료비는 모두 보상 대상입니다. 약관의 면책 사항 전체를 확인한 결과, 카티스템이나 줄기세포 치료를 특정하여 배제하는 조항은 존재하지 않습니다.${fn6}\n\n둘째, 약관규제법 제5조 제2항은 "약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석하여야 한다"고 명시하고 있으며${fn4}, 같은 법 제6조는 불공정한 약관 조항의 무효를${fn9}, 제3조는 설명의무 위반 시 해당 약관 내용을 계약의 내용으로 주장할 수 없음을 규정하고 있습니다.${fn10}\n\n셋째, 저를 직접 진찰하고 관절경으로 연골 상태를 확인한 담당 전문의의 의학적 판단은, 환자를 한 번도 진찰하지 않고 서류만으로 의견을 제시한 보험사 측 자문의의 판단보다 법적으로 높은 증거력을 가집니다. 이는 대법원 94다13046 판결${fn5}, 의정부지방법원 판결${fn7}, 부산지방법원 판결${fn8}에서 일관되게 확인된 원칙입니다.`
+  };
+
+  // ── 스타일별 법적 근거 섹션 ──
+  const lawSection = {
+    general: `\n\n4. 관련 법적 근거\n\n  - 약관규제법 제5조 제2항: 고객 유리 해석${fn4}\n  - 약관규제법 제6조: 불공정 약관 무효${fn9}\n  - 약관규제법 제3조: 설명의무 위반 시 주장 불가${fn10}\n  - 대법원 94다13046: 의사의 재량권 인정${fn5}\n  - 상법 제662조: 소멸시효 3년${fn11}`,
+    professional: `\n\n4. 적용 법령 및 판례\n\n  - 약관규제법 제5조②(작성자 불이익 원칙)${fn4}, 제6조(불공정약관 무효)${fn9}, 제3조(설명의무 위반)${fn10}\n  - 상법 제662조(보험금청구권 소멸시효 3년)${fn11}\n  - 금소법 제40조(분쟁조정 시효중단)${fn12}, 제19조(설명의무 위반 입증책임 전환)\n  - 대법원 94다13046(의사 진료방법 선택 재량권)${fn5}\n  - 의정부지법(주치의 진단 우선 인정)${fn7}, 부산지법(미지급 보험금 지급 명령)${fn8}`,
+    formal: `\n\n4. 법적 근거\n\n  - 약관의 규제에 관한 법률 제5조 제2항, 제6조, 제3조${fn4}${fn9}${fn10}\n  - 상법 제662조${fn11}\n  - 금융소비자 보호에 관한 법률 제40조${fn12}\n  - 대법원 94다13046${fn5}`,
+    concise: `\n\n4. 법적 근거: 약관규제법 §5②${fn4}·§6${fn9}·§3${fn10}, 상법 §662${fn11}, 금소법 §40${fn12}, 대법원 94다13046${fn5}`,
+    detailed: `\n\n4. 관련 법적 근거 상세\n\n  [1] 약관규제법 제5조 제2항 (작성자 불이익 원칙): 약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석하여야 합니다.${fn4}\n  [2] 약관규제법 제6조 (불공정약관 무효): 고객에게 부당하게 불리한 약관 조항은 무효입니다.${fn9}\n  [3] 약관규제법 제3조 (설명의무): 보험사가 중요한 면책 사항을 가입 시 설명하지 않았다면, 해당 약관 내용을 주장할 수 없습니다.${fn10}\n  [4] 대법원 94다13046: 의사의 진료방법 선택 재량권을 인정합니다.${fn5}\n  [5] 상법 제662조: 보험금청구권의 소멸시효는 3년입니다.${fn11}\n  [6] 금소법 제40조: 분쟁조정 신청은 소멸시효 중단 효력이 있습니다.${fn12}\n  [7] 의정부지방법원: 보험사 감정의 의견보다 주치의 진단을 우선 인정하였습니다.${fn7}\n  [8] 부산지방법원: 미지급 보험금 지급을 명하였습니다.${fn8}`
+  };
+
+  // ── 스타일별 마무리 ──
+  const closings = {
+    general: `\n\n5. 요청 사항\n\n이상의 사유로 이번 지급거절 결정에 대해 재검토를 요청드립니다.\n\n만일 귀사가 재차 지급을 거절하실 경우, 금융감독원 금융분쟁조정위원회에 분쟁조정을 신청하고, 필요시 법적 절차를 진행할 의사가 있음을 알려드립니다. 분쟁조정 신청은 소멸시효 중단 효력이 있습니다.${fn12}`,
+    professional: `\n\n5. 요청 사항\n\n위 의학적·법적 근거에 따라 지급거절 결정의 재검토를 요청합니다. 이의신청 기각 시 금감원 분쟁조정(금소법 §33~41) 및 법적 절차를 진행할 예정입니다.${fn12}`,
+    formal: `\n\n5. 요청 사항\n\n상기 사유에 의거하여 귀사의 지급거절 결정에 대한 재검토를 정중히 요청드립니다.\n\n본 이의신청이 수용되지 않을 경우, 금융감독원 금융분쟁조정위원회 분쟁조정 신청 및 관련 법적 절차를 진행할 예정이오니 양지하여 주시기 바랍니다.${fn12}`,
+    concise: `\n\n5. 요청: 재검토 요청. 기각 시 금감원 분쟁조정 및 법적 절차 진행 예정.${fn12}`,
+    detailed: `\n\n5. 요청 사항\n\n이상의 의학적 근거(식약처 허가, Phase 3 RCT, PMS 재심사), 법적 근거(약관규제법, 상법, 금소법), 판례(대법원, 의정부지법, 부산지법)를 종합적으로 고려하여, 이번 지급거절 결정에 대한 재검토를 요청드립니다.\n\n만일 귀사가 이 이의신청에 대해 재차 지급을 거절하실 경우, 저는 다음의 절차를 진행할 예정입니다.\n  - 금융감독원 금융분쟁조정위원회 분쟁조정 신청 (무료, 재판상 화해 효력)\n  - 필요시 소액사건심판법에 의한 법원 소송\n  - 보험금청구권 소멸시효 3년(상법 제662조) 이내 법적 조치\n\n참고로, 분쟁조정 신청은 소멸시효 중단 효력이 있습니다(금소법 제40조).${fn12}`
+  };
+
+  // ── 조합 ──
+  let letter = `수 신: ${fd.insurer||'○○보험'} 보험금심사팀 귀중
+발 신: ${fd.name||'(성명)'} (증권번호: ${fd.policy||'미입력'})
+제 목: 카티스템(CARTISTEM®) 수술 관련 실손의료비 지급거절에 대한 이의신청서
+
+${greetings[style]}
+
+
+1. 귀사가 통보한 거절 사유
+
+"${fd.denialReason||'(거절 사유 미입력)'}"
+${clinicalText}${statusSection[style]}
+
+
+3. 귀사의 거절 사유에 대한 구체적 반박${hasRebuttal ? rebuttalSection : defaultRebuttal[style]}
+${lawSection[style]}
+${closings[style]}
+
+아래 서류를 함께 첨부합니다.
+
+  1) 수술기록지 사본 (관절경 소견, ICRS 등급, 결손 면적 포함)
+  2) 담당 전문의 소견서
+  3) 수술 전 MRI 판독 소견서
+  4) 진료비 세부내역서
+  5) 식약처 카티스템 품목허가 사항 사본
+${allRefIds.length>0?'  6) [별첨] 거절 사유 관련 상세 참고자료 ('+allRefIds.length+'건)\n':''}`;
+
+  letter += fn.generateSection();
+
+  letter += `
+감사합니다.
+
+${dateStr}
+이의신청인: ${fd.name||'(성명)'} (서명 또는 날인)
+연 락 처: 
+주    소: `;
+  return letter;
+}
+
+function generateRefAttachment(ids){
+  if(ids.length===0) return '';
+  let html='<h3 style="text-align:center;color:#0f3460;margin-bottom:20px">[별첨] 거절 사유 관련 참고자료</h3>';
+  ids.forEach(id=>{
+    const c=CASES.find(x=>x.id===id);
+    if(!c) return;
+    html+=`<div style="border:2px solid ${c.color}33;border-radius:12px;padding:18px;margin-bottom:16px;background:${c.color}06">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="background:${c.color};color:#fff;border-radius:6px;font-size:10px;font-weight:700;padding:2px 8px">${c.tag}</span>
+        <span style="font-size:14px;font-weight:800;color:#1a1a2e">${c.title}</span>
+      </div>
+      <div style="background:#fff5f5;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#666">
+        <strong style="color:${c.color}">보험사 주장:</strong> ${c.denialLogic}
+      </div>`;
+    c.counterPoints.forEach((cp,i)=>{
+      html+=`<div style="background:#f0faf4;border:1px solid #a9dfbf;border-radius:8px;padding:10px 14px;margin-bottom:6px">
+        <div style="font-size:12px;font-weight:700;color:#1a6aa5">[${i+1}] ${cp.point}</div>
+        <div style="font-size:12px;color:#444;margin-top:4px;line-height:1.7">${cp.detail}</div>
+      </div>`;
+    });
+    html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <div style="background:#f8f9ff;border-radius:8px;padding:10px"><div style="font-size:11px;font-weight:800;color:#0f3460;margin-bottom:6px">📋 필수 증거 서류</div>${c.evidence.map(e=>'<div style="font-size:11px;color:#444;padding:2px 0">• '+e+'</div>').join('')}</div>
+      <div style="background:#fff8f0;border-radius:8px;padding:10px"><div style="font-size:11px;font-weight:800;color:#d35400;margin-bottom:6px">⚖️ 근거 법령</div>${c.laws.map(l=>'<div style="font-size:11px;color:#444;padding:2px 0">• '+l+'</div>').join('')}</div>
+    </div></div>`;
+  });
+  return html;
+}
+
+function handleGenerate(){
+  // 폼 유효성 검증
+  const nameEl=document.getElementById('f_name');
+  const insurerEl=document.getElementById('f_insurer');
+  const reasonEl=document.getElementById('f_denialReason');
+  let valid=true;
+  [nameEl,insurerEl].forEach(el=>{
+    if(!el.value.trim()){el.classList.add('val-error');valid=false;setTimeout(()=>el.classList.remove('val-error'),1000);}
+  });
+  if(!reasonEl.value.trim()&&selectedDenials.length===0){reasonEl.classList.add('val-error');valid=false;setTimeout(()=>reasonEl.classList.remove('val-error'),1000);}
+  if(!valid){
+    const hint=document.getElementById('genHint');
+    hint.textContent='환자명, 보험사는 필수 입력이며, 거절 사유를 입력하거나 참고 항목을 선택해주세요';
+    hint.style.display='inline';
+    return;
+  }
+  const fd={
+    name:document.getElementById('f_name').value,
+    insurer:document.getElementById('f_insurer').value,
+    policy:document.getElementById('f_policy').value,
+    surgDate:document.getElementById('f_surgDate').value,
+    hospital:document.getElementById('f_hospital').value,
+    surgeon:document.getElementById('f_surgeon').value,
+    denialDate:document.getElementById('f_denialDate').value,
+    amount:document.getElementById('f_amount').value,
+    denialReason:document.getElementById('f_denialReason').value,
+  };
+  // 자동매칭 + 수동선택 합산 (비호환 케이스 제외)
+  const matched = fd.denialReason ? autoMatchCases(fd.denialReason) : [];
+  const { incompatible: incompatIds } = getIncompatibleCases();
+  const allRefIds = [...new Set([...matched, ...selectedDenials])].filter(id => !incompatIds.includes(id));
+  const appeal=generateAppealLetter(fd);
+  const refHtml=generateRefAttachment(allRefIds);
+  const area=document.getElementById('generatedArea');
+  area.classList.remove('hidden');
+  // 개인정보 안내 표시
+  document.getElementById('privacyNotice').style.display='block';
+  activeGenTab='appeal';
+
+  area.innerHTML=`
+  <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.08)">
+    <div class="gen-header">
+      <div>
+        <div style="color:#fff;font-weight:800;font-size:16px">이의신청서가 생성되었습니다</div>
+        <div style="color:#8899bb;font-size:12px;margin-top:2px">보험사 제출용 이의신청서 + ${selectedDenials.length>0?selectedDenials.length+'건 참고자료 별첨':'참고자료 없음'}</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-green" onclick="handleDownload()">📥 다운로드 (HTML)</button>
+        <button class="btn-blue" onclick="handlePrint()">🖨️ 인쇄·PDF 저장</button>
+      </div>
+    </div>
+    <div class="gen-tabs">
+      <button class="active" onclick="switchGenTab('appeal',this)">📝 이의신청서 (보험사 제출용)</button>
+      ${selectedDenials.length>0?'<button onclick="switchGenTab(\'ref\',this)">📎 별첨 참고자료 ('+selectedDenials.length+'건)</button>':''}
+    </div>
+    <div style="padding:28px">
+      <div id="genContent-appeal">
+        <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:#92400e;line-height:1.6">💡 아래 문서를 직접 클릭하여 내용을 수정할 수 있습니다. 수정 후 다운로드하시면 수정된 내용이 반영됩니다. <strong>본 문서는 초안이므로 반드시 담당 전문의와 상의 후 제출하십시오.</strong></div>
+        <div class="appeal-letter" id="appealContent" contenteditable="true" style="cursor:text;outline:none"><h3>이의신청서</h3>${escapeHtml(appeal)}</div>
+      </div>
+      <div id="genContent-ref" class="hidden">
+        ${refHtml||'<div style="color:#888;text-align:center;padding:40px">참고 항목이 선택되지 않았습니다.</div>'}
+      </div>
+    </div>
+  </div>`;
+  area.scrollIntoView({behavior:'smooth'});
+}
+
+function switchGenTab(tabId,btn){
+  document.querySelectorAll('[id^="genContent-"]').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('genContent-'+tabId).classList.remove('hidden');
+  btn.closest('.gen-tabs').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function escapeHtml(text){return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+function handleDownload(){
+  // 편집된 내용 가져오기 (contenteditable에서)
+  const editedEl=document.getElementById('appealContent');
+  const appealHtml=editedEl?editedEl.innerHTML:'';
+  const fd={denialReason:document.getElementById('f_denialReason').value};
+  const matched = fd.denialReason ? autoMatchCases(fd.denialReason) : [];
+  const allRefIds = [...new Set([...matched, ...selectedDenials])];
+  const refHtml=generateRefAttachment(allRefIds);
+  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>카티스템 이의신청서</title>
+<style>@page{margin:20mm}body{font-family:'Batang','Noto Serif KR','Apple Myungjo',serif;color:#222;line-height:2;max-width:700px;margin:0 auto;padding:40px 20px;font-size:14px}h3{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;font-size:18px;text-align:center;color:#0f3460;margin-bottom:24px}.ref-section{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;line-height:1.7;font-size:12px;page-break-before:always;padding-top:20px}.footer{text-align:center;font-size:11px;color:#999;margin-top:40px;border-top:1px solid #eee;padding-top:16px;font-family:sans-serif}</style></head><body>
+${appealHtml}
+${refHtml?'<div class="ref-section">'+refHtml+'</div>':''}
+<div class="footer">본 문서는 카티스템 실손보험 지급거절 대응을 위한 참고 자료이며, 법률 자문을 대체하지 않습니다. 반드시 담당 전문의와 상의 후 제출하십시오.</div>
+</body></html>`;
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='카티스템_이의신청서_'+new Date().toISOString().slice(0,10)+'.html';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+function handlePrint(){
+  const editedEl=document.getElementById('appealContent');
+  const appealHtml=editedEl?editedEl.innerHTML:'';
+  const fd={denialReason:document.getElementById('f_denialReason').value};
+  const matched = fd.denialReason ? autoMatchCases(fd.denialReason) : [];
+  const allRefIds = [...new Set([...matched, ...selectedDenials])];
+  const refHtml=generateRefAttachment(allRefIds);
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>인쇄</title><style>@page{margin:20mm}body{font-family:'Batang',serif;color:#222;line-height:2;max-width:700px;margin:0 auto;padding:20px;font-size:14px}h3{font-family:sans-serif;font-size:18px;text-align:center;color:#0f3460}.ref-section{font-family:sans-serif;line-height:1.7;font-size:12px;page-break-before:always;padding-top:20px}</style></head><body>${appealHtml}${refHtml?'<div class="ref-section">'+refHtml+'</div>':''}</body></html>`);
+  win.document.close();win.focus();win.print();
+}
+
+// ─── CASES TAB ───
+function renderCaseList(){
+  const el=document.getElementById('caseList');
+  el.innerHTML=CASES.map(c=>{
+    const active=activeCaseId===c.id;
+    const dots=[1,2,3].map(i=>`<span class="${i<=c.severity?'on':''}"></span>`).join('');
+    return `<div onclick="selectCase(${c.id})" style="background:${active?'#fff':'rgba(255,255,255,.6)'};border:2px solid ${active?c.color:'transparent'};border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .2s;box-shadow:${active?'0 4px 16px '+c.color+'22':'0 1px 4px rgba(0,0,0,.06)'}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span class="case-tag" style="background:${c.color}">${c.tag}</span>
+        <span class="severity-dots">${dots}</span>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:#1a1a2e;line-height:1.4">${c.title}</div>
+      <div style="font-size:11px;color:#888;margin-top:3px">${c.subtitle}</div>
+    </div>`;
+  }).join('');
+  renderCaseDetail();
+}
+function selectCase(id){activeCaseId=id;renderCaseList();}
+function renderCaseDetail(){
+  const c=CASES.find(x=>x.id===activeCaseId);if(!c)return;
+  const el=document.getElementById('caseDetail');
+  const winColor=c.winRate>=75?'linear-gradient(90deg,#27ae60,#2ecc71)':c.winRate>=60?'linear-gradient(90deg,#f39c12,#f1c40f)':'linear-gradient(90deg,#e74c3c,#e91e63)';
+  el.innerHTML=`
+  <div class="case-detail-header" style="background:linear-gradient(135deg,${c.color},${c.color}cc)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <span style="background:rgba(255,255,255,.2);border-radius:6px;font-size:11px;font-weight:700;padding:3px 10px">${c.tag}</span>
+    </div>
+    <h2 style="font-size:20px;font-weight:800;margin:0 0 4px">${c.title}</h2>
+    <div style="font-size:12px;color:rgba(255,255,255,.8)">${c.subtitle}</div>
+  </div>
+  <div class="case-detail-body">
+    <div class="denial-box" style="background:#fff5f5;border:1px solid #f5c6cb">
+      <div style="font-size:10px;font-weight:800;color:${c.color};letter-spacing:1px;margin-bottom:6px">🚫 보험사 주장</div>
+      <div style="font-size:13px;color:#333;line-height:1.7">${c.denialLogic}</div>
+    </div>
+    <div style="margin-bottom:18px">
+      <div style="font-size:12px;font-weight:800;color:#27ae60;margin-bottom:10px">✅ 반박 논리 (${c.counterPoints.length}개)</div>
+      ${c.counterPoints.map((cp,i)=>`<div class="counter-card"><strong>[${i+1}] ${cp.point}</strong><p>${cp.detail}</p></div>`).join('')}
+    </div>
+    <div class="evidence-col">
+      <div class="evidence-box" style="background:#f8f9ff"><div style="font-size:11px;font-weight:800;color:#0f3460;margin-bottom:8px">📋 필수 증거 서류</div>${c.evidence.map(e=>`<div class="item">• ${e}</div>`).join('')}</div>
+      <div class="evidence-box" style="background:#fff8f0"><div style="font-size:11px;font-weight:800;color:#d35400;margin-bottom:8px">⚖️ 근거 법령·판례</div>${c.laws.map(l=>`<div class="item">• ${l}</div>`).join('')}</div>
+    </div>
+    <div class="strategy-box">
+      <div style="font-size:11px;font-weight:800;color:#a8d8ff;margin-bottom:6px">🧩 누적 대응 전략 포인트</div>
+      <div style="font-size:13px;line-height:1.7">${c.cumulative}</div>
+    </div>
+    <div style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:5px">
+        <span>대응 강도</span><span class="strength-badge ${c.winRate>=80?'str-high':c.winRate>=65?'str-mid':'str-low'}">${c.winRate>=80?'강 — 반박 근거 충분':c.winRate>=65?'중 — 추가 소견서 권장':'약 — 전문가 상담 권장'}</span>
+      </div>
+      <div class="win-bar-track"><div class="win-bar-fill" style="width:${c.winRate}%;background:${winColor}"></div></div>
+      <div style="font-size:11px;color:#999;margin-top:4px;font-style:italic">※ 대응 강도는 내부 참고 지표이며, 실제 결과를 보장하지 않습니다.</div>
+    </div>
+  </div>`;
+}
+
+// ─── INDICATIONS TAB ───
+function renderIndications(){
+  const el=document.getElementById('tab-indications');
+  el.innerHTML=`
+  <div class="card">
+    <div class="card-title">카티스템(CARTISTEM®) 공식 적응증 기준</div>
+    <div class="card-desc">식품의약품안전처 품목허가(201200401) 기준.</div>
+    <div class="indication-grid">${INDICATIONS.map(ind=>`<div class="indication-card"><div class="icon">${ind.icon}</div><div class="label">${ind.label}</div><div class="value">${ind.value}</div><div class="detail">${ind.detail}</div></div>`).join('')}</div>
+  </div>
+  <div class="card">
+    <div class="card-title">📌 적응증 기준과 거절 사유 연결 매트릭스</div>
+    <table class="data-table" style="margin-top:16px"><thead><tr><th>적응증 항목</th><th>해당 거절 사유</th><th>핵심 증빙 서류</th></tr></thead><tbody>
+    ${[["ICRS Grade IV 연골 결손","ICRS 등급 모호 주장 (CASE 03)","수술기록지 — 관절경 소견"],["KL Grade 1~3","제3기관 KL 4등급 판정 (CASE 04)","독립 재판독 소견 + 주치의 소견서"],["결손 크기 2~9cm²","ICRS 사이즈 불명확 (CASE 03)","수술기록지 — 직접 계측값"],["연령 제한 없음","고령 부적합 주장 (CASE 02)","식약처 허가 사항 원문"],["식약처 허가 전문의약품","줄기세포 지급 거절 (CASE 01)","품목허가서 (201200401)"],["비급여 = 실손 보상 대상","비급여 지급 불가 (CASE 06)","실손 표준약관 + 약관 원본"],["주치의 직접 진찰 > 서류 자문","제3의료기관 자문 거부 (CASE 07)","자문 회신서 + 반박 소견서"],["3상 RCT 통과 상용 의약품","실험적 치료 주장 (CASE 08)","품목허가서 + PMS 보고서"],["미세천공 대비 우월성 입증","과잉진료 주장 (CASE 09)","3상 RCT 논문 + 소견서"],["MRI 결손 면적 ≠ 실제 면적","MRI 병변 크기 미달 (CASE 10)","데브리드먼트 후 계측값"],["수술 수반 약제 — 주사료 한도 부적용","3세대 250만 원 한도 적용 (CASE 11)","수술기록지 + 약관 한도·예외 조항"],["주치의 직접 수술 > 서류 자문","제3기관 수술 부적정 (CASE 12)","집도의 반박 소견서 + 관절경 사진"]].map(([a,b,c],i)=>`<tr><td style="font-weight:700;color:#0f3460">${a}</td><td style="color:#c0392b;font-weight:600">${b}</td><td>${c}</td></tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+
+// ─── ROADMAP TAB ───
+function renderRoadmap(){
+  const el=document.getElementById('tab-roadmap');
+  el.innerHTML=`
+    <div class="card">
+      <div class="card-title">🗺️ 지급거절 통보를 받았을 때 — 단계별 대응 가이드</div>
+      <div class="card-desc">거절 통보를 받으면 당황하지 마십시오. 아래 5단계를 순서대로 진행하면 됩니다.</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #c0392b">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div class="step-num">1</div>
+        <div><div style="font-size:10px;font-weight:700;color:#0f3460;letter-spacing:1px">STEP 1 · 수령 즉시</div>
+        <div style="font-size:16px;font-weight:800;color:#1a1a2e">거절 통보서 서면 확보 및 분석</div></div>
+      </div>
+      <div style="font-size:13px;color:#444;line-height:1.8">보험사로부터 전화로 거절 안내를 받았더라도, <strong>반드시 서면(문서)으로 거절 사유서를 요청</strong>하십시오.</div>
+      <div style="background:#f8f9ff;border-radius:10px;padding:14px;margin-top:12px">
+        <div style="font-size:12px;font-weight:700;color:#0f3460;margin-bottom:8px">반드시 확인할 사항:</div>
+        <div style="font-size:12px;color:#444;line-height:1.8">① <strong>거절 사유의 정확한 문구</strong><br>② <strong>근거 약관 조항 번호</strong> — 없으면 서면으로 요청<br>③ <strong>의료자문 여부</strong> — 자문 결과서 확인<br>④ <strong>거절 통보 날짜</strong> — 소멸시효 기산점<br>⑤ <strong>담당자 이름·연락처</strong></div>
+      </div>
+      <div style="background:#fff5f5;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#922b21;line-height:1.6"><strong>주의:</strong> 보험사가 "동의하시면 종결 처리" 요청 시 절대 동의하지 마십시오. "서면 거절 사유서를 보내주시면 검토 후 답변하겠습니다"라고 대응하십시오.</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #d35400">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div class="step-num">2</div>
+        <div><div style="font-size:10px;font-weight:700;color:#0f3460;letter-spacing:1px">STEP 2 · 1~2주 소요</div>
+        <div style="font-size:16px;font-weight:800;color:#1a1a2e">병원 서류 일체 발급</div></div>
+      </div>
+      <div style="font-size:13px;color:#444;line-height:1.8">이의신청의 핵심은 <strong>의학적 증거</strong>입니다. 집도의에게 이의신청 사실을 알리고 소견서 협조를 요청하십시오.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <div style="background:#f0faf4;border:1px solid #a9dfbf;border-radius:10px;padding:12px">
+          <div style="font-size:12px;font-weight:700;color:#1d8348;margin-bottom:6px">📋 필수 서류</div>
+          <div style="font-size:12px;color:#444;line-height:1.8">• <strong>수술기록지</strong> — ICRS 등급, 결손 면적<br>• <strong>담당의 소견서</strong> — 의학적 필요성<br>• <strong>MRI 판독 소견서</strong><br>• <strong>진료비 세부내역서</strong><br>• <strong>식약처 허가사항 사본</strong></div>
+        </div>
+        <div style="background:#f8f9ff;border:1px solid #dde3f0;border-radius:10px;padding:12px">
+          <div style="font-size:12px;font-weight:700;color:#0f3460;margin-bottom:6px">📎 상황별 추가 서류</div>
+          <div style="font-size:12px;color:#444;line-height:1.8">• <strong>관절경 사진/영상</strong> — ICRS 분쟁 시<br>• <strong>독립 재판독 소견서</strong> — KL 등급 분쟁 시<br>• <strong>자문의 반박 소견서</strong><br>• <strong>보험 약관 원본</strong> — 서면 교부 청구<br>• <strong>의료자문 회신서</strong></div>
+        </div>
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#92400e;line-height:1.6"><strong>집도의 소견서 핵심:</strong> ① ICRS 등급·결손 면적 ② 카티스템 선택 이유 ③ 대안 치료 부적합 사유 ④ 보험사 거절에 대한 반박</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #1a6aa5">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div class="step-num">3</div>
+        <div><div style="font-size:10px;font-weight:700;color:#0f3460;letter-spacing:1px">STEP 3 · 서류 완비 즉시</div>
+        <div style="font-size:16px;font-weight:800;color:#1a1a2e">이의신청서 작성 및 내용증명 발송</div></div>
+      </div>
+      <div style="font-size:13px;color:#444;line-height:1.8">본 시스템의 <strong>"나의 사례 입력" 탭</strong>에서 이의신청서를 생성한 후, <strong>내용증명 우편</strong>으로 발송하십시오.</div>
+      <div style="background:#f8f9ff;border-radius:10px;padding:14px;margin-top:12px">
+        <div style="font-size:12px;font-weight:700;color:#0f3460;margin-bottom:8px">내용증명 발송 방법:</div>
+        <div style="font-size:12px;color:#444;line-height:1.8">① 이의신청서 + 첨부 서류 <strong>3통</strong> 준비<br>② 우체국 방문 → "내용증명 우편 발송"<br>③ 수신인: 보험사 <strong>본사</strong> 주소<br>④ 비용: 약 4,000~5,000원<br>⑤ 접수증 반드시 보관</div>
+      </div>
+      <div style="background:#f0faf4;border:1px solid #a9dfbf;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#1d6b4d;line-height:1.6"><strong>팁:</strong> 이의신청서만으로도 보험사가 재검토하여 지급을 승인하는 경우가 많습니다.</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #6c3483">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div class="step-num">4</div>
+        <div><div style="font-size:10px;font-weight:700;color:#0f3460;letter-spacing:1px">STEP 4 · 이의신청 기각 후</div>
+        <div style="font-size:16px;font-weight:800;color:#1a1a2e">금융감독원 분쟁조정 신청</div></div>
+      </div>
+      <div style="font-size:13px;color:#444;line-height:1.8"><strong>무료</strong>이며, 조정안 수락 시 <strong>재판상 화해와 동일한 효력</strong>이 있습니다.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <div style="background:#f8f9ff;border-radius:10px;padding:12px"><div style="font-size:12px;font-weight:700;color:#0f3460;margin-bottom:6px">신청 방법</div><div style="font-size:12px;color:#444;line-height:1.8">• <strong>온라인:</strong> consumer.fss.or.kr<br>• <strong>전화:</strong> 1332<br>• <strong>방문:</strong> 서울 여의도 금감원<br>• <strong>우편:</strong> 영등포구 여의대로 38</div></div>
+        <div style="background:#fff8f0;border-radius:10px;padding:12px"><div style="font-size:12px;font-weight:700;color:#d35400;margin-bottom:6px">절차</div><div style="font-size:12px;color:#444;line-height:1.8">• 접수 → 합의 권고 (30일)<br>• 불성립 → 조정위 회부<br>• 조정안 → <strong>20일 내</strong> 수락 결정<br>• 시효중단 효력 (금소법 §40)</div></div>
+      </div>
+      <div style="background:#fff5f5;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#922b21;line-height:1.6"><strong>중요:</strong> 소액사건(2,000만 원 이하) 분쟁조정 중 소송 제기 불가 (이탈 금지).</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #117a65">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div class="step-num">5</div>
+        <div><div style="font-size:10px;font-weight:700;color:#0f3460;letter-spacing:1px">STEP 5 · 조정 불성립 후</div>
+        <div style="font-size:16px;font-weight:800;color:#1a1a2e">소액심판 또는 민사소송</div></div>
+      </div>
+      <div style="font-size:13px;color:#444;line-height:1.8"><strong>3,000만 원 이하</strong>는 소액사건심판법 적용. 변호사 없이 제소 가능.</div>
+      <div style="background:#f8f9ff;border-radius:10px;padding:14px;margin-top:12px"><div style="font-size:12px;color:#444;line-height:1.8">• <strong>관할:</strong> 보험사 본점 또는 피보험자 주소지<br>• <strong>소액사건:</strong> 구술 제소, 1회 변론 가능<br>• <strong>입증 책임:</strong> 면책 사유는 <strong>보험사</strong>가 입증<br>• <strong>소멸시효:</strong> 3년 (상법 §662)<br>• <strong>지연이자:</strong> 연 6% + 소송촉진법 이자</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-title">⚖️ 핵심 법령 요약</div>
+        ${[{law:"약관규제법 제5조②",desc:"불명확 시 고객 유리 해석"},{law:"약관규제법 제6조",desc:"불공정 약관 무효"},{law:"약관규제법 제3조",desc:"설명의무 위반 시 주장 불가"},{law:"상법 제662조",desc:"소멸시효 3년"},{law:"금소법 제40조",desc:"분쟁조정 시효중단"},{law:"대법원 94다13046",desc:"의사 재량권 인정"}].map((item,i)=>`<div style="display:flex;gap:12px;padding:8px 0;${i<5?'border-bottom:1px solid #f0f0f0':''}"><span style="font-size:13px;font-weight:800;color:#0f3460;min-width:150px">${item.law}</span><span style="font-size:12px;color:#555">${item.desc}</span></div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="card-title">⚠️ 핵심 주의사항</div>
+        ${[{icon:"⏰",title:"소멸시효 3년",desc:"거절일로부터 3년 이내 조치"},{icon:"📬",title:"내용증명",desc:"반드시 내용증명으로 증거력 확보"},{icon:"🏥",title:"병원 협조",desc:"집도의에게 추가 소견서 요청"},{icon:"🆓",title:"금감원 무료",desc:"분쟁조정은 무료, 재판상 화해 효력"},{icon:"📋",title:"입증 책임",desc:"면책 사유는 보험사가 입증"}].map((item,i)=>`<div style="display:flex;gap:12px;padding:10px 0;${i<4?'border-bottom:1px solid #f0f0f0':''}"><span style="font-size:20px">${item.icon}</span><div><div style="font-size:13px;font-weight:800;color:#1a1a2e;margin-bottom:2px">${item.title}</div><div style="font-size:12px;color:#666">${item.desc}</div></div></div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ─── INSURANCE TAB ───
+function renderInsurance(){
+  const el=document.getElementById('tab-insurance');
+  el.innerHTML=`
+    <div class="card">
+      <div class="card-title">💰 실손보험 세대별 카티스템 보상 구조 상세 안내</div>
+      <div class="card-desc">실손보험은 가입 시기에 따라 1~5세대로 나뉘며, 세대별로 보장 구조가 크게 다릅니다. 본인의 보험 가입 시기를 반드시 확인하십시오.</div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:12px">보상 비교 그래프 (수술비 1,000만 원 기준)</div>
+      ${[{gen:"1세대 (~2009)",pay:0,receive:1000,color:"#27ae60"},{gen:"2세대 (2009~2017)",pay:100,receive:900,color:"#2ecc71"},{gen:"3세대 (2017~2021)",pay:200,receive:800,color:"#f39c12"},{gen:"4세대 (2021~2024)",pay:300,receive:700,color:"#e67e22"},{gen:"5세대 (2024~)",pay:500,receive:500,color:"#e74c3c"}].map(r=>'<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:700">'+r.gen+'</span><span>환자부담 <strong style="color:'+r.color+'">'+r.pay+'만 원</strong> / 보험사 '+r.receive+'만 원</span></div><div class="gen-bar"><div class="gen-bar-fill" style="width:'+r.receive/10+'%;background:'+r.color+'"></div></div></div>').join('')}
+    </div>
+
+    <div class="card" style="border-left:4px solid #27ae60">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#27ae60;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:8px">1세대</span><span style="font-size:16px;font-weight:800">~2009.9 가입</span><span style="background:#d4efdf;color:#1d8348;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">가장 유리</span></div>
+      <div style="font-size:13px;color:#444;line-height:1.8"><strong>보장:</strong> 급여·비급여 구분 없이 거의 <strong>전액</strong> 보상. 자기부담금 0~10%.<br><strong>카티스템:</strong> 수술비 전액에 가까운 보상 가능.<br><strong>주의:</strong> <span style="color:#c0392b;font-weight:700">절대 해지하지 마십시오</span> — 동일 조건 재가입 불가.</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #2ecc71">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#2ecc71;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:8px">2세대</span><span style="font-size:16px;font-weight:800">2009.10~2017.3 가입</span><span style="background:#d4efdf;color:#1d8348;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">유리</span></div>
+      <div style="font-size:13px;color:#444;line-height:1.8"><strong>보장:</strong> 비급여 <strong>80~90%</strong> 보상. 자기부담금 10~20%.<br><strong>예시:</strong> 1,000만 원 → 보험사 800~900만 원.<br><strong>특징:</strong> 비급여가 기본 보장에 포함. 연간 한도 5,000만 원.</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #f39c12">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#f39c12;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:8px">3세대</span><span style="font-size:16px;font-weight:800">2017.4~2021.6 가입</span><span style="background:#fef9e7;color:#b7950b;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">특약 확인 필수</span></div>
+      <div style="font-size:13px;color:#444;line-height:1.8"><strong>보장:</strong> 3대 비급여 특약 분리 (도수·체외충격파·증식, 주사료, MRI).<br><strong>핵심 쟁점:</strong> 카티스템이 <strong>'비급여 주사료 250만 원 한도'</strong>에 해당하는가? → <strong style="color:#1d8348">해당한다고 단정할 수 없음.</strong> 카티스템은 외래 반복 주사가 아니라 수술 중 결손부에 이식·도포하는 치료재료성 약제이므로, 주사료 한도 항목에 당연히 포섭된다고 보기 어렵습니다.<br><strong>보상:</strong> 주사료 한도가 적용되지 않으면 주계약 '질병 비급여' 한도(통상 5,000만 원)에서 약 80% 보상.<br><strong>예시:</strong> 1,000만 원 → 약 800만 원(실제 비율·한도는 본인 약관 확인).</div>
+      <div style="background:#fff5f5;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#922b21;line-height:1.6"><strong>CASE 11 참조:</strong> 250만 원 한도 삭감 시, ① '수술 수반 약제'라는 점을 주된 논거로, ② '항암제 등' 예외 규정은 보조 논거로 반박. 입원 여부는 의학적 필요에 따라 결정하고, 입원으로 시행된 경우 입원 기록의 정확성을 확인하십시오.</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #e67e22">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#e67e22;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:8px">4세대</span><span style="font-size:16px;font-weight:800">2021.7~2024 가입</span><span style="background:#fef9e7;color:#b7950b;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">비급여 특약 필수</span></div>
+      <div style="font-size:13px;color:#444;line-height:1.8"><strong>보장:</strong> 3세대와 유사. 자기부담금 <strong>30%</strong>로 증가.<br><strong>예시:</strong> 1,000만 원 → 보험사 700만 원.<br><strong>특징:</strong> 250만 원 주사료 한도 쟁점 동일. '수술 수반 약제' 논거로 한도 부적용을 주장(CASE 11 참조).</div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #e74c3c">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#e74c3c;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:8px">5세대</span><span style="font-size:16px;font-weight:800">2024~ 가입</span><span style="background:#fadbd8;color:#922b21;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">보상 대폭 축소</span></div>
+      <div style="font-size:13px;color:#444;line-height:1.8"><strong>보장:</strong> 비급여 <strong>50%</strong>, 입원 <strong>회당 한도 300만 원</strong>.<br><strong>예시:</strong> 1,500만 원 → 50%=750만 원이나, 한도 적용 → <strong style="color:#c0392b">실제 약 300만 원</strong>.</div>
+      <div style="background:#fff5f5;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#922b21;line-height:1.6"><strong>대응:</strong> 수술 전 보험사에 보상 예상액을 서면 확인. 삭감(한도 적용)은 이의신청보다 약관 해석 문의가 적합.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 실손보험 청구 필수 서류</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+        <div style="background:#f0faf4;border:1px solid #a9dfbf;border-radius:10px;padding:14px">
+          <div style="font-size:13px;font-weight:700;color:#1d8348;margin-bottom:8px">기본 청구 서류 (전 세대)</div>
+          <div style="font-size:12px;color:#444;line-height:2">✅ 보험금 청구서 (보험사 양식)<br>✅ 진단서 또는 소견서 (원본)<br>✅ 진료비 세부내역서<br>✅ 진료비 영수증 (원본)<br>✅ 신분증 사본<br>✅ 통장 사본</div>
+        </div>
+        <div style="background:#f8f9ff;border:1px solid #dde3f0;border-radius:10px;padding:14px">
+          <div style="font-size:13px;font-weight:700;color:#0f3460;margin-bottom:8px">카티스템 추가 권장 서류</div>
+          <div style="font-size:12px;color:#444;line-height:2">📎 수술기록지 (ICRS·결손면적)<br>📎 MRI 판독 소견서<br>📎 식약처 허가사항 출력물<br>📎 관절경 사진<br>📎 담당의 소견서</div>
+        </div>
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:12px;color:#92400e;line-height:1.6"><strong>팁:</strong> 최초 청구 시 식약처 허가사항 + 수술기록지를 함께 제출하면 거절을 사전 방지할 수 있습니다.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔍 내 보험이 몇 세대인지 확인하는 방법</div>
+      <div style="font-size:13px;color:#444;line-height:1.8;margin-top:8px">① 보험증권의 <strong>계약일(가입일)</strong>을 확인 → 위 세대 구분과 대조<br>② 보험사 고객센터 전화: "제 실손보험이 몇 세대인지, 비급여 한도가 얼마인지"<br>③ 보험사 앱/홈페이지 → 내 보험 조회 → 약관 확인<br>④ 확인 어려우면 <strong>약관 원본 서면 교부 요청</strong> (보험사 의무)</div>
+    </div>`;
+}
+
+
+// ─── SOURCES TAB ───
+function renderSources(){
+  const el=document.getElementById('tab-sources');
+  const sources=[
+    {cat:"임상 논문",catColor:"#0f3460",items:[
+      {title:"Lim HC, Park YB, Ha CW, Cole BJ et al. (2021)",desc:"Phase 3 RCT, 114명, 5년 추적. ICRS 개선율 97.7% vs 미세천공술 71.7% (p=0.001)",journal:"Orthopaedic Journal of Sports Medicine, 9(1):2325967120973052",url:"https://pubmed.ncbi.nlm.nih.gov/33490296/"},
+      {title:"Park YB, Ha CW et al. (2017)",desc:"Phase 1/2, 7명, 7년 장기 추적. 히알린양 연골 재생 확인",journal:"Stem Cells Translational Medicine, 6(2):613-621",url:"https://pubmed.ncbi.nlm.nih.gov/28191757/"},
+      {title:"Bae BS et al. (2025)",desc:"10명, 결손 면적 7.0→0.16cm², ICRS IV→I",journal:"Stem Cell Research & Therapy, 16(1):211",url:"https://doi.org/10.1186/s13287-025-04356-9"},
+      {title:"Jung SH et al. (2024)",desc:"25명 비교연구, Type II collagen 양성률 93.3% vs 미세천공술(microdrilling) 60%",journal:"Knee Surg Sports Traumatol Arthrosc, 32(4):829-842",url:"https://doi.org/10.1002/ksa.12100"},
+      {title:"Song JS et al. (2020)",desc:"125명, 2차 관절경: Grade IV 잔존 0%, 58.4% Grade I 달성",journal:"World Journal of Stem Cells, 12(6):514-526",url:"https://doi.org/10.4252/wjsc.v12.i6.514"},
+      {title:"Gomoll AH et al. (2011)",desc:"MRI가 데브리드먼트 후 결손 면적을 평균 65% 과소평가, 85%에서 실제가 더 큼",journal:"Cartilage, 2(4):389-393",url:"https://pubmed.ncbi.nlm.nih.gov/26069597/"},
+      {title:"Campbell AB et al. (2013)",desc:"MRI 대비 관절경 결손이 평균 70% 더 큼, 74%에서 과소평가",journal:"American Journal of Sports Medicine, 41(3):590-595",url:"https://pubmed.ncbi.nlm.nih.gov/23324431/"},
+      {title:"Perry J et al. (2023)",desc:"MRI가 전층 연골 결손 면적을 수술 중 실측 대비 평균 78.3% 과소평가",journal:"Orthopaedic Journal of Sports Medicine, 11(9)",url:"https://pubmed.ncbi.nlm.nih.gov/37693808/"},
+    ]},
+    {cat:"식약처·규제 자료",catColor:"#1d8348",items:[
+      {title:"식약처 의약품안전나라 — 카티스템 품목허가 정보",desc:"품목기준코드 201200401, 허가사항, 용법·용량, 사용상의 주의사항 전문",journal:"nedrug.mfds.go.kr",url:"https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetail?itemSeq=201200401"},
+      {title:"ClinicalTrials.gov — NCT01041001",desc:"카티스템 Phase 3 임상시험 (한국, Medipost)",journal:"clinicaltrials.gov",url:"https://clinicaltrials.gov/study/NCT01041001"},
+      {title:"ClinicalTrials.gov — NCT01733186",desc:"카티스템 Phase 1/2a 임상시험 (미국 Rush University)",journal:"clinicaltrials.gov",url:"https://clinicaltrials.gov/study/NCT01733186"},
+    ]},
+    {cat:"법령·판례",catColor:"#922b21",items:[
+      {title:"약관의 규제에 관한 법률",desc:"제5조(약관의 해석) 제2항: 작성자 불이익의 원칙, 제6조: 불공정약관 무효, 제3조: 설명의무",journal:"국가법령정보센터",url:"https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=75544"},
+      {title:"상법 제662조 (소멸시효)",desc:"보험금청구권의 소멸시효 3년",journal:"국가법령정보센터",url:"https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=91394"},
+      {title:"금융소비자 보호에 관한 법률",desc:"제40조: 분쟁조정 신청의 시효중단 효력, 제19조: 설명의무 위반 시 입증책임 전환",journal:"국가법령정보센터",url:"https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=215931"},
+      {title:"보험업법 제95조의3",desc:"의료자문 남용 방지 의무",journal:"국가법령정보센터",url:"https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=150107"},
+      {title:"대법원 94다13046 판결",desc:"의사의 진료방법 선택 재량권 인정. 대법원 종합법률정보에서 '94다13046' 검색",journal:"대법원 종합법률정보",url:"https://glaw.scourt.go.kr/wsjo/panre/sjo050.do"},
+    ]},
+    {cat:"보험·금융 자료",catColor:"#b7950b",items:[
+      {title:"금융감독원 금융민원센터",desc:"분쟁조정 신청, 온라인 민원 접수 (전화 1332)",journal:"금융감독원",url:"https://consumer.fss.or.kr"},
+      {title:"금융감독원 실손의료보험 안내",desc:"실손보험 표준약관, 보장 내용, 가입 세대별 비교",journal:"금융감독원",url:"https://fine.fss.or.kr"},
+      {title:"손해보험협회",desc:"의료자문 표준내부통제기준, 실손보험 관련 자료",journal:"knia.or.kr",url:"https://www.knia.or.kr"},
+    ]},
+  ];
+  el.innerHTML=`
+  <div class="card">
+    <div class="card-title">📚 출처·참고문헌 <span class="verified-pill">✓ 링크 검증 2026.06</span></div>
+    <div class="card-desc">본 시스템에 사용된 모든 근거 자료의 출처입니다. 링크를 클릭하면 새 창에서 원본을 확인할 수 있습니다. 임상 논문은 PubMed/DOI, 법령은 국가법령정보센터, 허가정보는 식약처 의약품안전나라 원문과 대조하여 서지정보를 확인했습니다.</div>
+    ${sources.map(s=>`
+      <div style="margin-bottom:24px">
+        <span class="source-cat" style="background:${s.catColor}">${s.cat}</span>
+        ${s.items.map(item=>`
+          <div class="source-card">
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title} <span style="font-size:12px;font-weight:400">↗</span></a>
+            <div class="meta">${item.desc}</div>
+            <div class="meta" style="font-style:italic;margin-top:2px">${item.journal}</div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
+    <div style="background:#f8f9ff;border:1px solid #dde3f0;border-radius:10px;padding:14px 18px;margin-top:16px;font-size:12px;color:#555;line-height:1.7">
+      <strong style="color:#0f3460">면책 안내:</strong> 본 도구는 카티스템 수술 후 실손보험 지급거절에 대한 이의신청 시 참고할 수 있는 교육용 자료입니다. 법률 자문을 대체하지 않으며, 생성된 문서는 초안이므로 반드시 담당 전문의와 상의 후 수정하여 제출하십시오. 복잡한 사안은 변호사 또는 금융감독원 분쟁조정위원회(1332)에 상담하시기 바랍니다.
+    </div>
+  </div>`;
+}
+
+// ─── INIT ───
+document.addEventListener('DOMContentLoaded',function(){
+  renderCaseCheckboxes();
+  const sd=document.getElementById('styleDesc');
+  if(sd) sd.innerHTML=STYLE_DESC[selectedStyle];
+  document.getElementById('f_denialReason').addEventListener('input',updateGenButton);
+  updateGenButton();
+});
+</script>
+</body>
+</html>
