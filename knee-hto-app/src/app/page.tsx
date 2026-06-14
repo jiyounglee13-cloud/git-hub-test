@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import KneeTool from "./KneeTool";
 
 export const metadata: Metadata = {
-  title: "무릎 OA & HTO 보조 도구 (데모) - 카티스템",
+  title: "무릎 OA & HTO 보조 도구 (데모) — Knee OA & HTO Assistant",
   description:
     "무릎 X-ray의 K&L 등급을 LLM 비전으로 추정하고, HTO 교정각·개대 쐐기 높이를 기하 계산하여 Before/After를 시뮬레이션하는 연구·교육용 데모입니다.",
 };
