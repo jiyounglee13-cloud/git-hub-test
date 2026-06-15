@@ -62,15 +62,16 @@ def build(include_deck: bool, outname: str):
 
     overlay = '''
 <div id="docview" style="display:none;position:fixed;inset:0;z-index:200;background:#fff">
-  <button onclick="closeDoc()" style="position:fixed;right:12px;top:12px;z-index:210;border:0;background:rgba(20,32,46,.82);color:#fff;font:600 13px/1 'IBM Plex Sans KR',sans-serif;border-radius:999px;padding:9px 15px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)">✕ 닫기</button>
+  <button onclick="history.back()" style="position:fixed;right:12px;top:12px;z-index:210;border:0;background:rgba(20,32,46,.82);color:#fff;font:600 13px/1 'IBM Plex Sans KR',sans-serif;border-radius:999px;padding:9px 15px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)">✕ 닫기</button>
   <iframe id="docframe" style="width:100%;height:100%;border:0" referrerpolicy="no-referrer"></iframe>
 </div>
 <script>
 __DOCS__
 var DMAP={'material-mechanism':'mechanism','material-production':'production','material-cases':'cases','material-insurance-playbook':'insurance','product-deck':'deck'};
-function openDoc(k){var d=DOCS[k];if(!d){alert('이 자료는 단일 파일(라이트) 버전에는 포함되지 않았습니다.\\n온라인 버전에서 확인해 주세요.');return;}var f=document.getElementById('docframe');f.srcdoc=d;document.getElementById('docview').style.display='block';document.body.style.overflow='hidden';}
+function isDocOpen(){var v=document.getElementById('docview');return !!(v&&v.style.display==='block');}
+function openDoc(k){var d=DOCS[k];if(!d){alert('이 자료는 단일 파일(라이트) 버전에는 포함되지 않았습니다.\\n온라인 버전에서 확인해 주세요.');return;}var f=document.getElementById('docframe');f.srcdoc=d;document.getElementById('docview').style.display='block';document.body.style.overflow='hidden';if(!window.NAV_POP&&history.pushState){history.pushState({tab:(window.ACTIVE_TAB||'product'),doc:k},'');}}
 function closeDoc(){document.getElementById('docview').style.display='none';document.getElementById('docframe').srcdoc='';document.body.style.overflow='';}
-window.addEventListener('message',function(e){if(e&&e.data==='closeDoc')closeDoc();});
+window.addEventListener('message',function(e){if(e&&e.data==='closeDoc')history.back();});
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var h=a.getAttribute('href')||'';var m=h.match(/(material-mechanism|material-production|material-cases|material-insurance-playbook|product-deck)\\.html/);if(m){e.preventDefault();openDoc(DMAP[m[1]]);}});
 </script>
 '''.replace('__DOCS__', docs_js)
