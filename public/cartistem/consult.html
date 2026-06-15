@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="카티스템 상담">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2315538a'/><rect x='26' y='9' width='12' height='19' rx='6' fill='%23fff'/><rect x='26' y='36' width='12' height='19' rx='6' fill='%23fff'/><rect x='21' y='28' width='22' height='8' rx='4' fill='%2348c9b0'/></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2315538a'/><rect x='26' y='9' width='12' height='19' rx='6' fill='%23fff'/><rect x='26' y='36' width='12' height='19' rx='6' fill='%23fff'/><rect x='21' y='28' width='22' height='8' rx='4' fill='%2348c9b0'/></svg>">
-<title>카티스템 상담 올인원</title>
+<title>카티스템 상담 자료</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -47,6 +47,7 @@
   .brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
   .brand h1{font-size:18px;font-weight:700;letter-spacing:-.01em;}
   .brand .tag{font-size:11px;font-weight:500;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:#fff;}
+  .brand .edumark{font-size:11.5px;font-weight:700;color:#fff;background:var(--brand,#16243B);border:1px solid var(--hair,#C2A36B);border-radius:999px;padding:3px 11px;letter-spacing:.02em;white-space:nowrap;}
   .brand .ver{font-size:11px;color:var(--faint);margin-left:auto;}
   .search{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;transition:border-color .15s,box-shadow .15s;}
   .search:focus-within{border-color:var(--a);box-shadow:0 0 0 4px rgba(37,99,235,.10);}
@@ -160,7 +161,7 @@
 
 
 body{padding-bottom:78px}
-header .brand h1{font-size:17px}
+header .brand h1{font-size:22px}
 .appbar{display:flex;align-items:center;gap:10px}
 .modehint{font-size:12px;color:var(--sub);margin:2px 0 16px}
 .panel{display:none} .panel.active{display:block}
@@ -369,7 +370,7 @@ header .brand h1{font-size:17px}
 .term .tt{font-size:13.5px;font-weight:700;color:var(--b)}
 .term .td{font-size:12.5px;color:var(--sub);line-height:1.58;margin-top:3px}
 /* 헤더 도구(인쇄·글자크기) */
-.tools{display:flex;gap:6px;align-self:center;margin-left:6px}
+.tools{display:flex;gap:6px;align-self:center;margin-left:auto}
 .tbtn{font-family:inherit;font-size:12.5px;font-weight:500;border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:9px;padding:5px 9px;cursor:pointer;line-height:1;white-space:nowrap}
 .tbtn:hover{background:#f3f6f9;color:var(--ink)}
 /* 인쇄 */
@@ -473,9 +474,9 @@ header:not(.hero){ background:rgba(251,250,248,.82)!important; border-bottom:1px
 <header>
   <div class="wrap">
     <div class="brand">
-      <h1>카티스템 상담 올인원</h1>
+      <h1>카티스템 상담 자료</h1>
+      <span class="edumark">사내 교육용</span>
       <span class="tag" id="tagLabel">상담원 모드</span>
-      <span class="ver mono">v2.3 · 기준 2026.6</span>
       <div class="tools">
         <button id="fontBtn" class="tbtn" title="글자 크기">가＋</button>
         <button id="printBtn" class="tbtn" title="인쇄">🖨 인쇄</button>
