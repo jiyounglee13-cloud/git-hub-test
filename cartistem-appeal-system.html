@@ -141,17 +141,21 @@ table.data-table tr:nth-child(even){background:#fafbff}
    ──────────────────────────────────────────────────────────── */
 :root{
   --navy-900:#0B1B30; --navy-800:#0F2742; --navy-700:#143258; --navy-600:#1B4570;
-  --brand:#0F3460; --brand-2:#1A5276; --accent:#C8A04D; --accent-2:#E3C27E;
-  --ink:#1B2A3D; --ink-soft:#5A6B80; --ink-faint:#8B98AB;
+  --brand:#0F3460; --brand-2:#1A5276; --brand-press:#0B2747;
+  --accent:#BE9B4B; --accent-2:#DFC07A; --accent-ink:#7A6224;
+  --ink:#1B2A3D; --ink-soft:#51627A; --ink-faint:#76869B;
   --line:#E4E9F2; --line-soft:#EEF1F8;
-  --bg:#EEF1F7; --surface:#FFFFFF; --surface-2:#F8FAFD;
+  --bg:#EEF1F7; --surface:#FFFFFF; --surface-2:#F8FAFD; --surface-trust:#0C1D33;
   --ok:#1E8E5A; --ok-soft:#E7F6EE; --warn:#B7791F; --danger:#C0392B;
-  --r-lg:20px; --r-md:14px; --r-sm:10px;
+  --r-lg:20px; --r-md:14px; --r-sm:10px; --r-pill:999px;
+  --ease:cubic-bezier(.4,0,.2,1); --ease-out:cubic-bezier(.22,1,.36,1);
   --sh-sm:0 1px 2px rgba(16,32,58,.06), 0 2px 8px rgba(16,32,58,.05);
   --sh-md:0 4px 14px rgba(16,32,58,.08), 0 12px 32px rgba(16,32,58,.06);
   --sh-lg:0 8px 24px rgba(16,32,58,.10), 0 24px 60px rgba(16,32,58,.10);
   --sh-brand:0 8px 24px rgba(15,52,96,.28);
 }
+/* tabular figures on all numeric UI — quiet premium signal */
+.badge strong,table.data-table td,table.data-table th,.win-bar-track,.strength-badge,.indication-card .value,.gen-bar,.severity-dots{font-feature-settings:"tnum" 1;font-variant-numeric:tabular-nums}
 body{
   font-family:'Pretendard','Pretendard Variable','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
   background:
@@ -300,8 +304,80 @@ table.data-table tr:nth-child(even){background:var(--surface-2)}
 .verified-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#15775A;background:var(--ok-soft);border:1px solid #9FDCBC;border-radius:999px;padding:2px 9px;vertical-align:middle}
 .warn-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#9A4A1A;background:#FCEFE2;border:1px solid #F0C9A3;border-radius:999px;padding:2px 9px;vertical-align:middle}
 ::selection{background:rgba(200,160,77,.28)}
+/* ──────────── v3 · 가독성 · 접근성 · 레터헤드 ──────────── */
+/* 본문 가독성 상향(고령 사용자) — 16px 베이스 */
+.form-group label{font-size:13px}
+.form-group input,.form-group textarea,.form-group select{font-size:15.5px;padding:12px 15px}
+.card-desc{font-size:13.5px;color:var(--ink-soft)}
+.info-box{font-size:13.5px;line-height:1.75}
+/* 터치 타깃 ≥44px */
+.case-check{width:26px;height:26px;font-size:15px}
+.tabs button{min-height:46px}
+.style-btn{min-height:42px;padding:9px 16px}
+input[type=checkbox]#includeFootnotes{width:20px;height:20px}
+/* 명도 대비(AA) 보정 */
+.header-sub{color:#AEC0DA}
+.footer{color:#6B7A8E}
+/* 신뢰 안내 배너 */
+.assure-banner{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(180deg,#F4F8FF,#EEF4FD);
+  border:1px solid #D6E2F4;border-left:3px solid var(--brand);border-radius:14px;padding:14px 18px;margin-bottom:18px}
+.assure-banner .ic{font-size:20px;line-height:1.4}
+.assure-banner b{color:var(--brand)}
+.assure-banner p{font-size:13.5px;color:var(--ink);line-height:1.7;margin:0}
+/* 진행 단계 표시 */
+.progress-rail{display:flex;align-items:center;gap:0;margin:2px 0 4px}
+.progress-rail .pstep{display:flex;align-items:center;gap:7px;flex:1}
+.progress-rail .pdot{width:24px;height:24px;border-radius:var(--r-pill);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;background:#E3E9F3;color:#8B98AB;flex-shrink:0;transition:all .25s var(--ease);font-variant-numeric:tabular-nums}
+.progress-rail .pstep.done .pdot{background:linear-gradient(135deg,var(--ok),#16A55F);color:#fff;box-shadow:0 2px 8px rgba(30,142,90,.35)}
+.progress-rail .pstep.active .pdot{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 2px 10px rgba(15,52,96,.4)}
+.progress-rail .plabel{font-size:12px;font-weight:700;color:var(--ink-faint)}
+.progress-rail .pstep.active .plabel,.progress-rail .pstep.done .plabel{color:var(--ink)}
+.progress-rail .pline{height:2px;flex:1;background:#E3E9F3;margin:0 6px;border-radius:2px}
+.progress-rail .pline.fill{background:linear-gradient(90deg,var(--ok),var(--brand))}
+.autosave-pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#15775A;
+  background:var(--ok-soft);border:1px solid #9FDCBC;border-radius:var(--r-pill);padding:3px 11px}
+/* 용어 도움말 툴팁(터치 지원) */
+.help{position:relative;display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:5px;
+  border-radius:var(--r-pill);background:#E3E9F3;color:#5A6B80;font-size:11px;font-weight:800;cursor:pointer;user-select:none;vertical-align:middle}
+.help:hover,.help:focus{background:var(--brand);color:#fff}
+.help .tip{position:absolute;bottom:135%;left:50%;transform:translateX(-50%) translateY(4px);width:240px;
+  background:var(--surface-trust);color:#EAF0FA;font-size:12px;font-weight:500;line-height:1.6;letter-spacing:0;
+  border-radius:10px;padding:10px 12px;box-shadow:var(--sh-lg);opacity:0;visibility:hidden;transition:all .18s var(--ease);z-index:50;text-align:left}
+.help .tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--surface-trust)}
+.help.open .tip,.help:hover .tip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+/* 초안 경고(생성 문서 상단) */
+.draft-warn{display:flex;gap:10px;align-items:flex-start;background:linear-gradient(180deg,#FFFBEB,#FFF6DC);
+  border:1px solid #F0D58C;border-radius:12px;padding:11px 15px;margin-bottom:14px;font-size:12.5px;color:#6E5212;line-height:1.65}
+
+/* ──────────── 프리미엄 레터헤드 "문서" 표면 ──────────── */
+.appeal-letter{
+  max-width:700px;margin:0 auto;background:linear-gradient(180deg,#FFFEFB,#FCFBF5);
+  border:1px solid #E7DBBE;border-top:3px double var(--accent-2);border-radius:4px;
+  padding:46px 50px;box-shadow:0 1px 2px rgba(16,32,58,.05),0 18px 50px rgba(16,32,58,.10);
+  font-size:15px;line-height:2.0;color:#22303f}
+.appeal-letter h3{position:relative;border-bottom:1px solid #E7DBBE;color:var(--brand)}
+.appeal-letter h3::after{content:"⚖ 자동 생성 · 출처 검증";position:absolute;right:0;bottom:10px;font-size:10px;font-weight:700;
+  letter-spacing:0;color:var(--accent-ink);background:#FBF4E2;border:1px solid #EAD9AE;border-radius:var(--r-pill);padding:2px 9px}
+@media(max-width:768px){.appeal-letter{padding:26px 20px;font-size:14.5px}}
+
+/* ──────────── 스티키 탭 스크롤 음영 · 언더라인 모션 ──────────── */
+.tabs{transition:box-shadow .25s var(--ease)}
+.tabs.scrolled{box-shadow:0 4px 16px rgba(11,27,48,.09)}
+.tabs button{position:relative;border-bottom:none!important}
+.tabs button::after{content:"";position:absolute;left:50%;right:50%;bottom:-1px;height:3px;border-radius:3px 3px 0 0;
+  background:var(--accent);transition:left .22s var(--ease),right .22s var(--ease)}
+.tabs button.active::after{left:14px;right:14px}
+/* CTA 정제 — 글로스 제거, 차분한 호버 */
+.btn-primary::after{display:none}
+.btn-primary{box-shadow:inset 0 1px 0 rgba(255,255,255,.12),var(--sh-brand)}
+.btn-primary:not(:disabled):hover{transform:translateY(-1px)}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{box-shadow:0 0 0 3px rgba(15,52,96,.12)}
+/* 필수 배지 — 위험(빨강) 대신 차분한 네이비 */
+.required-badge{background:linear-gradient(135deg,var(--brand),var(--brand-2));box-shadow:0 2px 6px rgba(15,52,96,.25)}
+
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-@media(max-width:768px){.header{padding:22px 18px}.tabs{padding:0 14px}.content{padding:16px 14px 40px}.card{padding:20px 18px}.appeal-letter{padding:24px 20px}}
+@media(max-width:768px){.header{padding:22px 18px}.tabs{padding:0 14px}.content{padding:16px 14px 40px}.card{padding:20px 18px}.appeal-letter{padding:26px 20px}}
 </style>
 </head>
 <body>
@@ -338,6 +414,20 @@ table.data-table tr:nth-child(even){background:var(--surface-2)}
 
 <!-- ═══════════ TAB: MY CASE ═══════════ -->
 <div id="tab-mycase">
+  <div class="assure-banner">
+    <span class="ic">🤝</span>
+    <p><b>혼자가 아닙니다.</b> 카티스템 지급거절은 식약처 허가·수술기록지·약관 해석 원칙으로 충분히 다툴 수 있는 사안입니다. 아래 단계를 천천히 따라오시면, 보험사 제출용 이의신청서 초안이 자동으로 완성됩니다. <b>모르는 항목은 비워 두셔도 됩니다.</b></p>
+  </div>
+  <div class="card" style="padding:16px 22px">
+    <div class="progress-rail" id="progressRail">
+      <div class="pstep" data-step="1"><span class="pdot">1</span><span class="plabel">기본 정보</span></div>
+      <div class="pline"></div>
+      <div class="pstep" data-step="2"><span class="pdot">2</span><span class="plabel">거절 사유</span></div>
+      <div class="pline"></div>
+      <div class="pstep" data-step="3"><span class="pdot">3</span><span class="plabel">문체·생성</span></div>
+      <div style="flex:0 0 auto;margin-left:10px"><span class="autosave-pill" id="autosavePill" style="display:none">💾 자동 저장됨</span></div>
+    </div>
+  </div>
   <!-- 환자 정보 -->
   <div class="card">
     <div class="card-title">환자·보험 정보 입력</div>
@@ -363,9 +453,9 @@ table.data-table tr:nth-child(even){background:var(--surface-2)}
     <div class="card-desc">수술기록지에 기재된 임상 정보를 입력하면, 환자 상태에 <strong>부적합한 반박 논리를 자동으로 제외</strong>합니다. 모르는 항목은 "확인 전"으로 두시면 됩니다.</div>
     <div class="form-grid">
       <div class="form-group">
-        <label>ICRS 등급 (관절경 확인)</label>
+        <label>ICRS 등급 (관절경 확인)<span class="help" tabindex="0" onclick="this.classList.toggle('open')">?<span class="tip">ICRS 등급은 <b>관절경으로 직접 본 연골 손상 정도</b>입니다(0~4등급). 카티스템 적응증은 전층 결손인 <b>Grade IV</b>입니다. <b>수술기록지</b>에서 확인하세요.</span></span></label>
         <select id="f_icrs" onchange="updateClinicalFilter()">
-          <option value="">확인 전</option>
+          <option value="">모름 / 서류에 없음</option>
           <option value="4">Grade IV (전층 결손 — 카티스템 적응증)</option>
           <option value="3">Grade III (50% 이상 결손)</option>
           <option value="2">Grade II (50% 미만 결손)</option>
@@ -373,9 +463,9 @@ table.data-table tr:nth-child(even){background:var(--surface-2)}
         </select>
       </div>
       <div class="form-group">
-        <label>KL 등급 (X-ray 기준)</label>
+        <label>KL 등급 (X-ray 기준)<span class="help" tabindex="0" onclick="this.classList.toggle('open')">?<span class="tip">KL 등급은 <b>X-ray로 본 관절염 전반의 진행 정도</b>입니다(1~4등급). ICRS와는 다른 기준입니다. 카티스템은 보통 <b>Grade 1~3</b>이 대상이며, Grade 4(말기)는 인공관절을 권합니다.</span></span></label>
         <select id="f_kl" onchange="updateClinicalFilter()">
-          <option value="">확인 전</option>
+          <option value="">모름 / 서류에 없음</option>
           <option value="1">Grade 1</option>
           <option value="2">Grade 2</option>
           <option value="3">Grade 3</option>
@@ -385,7 +475,7 @@ table.data-table tr:nth-child(even){background:var(--surface-2)}
       <div class="form-group">
         <label>결손 면적 (cm²)</label>
         <select id="f_defect" onchange="updateClinicalFilter()">
-          <option value="">확인 전</option>
+          <option value="">모름 / 서류에 없음</option>
           <option value="under2">2cm² 미만</option>
           <option value="2to9">2~9cm² (카티스템 적응증)</option>
           <option value="over9">9cm² 초과</option>
@@ -394,7 +484,7 @@ table.data-table tr:nth-child(even){background:var(--surface-2)}
       <div class="form-group">
         <label>환자 연령</label>
         <select id="f_age" onchange="updateClinicalFilter()">
-          <option value="">확인 전</option>
+          <option value="">모름 / 서류에 없음</option>
           <option value="under50">50세 미만</option>
           <option value="50to65">50~65세</option>
           <option value="over65">65세 이상</option>
@@ -486,17 +576,17 @@ table.data-table tr:nth-child(even){background:var(--surface-2)}
 // ─── DATA ───
 const CASES=[
 {id:1,tag:"CASE 01",color:"#c0392b",title:"줄기세포는 실손보험 지급이 거부될 수 있다",subtitle:"줄기세포 치료 전반에 대한 포괄적 거절",severity:3,denialLogic:"줄기세포를 이용한 치료는 보험사 내부 기준상 지급 거절 대상에 해당할 수 있으며, 실손보험 약관상 보상 범위에 포함되지 않는다.",counterPoints:[{point:"카티스템은 식약처 정식 품목허가 의약품 (2012년, 품목기준코드 201200401)",detail:"카티스템은 2012년 1월 식약처로부터 품목허가를 취득한 전문의약품입니다. 3상 임상시험(Level I evidence)을 거쳤고, 6년간 615명 대상 시판 후 조사를 통과하여 재심사도 완료했습니다. 무허가 줄기세포 시술과는 법적으로 완전히 구분됩니다."},{point:"실손보험 표준약관에 '줄기세포 제외' 조항 없음 — 포괄주의 원칙",detail:"실손의료보험은 포괄주의(negative list) 방식을 채택하여, '보상하지 않는 사항'을 약관에 열거하고 그 외 의료비는 보상하는 구조입니다. 표준약관의 면책 사항에 '줄기세포 치료'를 특정하여 배제하는 조항은 존재하지 않습니다."},{point:"약관규제법 제5조 제2항 — 작성자 불이익의 원칙 적용",detail:"약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석되어야 합니다. 약관에 명시적 제외 조항이 없는 상황에서 보험사가 임의로 지급을 거절하면, 이 원칙에 의해 피보험자에게 유리하게 해석해야 합니다."}],evidence:["식약처 품목허가서 (카티스템, 2012년 1월)","실손보험 표준약관 원문 (면책 사항 부분)","임상 3상 논문 (Lim et al., 2021, OJSM)","약관규제법 조문"],laws:["약관규제법 제5조 제2항 (작성자 불이익의 원칙)","약관규제법 제6조 (불공정약관 조항 무효)","약관규제법 제3조 (설명의무 위반 시 주장 불가)","의정부지방법원 판결 — 주치의 진단 우선 인정"],winRate:90,cumulative:"가장 먼저, 가장 강하게 반박할 수 있는 사유입니다. 식약처 품목허가서 사본과 실손보험 표준약관의 면책 조항 목록을 함께 첨부하면 보험사가 스스로 번복하는 경우가 많습니다."},
-{id:2,tag:"CASE 02",color:"#d35400",title:"카티스템은 고령 환자에게 적합하지 않다",subtitle:"연령을 이유로 한 적응증 외 치료 주장",severity:3,denialLogic:"카티스템 수술은 고령 환자에게 적합하지 않은 치료이며, 해당 환자의 연령을 고려할 때 적응증에서 벗어난 시술로 보험금 지급이 불가하다.",counterPoints:[{point:"카티스템 허가사항에 연령 제한 없음",detail:"식약처 품목허가 사항에 연령 상한 또는 하한이 명시되어 있지 않습니다. 허가 적응증은 '퇴행성 또는 반복적 외상으로 인한 골관절염 환자'이며, 특정 연령대를 배제하는 문구가 없습니다."},{point:"임상시험 평균 연령 55.9세 — 고령 환자 유효성 확인",detail:"3상 임상시험(Lim et al., 2021) 평균 환자 연령 55.9세. Park et al.(2017) 7년 장기 추적에서 KL Grade 3 환자 안전성·유효성 확인."},{point:"의사의 재량권 — 대법원 94다13046",detail:"대법원 법리: '의사는 환자의 상황과 당시 의료 수준, 전문적 지식과 경험에 따라 적절하다고 판단되는 진료방법을 선택할 수 있다.'"}],evidence:["식약처 허가 사항 원문 (연령 제한 조항 부재 확인)","3상 임상시험 논문 (Lim et al., 2021)","고령 환자 장기추적 논문 (Park et al., 2017)","담당의 소견서"],laws:["대법원 94다13046 (의사의 진료방법 선택 재량권)","약관규제법 제6조 제2항 제1호","약관규제법 제5조"],winRate:92,cumulative:"식약처 허가 사항을 출력하여 '연령 제한 없음'을 직접 확인시켜 주십시오."},
+{id:2,tag:"CASE 02",color:"#d35400",title:"카티스템은 고령 환자에게 적합하지 않다",subtitle:"연령을 이유로 한 적응증 외 치료 주장",severity:3,denialLogic:"카티스템 수술은 고령 환자에게 적합하지 않은 치료이며, 해당 환자의 연령을 고려할 때 적응증에서 벗어난 시술로 보험금 지급이 불가하다.",counterPoints:[{point:"카티스템 허가사항에 연령 제한 없음",detail:"식약처 품목허가 사항에 연령 상한 또는 하한이 명시되어 있지 않습니다. 허가 적응증은 '퇴행성 또는 반복적 외상으로 인한 무릎 관절의 전층 연골 결손(ICRS Grade IV)' 치료로, 결손의 등급·크기로 정의될 뿐 특정 연령대를 배제하는 문구는 없습니다(카티스템은 일반적인 말기 골관절염 자체의 치료제가 아니라, 국소 전층 연골 결손을 메우는 세포치료제임에 유의)."},{point:"임상시험 평균 연령 55.9세 — 고령 환자 유효성 확인",detail:"3상 임상시험(Lim et al., 2021) 평균 환자 연령 55.9세. Park et al.(2017) 7년 장기 추적에서 KL Grade 3 환자 안전성·유효성 확인."},{point:"의사의 재량권 — 대법원 94다13046",detail:"대법원 법리: '의사는 환자의 상황과 당시 의료 수준, 전문적 지식과 경험에 따라 적절하다고 판단되는 진료방법을 선택할 수 있다.'"}],evidence:["식약처 허가 사항 원문 (연령 제한 조항 부재 확인)","3상 임상시험 논문 (Lim et al., 2021)","고령 환자 장기추적 논문 (Park et al., 2017)","담당의 소견서"],laws:["대법원 94다13046 (의사의 진료방법 선택 재량권)","약관규제법 제6조 제2항 제1호","약관규제법 제5조"],winRate:92,cumulative:"식약처 허가 사항을 출력하여 '연령 제한 없음'을 직접 확인시켜 주십시오."},
 {id:3,tag:"CASE 03",color:"#1a6aa5",title:"MRI상 ICRS 등급·결손 크기가 불분명하다",subtitle:"ICRS 등급 경계 모호성을 이유로 한 지급 거절",severity:3,denialLogic:"MRI 영상 판독 결과, 연골 결손 등급이 ICRS 3등급과 4등급의 경계에 있어 4등급으로 단정하기 어려우며, 결손 크기 역시 기준(2cm²)에 미달할 수 있다.",counterPoints:[{point:"관절경 소견이 MRI보다 우선 — Gold Standard",detail:"ICRS 등급 분류의 gold standard는 관절경 직접 육안 소견입니다. MRI의 연골 손상 등급 평가 정확도는 60~85% 수준이며, 특히 Grade III와 IV 구분에서 불일치가 발생할 수 있습니다."},{point:"결손 크기는 수술 중 직접 계측 — 가장 정확한 기록",detail:"카티스템 시술 과정에서 결손 부위를 노출하고 직접 측정하므로, 수술기록지에 기재된 결손 면적은 직접 관찰에 의한 기록입니다."},{point:"보험사 측 재판독은 '사후 추정'에 불과",detail:"보험사 자문의는 환자를 직접 진찰하지 않고 서류만으로 판단합니다. 관절경으로 직접 관찰한 수술의의 소견보다 정확도가 떨어집니다."}],evidence:["수술기록지 (ICRS 4등급 및 결손 크기 명시)","관절경 수술 중 사진·영상 자료","수술 전 MRI 판독 소견서","집도의 ICRS 등급 판단 근거 추가 소견서"],laws:["의료법 제22조 (진료기록부 작성 의무 및 법적 효력)","약관규제법 제5조","ICRS Cartilage Injury Evaluation Package"],winRate:78,cumulative:"수술기록지가 핵심 무기입니다. 집도의에게 'ICRS 4등급 확인 및 결손 크기 재확인 소견서'를 별도 발급받아 첨부하면 보험사의 MRI 재판독 주장을 무력화할 수 있습니다."},
-{id:4,tag:"CASE 04",color:"#6c3483",title:"KL 3등급을 제3기관이 4등급(말기)으로 판정",subtitle:"보험사 측 자문의가 KL 4등급 판정 → 적응증 외 주장",severity:3,denialLogic:"진료 기관은 KL 3등급으로 진단했으나, 보험사가 의뢰한 제3기관이 KL 4등급(말기)으로 판정하여 카티스템 적응증에서 제외된다.",counterPoints:[{point:"KL Grade와 ICRS Grade는 완전히 다른 평가 체계",detail:"KL Grade는 X-ray 기반 골관절염 전반적 진행 정도를, ICRS Grade는 관절경 기반 국소 연골 결손 심각도를 평가합니다."},{point:"KL 3↔4 경계는 판독자 간 신뢰도 차이가 큰 영역 (kappa 0.5~0.7)",detail:"KL 등급은 반정량적 지표로, 동일 영상이라도 판독자에 따라 3등급 또는 4등급으로 달리 해석될 수 있습니다."},{point:"보험사 자문의 이해충돌 — 10건 중 7건 이상 미지급 통계",detail:"2025년 통계에 따르면 생명보험 의료자문 건 중 10건 중 7건 이상에서 보험금이 일부 또는 전부 미지급되었습니다."}],evidence:["수술 전 X-ray 영상 및 원본 판독 소견서","집도의 KL 등급 판단 근거 소견서","독립 제3기관(대학병원) 재판독 소견서","KL 분류 판독자 간 신뢰도 관련 의학 문헌"],laws:["약관규제법 제5조","민사소송법 제202조 (자유심증주의)","의정부지법 판결 — 주치의 진단 우선 인정","부산지법 판결 — 미지급 보험금 1,068만 원 지급"],winRate:70,cumulative:"독립적인 대학병원 영상의학과에 재판독을 의뢰하여 KL 3등급 확인서를 받으면 보험사 주장에 정면 대응할 수 있습니다."},
+{id:4,tag:"CASE 04",color:"#6c3483",title:"KL 3등급을 제3기관이 4등급(말기)으로 판정",subtitle:"보험사 측 자문의가 KL 4등급 판정 → 적응증 외 주장",severity:3,denialLogic:"진료 기관은 KL 3등급으로 진단했으나, 보험사가 의뢰한 제3기관이 KL 4등급(말기)으로 판정하여 카티스템 적응증에서 제외된다.",counterPoints:[{point:"KL Grade와 ICRS Grade는 완전히 다른 평가 체계",detail:"KL Grade는 X-ray 기반 골관절염 전반적 진행 정도를, ICRS Grade는 관절경 기반 국소 연골 결손 심각도를 평가합니다."},{point:"KL 3↔4 경계는 판독자 간 신뢰도 차이가 큰 영역 (kappa 0.5~0.7)",detail:"KL 등급은 반정량적 지표로, 동일 영상이라도 판독자에 따라 3등급 또는 4등급으로 달리 해석될 수 있습니다."},{point:"보험사 자문의 이해충돌 — 부지급·삭감으로 이어진다는 지적 다수",detail:"언론 보도·국정감사 등에서 보험사 의료자문 건의 상당수가 부지급·삭감으로 이어진다는 지적이 반복되어 왔습니다(구체 수치는 발표 주체·연도에 따라 다르므로, 인용 시 정확한 출처를 함께 제시하십시오)."}],evidence:["수술 전 X-ray 영상 및 원본 판독 소견서","집도의 KL 등급 판단 근거 소견서","독립 제3기관(대학병원) 재판독 소견서","KL 분류 판독자 간 신뢰도 관련 의학 문헌"],laws:["약관규제법 제5조","민사소송법 제202조 (자유심증주의)","의정부지법 판결 — 주치의 진단 우선 인정","부산지법 판결 — 미지급 보험금 1,068만 원 지급"],winRate:70,cumulative:"독립적인 대학병원 영상의학과에 재판독을 의뢰하여 KL 3등급 확인서를 받으면 보험사 주장에 정면 대응할 수 있습니다."},
 {id:5,tag:"CASE 05",color:"#117a65",title:"사용량(바이알 수)에 대한 지급 보류",subtitle:"카티스템 투여량이 과다하다는 주장",severity:2,denialLogic:"사용된 카티스템의 바이알 수 또는 투여 용량이 기준을 초과하거나 의학적 근거 없이 과다 사용되었다.",counterPoints:[{point:"용량은 결손 면적에 의해 객관적으로 결정 — 허가 용법·용량",detail:"카티스템의 허가 투여량은 결손 면적 1cm²당 500μL이며, 최대 3바이알 세트까지 사용 가능합니다."},{point:"다발성 결손 시 총 면적 합계에 따라 바이알 수 증가는 합리적",detail:"한 무릎 관절 내에 내측과, 슬개골, 활차구 등 다발성 결손이 존재할 수 있습니다."},{point:"식약처 허가 용법·용량이 유일한 공식 기준",detail:"현재 학회 차원의 용량 기준이 확립 전이므로, 식약처 허가 용법·용량이 유일한 공식 기준입니다."}],evidence:["수술기록지 (결손 부위별 면적 및 카티스템 사용량)","식약처 허가사항 원문 — 용법·용량 항목","진료비 세부내역서","집도의 사용량 결정 근거 소견서"],laws:["약관규제법 제5조","실손보험 표준약관 (실제 발생 의료비 보상 원칙)","3상 임상시험 프로토콜 (NCT01041001)"],winRate:73,cumulative:"수술기록지에 결손 크기와 투여량이 함께 기재되어 있는지 반드시 확인하십시오."},
 {id:6,tag:"CASE 06",color:"#2980b9",title:"건강보험 비급여 항목이라 지급 대상이 아니다",subtitle:"비급여 = 실손 보상 제외라는 잘못된 약관 해석",severity:2,denialLogic:"카티스템이 건강보험 비급여 항목에 해당하므로, 실손보험 약관상 지급 대상이 아니다.",counterPoints:[{point:"실손보험의 핵심 목적 자체가 비급여 의료비 보상",detail:"실손의료보험은 건강보험이 보장하지 않는 비급여 항목까지 보장하기 위해 존재합니다."},{point:"세대별 비급여 보장 비율 확인 — 0% 보상 약관은 존재하지 않음",detail:"1세대(~2009): 비급여 거의 100% 보장, 2세대: 80~90%, 3세대: 80%, 4세대: 70%, 5세대: 50%."},{point:"카티스템은 식약처 허가 의약품 — 비인가 시술이 아님",detail:"카티스템은 식약처 품목허가를 받은 전문의약품이므로, 보상 대상인 '치료 목적의 의료비'에 해당합니다."}],evidence:["보험 가입 약관 원본","진료비 세부내역서","실손보험 표준약관 제3조","금융위원회(2025) 비급여 분쟁조정기준"],laws:["실손보험 표준약관 (비급여 의료비 보상 원칙)","약관규제법 제5조 제2항","금소법 제19조"],winRate:82,cumulative:"약관 원본을 보험사에 서면으로 교부 요청하십시오."},
-{id:7,tag:"CASE 07",color:"#8e44ad",title:"제3의료기관 자문으로 보험사 측에 유리한 지급거부 증가",subtitle:"보험사 의뢰 의료자문이 집도의 소견을 일방적으로 부정하는 구조적 문제",severity:3,denialLogic:"보험사가 의뢰한 제3의료기관(자문의)의 의견에 따르면, 해당 환자의 카티스템 시술은 적응증에 부합하지 않거나 의학적 필요성이 인정되지 않으므로 보험금 지급이 불가하다.",counterPoints:[{point:"보험사 의료자문의 구조적 이해충돌 — 10건 중 7건 이상 미지급",detail:"보험사가 자문의를 선정하고, 자문료를 지급하며, 질문 항목도 보험사가 설계하는 구조에서 자문 결과가 보험사에 유리하게 나오는 것은 구조적으로 예견된 결과입니다."},{point:"자문의는 환자를 직접 진찰하지 않은 '서류 심사'에 불과",detail:"집도의는 환자의 임상 증상, 이학적 검사, MRI, 관절경 직접 소견을 종합하여 치료를 결정했습니다. 법적·의학적으로 직접 진찰·수술한 의사의 판단이 서류 심사보다 높은 증거력을 가집니다."},{point:"보험사가 자문의에게 불리한 자료를 선택적으로 미전달하는 사례 다수",detail:"관절경 사진, 수술 중 영상, 집도의 상세 소견서 등 환자에게 유리한 자료를 누락하는 경우가 빈번합니다."},{point:"법원 판례: 주치의 진단이 보험사 자문의보다 우선",detail:"의정부지법, 부산지법 모두 일관되게 직접 진료한 의사의 판단을 서류 자문보다 신뢰합니다."}],evidence:["보험사 손해사정결과 안내서","의료자문 회신서 원본","자문 의뢰 시 전달 자료 목록","집도의 반박 소견서","관절경 사진·수술 중 영상","독립 제3기관 재판독 소견서"],laws:["보험업법 제95조의3 (의료자문 남용 방지 의무)","약관규제법 제5조","민사소송법 제202조","의정부지법 판결","부산지법 판결","보험협회 의료자문 표준내부통제기준"],winRate:72,cumulative:"① 의료자문 회신서 원본과 전달 자료 목록을 서면으로 요청 ② 집도의에게 항목별 반박 소견서 ③ 누락 자료 보완 제출"},
+{id:7,tag:"CASE 07",color:"#8e44ad",title:"제3의료기관 자문으로 보험사 측에 유리한 지급거부 증가",subtitle:"보험사 의뢰 의료자문이 집도의 소견을 일방적으로 부정하는 구조적 문제",severity:3,denialLogic:"보험사가 의뢰한 제3의료기관(자문의)의 의견에 따르면, 해당 환자의 카티스템 시술은 적응증에 부합하지 않거나 의학적 필요성이 인정되지 않으므로 보험금 지급이 불가하다.",counterPoints:[{point:"보험사 의료자문의 구조적 이해충돌 — 부지급·삭감으로 이어진다는 지적 다수",detail:"보험사가 자문의를 선정하고, 자문료를 지급하며, 질문 항목도 보험사가 설계하는 구조에서 자문 결과가 보험사에 유리하게 나오는 것은 구조적으로 예견된 결과입니다."},{point:"자문의는 환자를 직접 진찰하지 않은 '서류 심사'에 불과",detail:"집도의는 환자의 임상 증상, 이학적 검사, MRI, 관절경 직접 소견을 종합하여 치료를 결정했습니다. 법적·의학적으로 직접 진찰·수술한 의사의 판단이 서류 심사보다 높은 증거력을 가집니다."},{point:"보험사가 자문의에게 불리한 자료를 선택적으로 미전달하는 사례 다수",detail:"관절경 사진, 수술 중 영상, 집도의 상세 소견서 등 환자에게 유리한 자료를 누락하는 경우가 빈번합니다."},{point:"법원 판례: 주치의 진단이 보험사 자문의보다 우선",detail:"의정부지법, 부산지법 모두 일관되게 직접 진료한 의사의 판단을 서류 자문보다 신뢰합니다."}],evidence:["보험사 손해사정결과 안내서","의료자문 회신서 원본","자문 의뢰 시 전달 자료 목록","집도의 반박 소견서","관절경 사진·수술 중 영상","독립 제3기관 재판독 소견서"],laws:["보험업법 제95조의3 (의료자문 남용 방지 의무)","약관규제법 제5조","민사소송법 제202조","의정부지법 판결","부산지법 판결","보험협회 의료자문 표준내부통제기준"],winRate:72,cumulative:"① 의료자문 회신서 원본과 전달 자료 목록을 서면으로 요청 ② 집도의에게 항목별 반박 소견서 ③ 누락 자료 보완 제출"},
 {id:8,tag:"CASE 08",color:"#2c3e50",title:"카티스템은 실험적·연구적 치료에 해당한다",subtitle:"약관상 '실험적 치료' 면책 조항을 근거로 한 거절",severity:3,denialLogic:"카티스템은 아직 충분히 검증되지 않은 실험적·연구적 치료에 해당하며, 약관상 면책 조항에 의거하여 보험금 지급이 불가하다.",counterPoints:[{point:"카티스템은 3상 임상시험 완료 + 식약처 허가 = 실험적 치료가 아님",detail:"카티스템은 Phase 1/2/3 임상시험을 모두 거쳐 2012년 정식 허가를 받았으며, 이후 시판 후 조사(PMS)와 재심사까지 완료했습니다."},{point:"누적 3만 명 이상 시술 — 13년간 상용화된 치료",detail:"2012년 허가 이후 13년간 누적 3만 명 이상의 환자에게 시술된 상용 의약품입니다."},{point:"약관상 '실험적 치료' 정의에 식약처 허가 의약품은 포함 불가",detail:"'실험적 치료'란 통상 '관련 기관의 승인을 받지 않은 치료'를 의미합니다. 카티스템은 식약처 승인을 받은 전문의약품입니다."}],evidence:["식약처 품목허가서 (2012년)","시판 후 조사(PMS) 완료 보고서","3상 임상시험 논문","보험 약관 원문"],laws:["약관규제법 제5조 제2항","약관규제법 제3조","약관규제법 제6조"],winRate:88,cumulative:"보험사에 '실험적 치료의 정의'를 서면으로 제시하도록 요청하십시오."},
 {id:9,tag:"CASE 09",color:"#16a085",title:"미세천공술로 충분 — 카티스템은 과잉진료다",subtitle:"더 저렴한 치료로 충분하다는 의학적 필요성 부정",severity:3,denialLogic:"해당 환자의 연골 결손은 미세천공술로 충분히 치료 가능하며, 고가의 카티스템 사용은 과잉진료에 해당한다.",counterPoints:[{point:"3상 RCT에서 카티스템이 미세천공술 대비 통계적으로 우월",detail:"Lim et al.(2021) RCT 114명: ICRS 등급 개선율 카티스템 97.7% vs 미세천공술 71.7% (p=0.001)."},{point:"미세천공술은 결손 면적 2cm² 이상에서 효과 급감",detail:"ICRS 국제 가이드라인에서 미세천공술의 효과는 결손 면적 2cm² 이상에서 급격히 떨어집니다."},{point:"치료법 선택은 의사의 재량권 — 보험사가 대체 치료를 강제할 수 없음",detail:"대법원 94다13046 판결에 따라, 의사는 적절한 진료방법을 선택할 재량이 있습니다."}],evidence:["3상 RCT 논문 (Lim et al., 2021)","ICRS 국제 가이드라인","집도의 소견서","수술기록지"],laws:["대법원 94다13046","약관규제법 제5조","실손보험 표준약관"],winRate:80,cumulative:"핵심은 '미세천공술로 충분하지 않은 의학적 이유'를 구체적으로 제시하는 것입니다."},
 {id:10,tag:"CASE 10",color:"#b71c1c",title:"MRI로 측정한 병변 크기가 적응증 기준 미달이라는 주장",subtitle:"MRI 결손 면적 기준 2cm² 미달 판정 → 적응증 외 주장 (최신 이슈)",severity:3,denialLogic:"수술 전 MRI에서 측정한 연골 결손 면적이 카티스템 적응증 기준인 2cm²에 미달하므로 적응증 외 사용에 해당한다.",counterPoints:[{point:"MRI는 결손 크기를 평균 65~78% 과소평가 — 국제 논문 다수 확인",detail:"Gomoll et al.(2011): 평균 65% 과소평가, 85%에서 실제 결손이 더 큼. Campbell et al.(2013): 관절경 결손이 MRI 대비 평균 70% 더 큼. Perry et al.(2023): 전층 연골 결손 면적을 평균 78.3% 과소평가."},{point:"정확한 결손 크기는 관절경 데브리드먼트 후 직접 계측이 gold standard",detail:"카티스템 시술 시 손상된 연골을 데브리드먼트하여 건강한 연골 경계까지 정리한 후 실제 결손 면적을 직접 계측합니다."},{point:"MRI의 부분층 손상은 연골 변성을 반영하지 못함",detail:"MRI에서 Grade II~III로 판독되는 부분층 손상이 수술 시 데브리드먼트하면 전층 결손으로 드러나는 경우가 매우 흔합니다."},{point:"보험사는 MRI 측정 한계를 알면서 이를 거절 근거로 악용",detail:"MRI의 결손 크기 과소평가는 영상의학계에서 널리 알려진 사실입니다."}],evidence:["수술기록지 — 데브리드먼트 후 결손 면적","관절경 수술 중 사진·영상","수술 전 MRI 판독 소견서","집도의 소견서","Gomoll, Campbell, Perry 논문 사본"],laws:["약관규제법 제5조","의료법 제22조","대법원 94다13046","약관규제법 제6조"],winRate:82,cumulative:"핵심은 '수술기록지의 데브리드먼트 후 결손 면적'이 MRI 측정치보다 우선한다는 점입니다."},
-{id:11,tag:"CASE 11",color:"#7B241C",title:"3세대 보험 '비급여 주사료 250만 원 한도'를 적용하여 삭감",subtitle:"카티스템을 일반 비급여 주사로 분류하여 연간 250만 원 한도 적용 (3세대 이슈)",severity:3,denialLogic:"카티스템은 주사제에 해당하므로, 3세대 실손보험의 '3대 비급여 특약 — 비급여 주사료' 항목에 따라 연간 250만 원 한도가 적용된다. 따라서 250만 원을 초과하는 금액은 보상하지 않는다.",counterPoints:[{point:"카티스템은 '비급여 주사료'가 아니라 수술 중 결손부에 이식·도포하는 약제 — 250만 원 주사료 한도의 적용 대상 자체가 아님",detail:"3세대 실손의 '비급여 주사료 연 250만 원·50회 한도'는 도수치료·체외충격파·증식치료와 함께, 외래에서 반복 시행되는 통증·영양·증식 주사의 과잉진료를 관리하기 위한 항목입니다. 반면 카티스템은 관절경 또는 관절 절개 하에 연골 결손부를 데브리드먼트한 뒤 그 부위에 직접 이식·도포하는, 수술에 수반된 치료재료성 약제입니다. 단순 정맥·근육·관절강 내 주입 주사와는 시술 형태가 본질적으로 다르므로, 약관상 '비급여 주사료' 한도 항목에 당연히 포섭된다고 볼 수 없습니다. 보험사에 '카티스템을 250만 원 주사료 한도 대상으로 분류한 약관상 근거 조항'을 서면으로 제시하도록 먼저 요구하십시오."},{point:"[보조 논거] 약관상 '항암제·희귀의약품 등' 비급여 주사료 예외 규정의 해석을 다툴 여지가 있음",detail:"3·4세대 특별약관에는 '항암제, 항생제(항진균제 포함), 희귀의약품에 사용된 비급여 주사료는 주계약 질병 비급여에서 보상한다'는 예외가 있습니다. 카티스템은 식약처가 허가한 고가의 첨단바이오의약품(세포치료제)으로, 일반적인 통증·영양 주사와는 성격이 전혀 다릅니다. 다만 카티스템을 약관상 '항암제'로 곧바로 등치시키는 해석(예: 분류코드 439번을 항암제군으로 보는 주장)은 보험사나 법원이 받아들이지 않을 수 있는 '다툼의 여지가 있는 주장'입니다. 따라서 위 1번(수술 수반 약제론)을 주된 논거로 삼고, 이 예외 규정은 보조적으로만 제기하십시오. 약관 문구가 불명확한 경우 약관규제법 제5조 제2항에 따라 피보험자에게 유리하게 해석되어야 합니다."},{point:"주사료 한도가 적용되지 않으면 주계약 '질병 비급여' 한도에서 보상",detail:"카티스템이 250만 원 주사료 한도 항목에서 제외되면, 보상은 주계약의 '질병 비급여' 항목으로 넘어갑니다. 이 항목의 연간 한도는 통상 5,000만 원 수준이며, 자기부담률을 적용하여 비급여 비용의 약 70~80%(3·4세대 기준)를 보상합니다. 예컨대 수술비가 1,500만 원이라면 자기부담률 적용 후 약 1,050만~1,200만 원 보상이 가능합니다(실제 한도·비율은 가입 약관에 따라 다르므로 반드시 본인 약관으로 확인)."},{point:"입원/통원 구분에 따라 한도가 크게 달라지므로 실제 진료 형태를 정확히 확인",detail:"주계약 질병 비급여의 높은 연간 한도는 통상 '입원'에 적용되고, 통원(외래)은 회당 한도(20만~30만 원 내외)가 적용되어 실질 보상이 크게 줄어듭니다. 따라서 카티스템 시술이 의학적 필요에 따라 입원으로 시행된 경우에는, 입원 사실이 진료기록·영수증에 정확히 기재되었는지 확인하십시오. 다만 보상 한도를 늘릴 목적으로 의학적 필요가 없는 입원을 임의로 만드는 것은 부적절하며, 입원 여부는 어디까지나 담당 전문의의 의학적 판단에 따라야 합니다."}],evidence:["보험 가입 약관 원본 — '비급여 주사료 한도' 및 예외 규정 조항 확인","수술기록지 — 카티스템을 결손부에 이식·도포한 수술 과정 기재 확인","식약처 카티스템 품목허가 사항 — 첨단바이오의약품(세포치료제) 분류 확인","진료비 세부내역서 — 입원/통원 구분 및 약제·치료재료 항목 확인","보험사에 '250만 원 한도 분류 근거 조항' 서면 제시 요청"],laws:["실손보험 표준약관 (비급여 주사료 한도 및 예외 규정)","약관규제법 제5조 제2항 (불명확 시 고객 유리 해석)","약관규제법 제3조 (설명의무 위반 시 주장 불가)","금소법 제19조 (설명의무 위반 시 입증책임 전환)"],winRate:72,cumulative:"핵심은 보험사에 '카티스템을 250만 원 비급여 주사료 한도 대상으로 분류한 약관상 근거 조항을 서면으로 제시하라'고 먼저 요구하는 것입니다. 가장 방어력 높은 논거는 ① 카티스템이 외래 반복 주사가 아니라 수술 중 결손부에 이식·도포하는 치료재료성 약제라는 점이며, ② 약관상 '항암제 등' 예외 규정 해석은 다툼의 여지가 있으므로 보조 논거로만 활용하십시오. 입원으로 시행된 경우 입원 기록의 정확성을 확인하되, 보상만을 목적으로 한 임의 입원은 권하지 않습니다. 약관 문구가 불명확하면 약관규제법 제5조 제2항(고객 유리 해석)을 원용하십시오."},
-{id:12,tag:"CASE 12",color:"#4A235A",title:"제3의료기관 자문에서 '수술 부적정' 소견 → 과잉진료 주장",subtitle:"보험사 의뢰 자문 정형외과 전문의가 '카티스템 수술은 과잉 진료이며 의학적으로 타당하지 않다'고 소견",severity:3,denialLogic:"보험사가 의뢰한 제3의료기관 정형외과 전문의 자문 결과, '제출된 의무기록을 바탕으로 검토한 결과, 해당 환자의 상태에 카티스템 수술은 과잉 진료이며 의학적으로 타당하지 않다'는 소견이 나왔으므로 보험금 지급이 불가하다.",counterPoints:[{point:"자문의는 '서류 검토'만 했을 뿐, 환자를 직접 진찰하거나 관절경을 확인하지 않음",detail:"보험사 자문의는 보험사가 전달한 의무기록과 영상 일부만으로 '부적정' 소견을 내렸습니다. 환자를 직접 진찰하지 않았고, 관절경으로 연골 상태를 직접 확인하지도 않았습니다. 반면, 집도의는 환자의 병력·이학적 검사·MRI·관절경 직접 소견을 종합적으로 검토하여 카티스템이 필요하다고 판단했습니다. 의정부지방법원은 보험사 감정의 의견이 '확정적 감정이 아니라 가까워 보인다는 취지에 불과하다'고 판단하여 주치의 진단을 우선 인정한 바 있습니다."},{point:"'과잉진료' 주장의 의학적 근거가 불충분 — 자문의의 대안 치료 제시 여부 확인 필요",detail:"자문의가 '과잉진료'라고 주장하려면, ① 해당 환자에게 카티스템이 아닌 어떤 치료가 적절했는지, ② 그 대안 치료가 카티스템과 동등하거나 더 나은 결과를 보인다는 의학적 근거를 함께 제시해야 합니다. 단순히 '타당하지 않다'는 결론만 있고 대안 치료와 그 근거가 없다면, 이는 구체적 의학적 판단이 아닌 보험사에 유리한 결론을 위한 자문입니다. 카티스템은 3상 RCT에서 미세천공술 대비 ICRS 개선율 97.7% vs 71.7%(p=0.001)로 우월성이 입증되었습니다(Lim et al., 2021)."},{point:"자문 의뢰 시 보험사가 전달한 자료의 완전성 검증 필요",detail:"보험사가 자문 의뢰 시 관절경 사진, 수술 중 영상, 집도의 상세 소견서 등 환자에게 유리한 자료를 누락하고 MRI 영상과 기본 진료기록만 전달한 경우가 다수 보고되어 있습니다. 자문 의뢰 시 전달 자료 목록을 보험사에 서면 요청하여, 어떤 자료가 자문의에게 전달되었는지 확인해야 합니다. 불완전한 자료에 기반한 '부적정' 소견은 신뢰도가 떨어집니다."},{point:"의료자문의 구조적 이해충돌 — 보험업법 제95조의3 남용 방지 의무",detail:"2025년 통계에 따르면 생명보험 의료자문 건 중 10건 중 7건 이상에서 보험금이 일부 또는 전부 미지급되었습니다. 보험사가 자문의를 선정하고, 자문료를 지급하며, 질문 항목도 보험사가 설계하는 구조입니다. 보험협회 의료자문 표준내부통제기준 자체가 '보험금 부지급 또는 삭감 수단으로 남용되지 않도록' 경고하고 있습니다."},{point:"집도의의 항목별 반박 소견서가 자문의 의견을 무력화",detail:"가장 효과적인 대응은 집도의에게 자문의 소견서 원본을 보여주고, 항목별로 반박하는 소견서를 받는 것입니다. 예: '자문의는 OO라고 판단하였으나, 본인이 관절경으로 직접 확인한 결과 ICRS 4등급 전층 결손이 확인되었으며, 결손 면적 OOcm²로 카티스템 적응증에 정확히 부합합니다. 환자의 연령·전신 상태·기저질환을 종합 고려하여 카티스템이 가장 적절한 치료라고 판단하였습니다.'"}],evidence:["보험사 손해사정결과 안내서 (자문 결과 원문)","의료자문 회신서 원본 (보험사에 서면 교부 요청)","자문 의뢰 시 전달 자료 목록 (누락 자료 확인)","집도의 반박 소견서 — 자문의 '부적정' 의견에 대한 항목별 반박","수술기록지 (관절경 소견, ICRS 등급, 결손 면적)","관절경 사진·수술 중 영상","3상 RCT 논문 (Lim et al., 2021) — 의학적 필요성 근거"],laws:["보험업법 제95조의3 (의료자문 남용 방지 의무)","약관규제법 제5조 (불명확 시 피보험자 유리 해석)","대법원 94다13046 (의사의 진료방법 선택 재량권)","민사소송법 제202조 (자유심증주의)","의정부지법 판결 — 주치의 진단 우선 인정","부산지법 판결 — 미지급 보험금 지급 명령"],winRate:70,cumulative:"대응의 핵심은 4단계입니다. ① 보험사에 의료자문 회신서 원본과 자문 의뢰 시 전달 자료 목록을 서면으로 요청합니다. ② 자문의가 '과잉진료'라고 판단한 구체적 근거(대안 치료 제시 여부, 의학적 논거)를 확인합니다. ③ 집도의에게 자문의 소견에 대한 항목별 반박 소견서를 받습니다. ④ 관절경 사진 등 자문 시 누락된 자료를 보완 제출합니다. 자문 자체의 공정성과 완전성에 의문을 제기하면 보험사가 재심사에 응하는 경우가 많습니다."}
+{id:11,tag:"CASE 11",color:"#7B241C",title:"3세대 보험 '비급여 주사료 250만 원 한도'를 적용하여 삭감",subtitle:"카티스템을 일반 비급여 주사로 분류하여 연간 250만 원 한도 적용 (3세대 이슈)",severity:3,denialLogic:"카티스템은 주사제에 해당하므로, 3세대 실손보험의 '3대 비급여 특약 — 비급여 주사료' 항목에 따라 연간 250만 원 한도가 적용된다. 따라서 250만 원을 초과하는 금액은 보상하지 않는다.",counterPoints:[{point:"카티스템은 '비급여 주사료'가 아니라 수술 중 결손부에 이식·도포하는 약제 — 250만 원 주사료 한도의 적용 대상 자체가 아님",detail:"3세대 실손의 '비급여 주사료 연 250만 원·50회 한도'는 도수치료·체외충격파·증식치료와 함께, 외래에서 반복 시행되는 통증·영양·증식 주사의 과잉진료를 관리하기 위한 항목입니다. 반면 카티스템은 관절경 또는 관절 절개 하에 연골 결손부를 데브리드먼트한 뒤 그 부위에 직접 이식·도포하는, 수술에 수반된 치료재료성 약제입니다. 단순 정맥·근육·관절강 내 주입 주사와는 시술 형태가 본질적으로 다르므로, 약관상 '비급여 주사료' 한도 항목에 당연히 포섭된다고 볼 수 없습니다. 보험사에 '카티스템을 250만 원 주사료 한도 대상으로 분류한 약관상 근거 조항'을 서면으로 제시하도록 먼저 요구하십시오. 아울러 병원의 진료비 세부내역서에서 카티스템이 '주사료'가 아니라 수술에 수반된 약제·치료재료 항목으로 정확히 기재되었는지 확인하고, 코딩이 부정확하면 병원에 정정을 요청하십시오(실무상 한도 적용 여부는 병원이 입력한 진료비 코드에 좌우되는 경우가 많습니다)."},{point:"[보조 논거] 약관상 '항암제·희귀의약품 등' 비급여 주사료 예외 규정의 해석을 다툴 여지가 있음",detail:"3·4세대 특별약관에는 '항암제, 항생제(항진균제 포함), 희귀의약품에 사용된 비급여 주사료는 주계약 질병 비급여에서 보상한다'는 예외가 있습니다. 카티스템은 식약처가 허가한 고가의 첨단바이오의약품(세포치료제)으로, 일반적인 통증·영양 주사와는 성격이 전혀 다릅니다. 다만 카티스템을 약관상 '항암제'로 곧바로 등치시키는 해석(예: 분류코드 439번을 항암제군으로 보는 주장)은 보험사나 법원이 받아들이지 않을 수 있는 '다툼의 여지가 있는 주장'입니다. 따라서 위 1번(수술 수반 약제론)을 주된 논거로 삼고, 이 예외 규정은 보조적으로만 제기하십시오. 약관 문구가 불명확한 경우 약관규제법 제5조 제2항에 따라 피보험자에게 유리하게 해석되어야 합니다."},{point:"주사료 한도가 적용되지 않으면 주계약 '질병 비급여' 한도에서 보상",detail:"카티스템이 250만 원 주사료 한도 항목에서 제외되면, 보상은 주계약의 '질병 비급여' 항목으로 넘어갑니다. 이 항목의 연간 한도는 통상 5,000만 원 수준이며, 자기부담률을 적용하여 비급여 비용의 약 70~80%(3·4세대 기준)를 보상합니다. 예컨대 수술비가 1,500만 원이라면 자기부담률 적용 후 약 1,050만~1,200만 원 보상이 가능합니다(실제 한도·비율은 가입 약관에 따라 다르므로 반드시 본인 약관으로 확인)."},{point:"입원/통원 구분에 따라 한도가 크게 달라지므로 실제 진료 형태를 정확히 확인",detail:"주계약 질병 비급여의 높은 연간 한도는 통상 '입원'에 적용되고, 통원(외래)은 회당 한도(20만~30만 원 내외)가 적용되어 실질 보상이 크게 줄어듭니다. 따라서 카티스템 시술이 의학적 필요에 따라 입원으로 시행된 경우에는, 입원 사실이 진료기록·영수증에 정확히 기재되었는지 확인하십시오. 다만 보상 한도를 늘릴 목적으로 의학적 필요가 없는 입원을 임의로 만드는 것은 부적절하며, 입원 여부는 어디까지나 담당 전문의의 의학적 판단에 따라야 합니다."}],evidence:["보험 가입 약관 원본 — '비급여 주사료 한도' 및 예외 규정 조항 확인","수술기록지 — 카티스템을 결손부에 이식·도포한 수술 과정 기재 확인","식약처 카티스템 품목허가 사항 — 첨단바이오의약품(세포치료제) 분류 확인","진료비 세부내역서 — 입원/통원 구분 및 약제·치료재료 항목 확인","보험사에 '250만 원 한도 분류 근거 조항' 서면 제시 요청"],laws:["실손보험 표준약관 (비급여 주사료 한도 및 예외 규정)","약관규제법 제5조 제2항 (불명확 시 고객 유리 해석)","약관규제법 제3조 (설명의무 위반 시 주장 불가)","금소법 제19조 (설명의무 위반 시 입증책임 전환)"],winRate:72,cumulative:"핵심은 보험사에 '카티스템을 250만 원 비급여 주사료 한도 대상으로 분류한 약관상 근거 조항을 서면으로 제시하라'고 먼저 요구하는 것입니다. 가장 방어력 높은 논거는 ① 카티스템이 외래 반복 주사가 아니라 수술 중 결손부에 이식·도포하는 치료재료성 약제라는 점이며, ② 약관상 '항암제 등' 예외 규정 해석은 다툼의 여지가 있으므로 보조 논거로만 활용하십시오. 입원으로 시행된 경우 입원 기록의 정확성을 확인하되, 보상만을 목적으로 한 임의 입원은 권하지 않습니다. 약관 문구가 불명확하면 약관규제법 제5조 제2항(고객 유리 해석)을 원용하십시오."},
+{id:12,tag:"CASE 12",color:"#4A235A",title:"제3의료기관 자문에서 '수술 부적정' 소견 → 과잉진료 주장",subtitle:"보험사 의뢰 자문 정형외과 전문의가 '카티스템 수술은 과잉 진료이며 의학적으로 타당하지 않다'고 소견",severity:3,denialLogic:"보험사가 의뢰한 제3의료기관 정형외과 전문의 자문 결과, '제출된 의무기록을 바탕으로 검토한 결과, 해당 환자의 상태에 카티스템 수술은 과잉 진료이며 의학적으로 타당하지 않다'는 소견이 나왔으므로 보험금 지급이 불가하다.",counterPoints:[{point:"자문의는 '서류 검토'만 했을 뿐, 환자를 직접 진찰하거나 관절경을 확인하지 않음",detail:"보험사 자문의는 보험사가 전달한 의무기록과 영상 일부만으로 '부적정' 소견을 내렸습니다. 환자를 직접 진찰하지 않았고, 관절경으로 연골 상태를 직접 확인하지도 않았습니다. 반면, 집도의는 환자의 병력·이학적 검사·MRI·관절경 직접 소견을 종합적으로 검토하여 카티스템이 필요하다고 판단했습니다. 의정부지방법원은 보험사 감정의 의견이 '확정적 감정이 아니라 가까워 보인다는 취지에 불과하다'고 판단하여 주치의 진단을 우선 인정한 바 있습니다."},{point:"'과잉진료' 주장의 의학적 근거가 불충분 — 자문의의 대안 치료 제시 여부 확인 필요",detail:"자문의가 '과잉진료'라고 주장하려면, ① 해당 환자에게 카티스템이 아닌 어떤 치료가 적절했는지, ② 그 대안 치료가 카티스템과 동등하거나 더 나은 결과를 보인다는 의학적 근거를 함께 제시해야 합니다. 단순히 '타당하지 않다'는 결론만 있고 대안 치료와 그 근거가 없다면, 이는 구체적 의학적 판단이 아닌 보험사에 유리한 결론을 위한 자문입니다. 카티스템은 3상 RCT에서 미세천공술 대비 ICRS 개선율 97.7% vs 71.7%(p=0.001)로 우월성이 입증되었습니다(Lim et al., 2021)."},{point:"자문 의뢰 시 보험사가 전달한 자료의 완전성 검증 필요",detail:"보험사가 자문 의뢰 시 관절경 사진, 수술 중 영상, 집도의 상세 소견서 등 환자에게 유리한 자료를 누락하고 MRI 영상과 기본 진료기록만 전달한 경우가 다수 보고되어 있습니다. 자문 의뢰 시 전달 자료 목록을 보험사에 서면 요청하여, 어떤 자료가 자문의에게 전달되었는지 확인해야 합니다. 불완전한 자료에 기반한 '부적정' 소견은 신뢰도가 떨어집니다."},{point:"의료자문의 구조적 이해충돌 — 보험업법 제95조의3 남용 방지 의무",detail:"언론 보도·국정감사 등에서 보험사 의료자문 건의 상당수가 부지급·삭감으로 이어진다는 지적이 반복되어 왔습니다(구체 수치는 발표 주체·연도에 따라 다르므로, 인용 시 정확한 출처를 함께 제시하십시오). 보험사가 자문의를 선정하고, 자문료를 지급하며, 질문 항목도 보험사가 설계하는 구조입니다. 보험협회 의료자문 표준내부통제기준 자체가 '보험금 부지급 또는 삭감 수단으로 남용되지 않도록' 경고하고 있습니다."},{point:"집도의의 항목별 반박 소견서가 자문의 의견을 무력화",detail:"가장 효과적인 대응은 집도의에게 자문의 소견서 원본을 보여주고, 항목별로 반박하는 소견서를 받는 것입니다. 예: '자문의는 OO라고 판단하였으나, 본인이 관절경으로 직접 확인한 결과 ICRS 4등급 전층 결손이 확인되었으며, 결손 면적 OOcm²로 카티스템 적응증에 정확히 부합합니다. 환자의 연령·전신 상태·기저질환을 종합 고려하여 카티스템이 가장 적절한 치료라고 판단하였습니다.'"}],evidence:["보험사 손해사정결과 안내서 (자문 결과 원문)","의료자문 회신서 원본 (보험사에 서면 교부 요청)","자문 의뢰 시 전달 자료 목록 (누락 자료 확인)","집도의 반박 소견서 — 자문의 '부적정' 의견에 대한 항목별 반박","수술기록지 (관절경 소견, ICRS 등급, 결손 면적)","관절경 사진·수술 중 영상","3상 RCT 논문 (Lim et al., 2021) — 의학적 필요성 근거"],laws:["보험업법 제95조의3 (의료자문 남용 방지 의무)","약관규제법 제5조 (불명확 시 피보험자 유리 해석)","대법원 94다13046 (의사의 진료방법 선택 재량권)","민사소송법 제202조 (자유심증주의)","의정부지법 판결 — 주치의 진단 우선 인정","부산지법 판결 — 미지급 보험금 지급 명령"],winRate:70,cumulative:"대응의 핵심은 4단계입니다. ① 보험사에 의료자문 회신서 원본과 자문 의뢰 시 전달 자료 목록을 서면으로 요청합니다. ② 자문의가 '과잉진료'라고 판단한 구체적 근거(대안 치료 제시 여부, 의학적 논거)를 확인합니다. ③ 집도의에게 자문의 소견에 대한 항목별 반박 소견서를 받습니다. ④ 관절경 사진 등 자문 시 누락된 자료를 보완 제출합니다. 자문 자체의 공정성과 완전성에 의문을 제기하면 보험사가 재심사에 응하는 경우가 많습니다."}
 ];
 
 const STEPS=[
@@ -619,6 +709,7 @@ function selectStyle(style,btn){
   document.querySelectorAll('.style-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('styleDesc').innerHTML=STYLE_DESC[style];
+  if(typeof saveDraft==='function')saveDraft();
 }
 
 // ─── TAB SWITCHING ───
@@ -668,6 +759,7 @@ function toggleDenial(id){
   if(i>=0) selectedDenials.splice(i,1); else selectedDenials.push(id);
   renderCaseCheckboxes();
   updateGenButton();
+  if(typeof saveDraft==='function'){saveDraft();updateProgress();}
 }
 function updateGenButton(){
   const reason=document.getElementById('f_denialReason').value.trim();
@@ -872,12 +964,14 @@ function generateAppealLetter(fd){
   const fn4 = fn.ref("약관의 규제에 관한 법률 제5조 제2항 — 작성자 불이익의 원칙");
   const fn5 = fn.ref("대법원 94다13046 판결 — 의사의 진료방법 선택 재량권");
   const fn6 = fn.ref("실손의료보험 표준약관 — 면책 사항 목록. 줄기세포 치료 제외 조항 부재");
-  const fn7 = fn.ref("의정부지방법원 판결 — 주치의 진단 우선 인정");
-  const fn8 = fn.ref("부산지방법원 판결 — 미지급 보험금 지급 명령");
+  const fn7 = fn.ref("의정부지방법원 — 주치의 진단을 보험사 감정의 의견보다 우선 인정한 취지의 하급심 사례(인용 시 사건번호·선고일 확인 필요)");
+  const fn8 = fn.ref("부산지방법원 — 미지급 보험금 지급을 명한 취지의 하급심 사례(인용 시 사건번호·선고일 확인 필요)");
   const fn9 = fn.ref("약관의 규제에 관한 법률 제6조 — 불공정 약관 무효");
   const fn10 = fn.ref("약관의 규제에 관한 법률 제3조 — 설명의무 위반");
   const fn11 = fn.ref("상법 제662조 — 보험금청구권 소멸시효 3년");
   const fn12 = fn.ref("금융소비자 보호에 관한 법률 제40조 — 분쟁조정 시효중단");
+  const fn13 = fn.ref("민사소송법 제202조 — 자유심증주의(증거의 증명력은 법관이 자유로운 심증으로 판단). 직접 진찰·수술한 의사의 소견과 서류 심사 자문의 의견의 증명력 비교의 근거");
+  const fn14 = fn.ref("면책사유의 존재에 대한 증명책임은 보험자(보험사)에게 있다는 것이 통설·판례의 입장");
   
   const rebuttalSection = generateDenialRebuttal(fd.denialReason, selectedDenials, fn);
   const hasRebuttal = rebuttalSection.trim().length > 0;
@@ -923,11 +1017,11 @@ function generateAppealLetter(fd){
 
   // ── 스타일별 기본 반박 (케이스 미매칭 시) ──
   const defaultRebuttal = {
-    general: `\n\n실손의료보험 표준약관은 포괄주의(negative list) 방식을 채택하고 있어, '보상하지 않는 사항'에 명시되지 않은 치료 목적의 의료비는 보상 대상입니다. 카티스템을 특정하여 배제하는 면책 조항은 존재하지 않습니다.${fn6}\n\n약관규제법 제5조 제2항은 "약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석하여야 한다"고 규정하고 있습니다.${fn4}\n\n또한 저를 직접 진찰하고 관절경으로 연골 상태를 확인한 담당 전문의의 의학적 판단은, 환자를 진찰하지 않고 서류만으로 판단한 보험사 자문의보다 법적으로 높은 증거력을 가집니다.${fn5}${fn7}${fn8}`,
-    professional: `\n\n귀사의 거절 사유는 다음의 법리에 의해 부당합니다.\n\n첫째, 실손의료보험은 포괄주의(negative list)를 채택하고 있으며, 면책 사항에 카티스템이 명시되어 있지 않습니다.${fn6} 둘째, 약관규제법 제5조 제2항의 작성자 불이익의 원칙에 의해, 불명확한 약관은 고객에게 유리하게 해석되어야 합니다.${fn4} 셋째, 담당 전문의의 관절경 기반 직접 소견은 보험사 자문의의 서류 심사보다 법적 증명력이 우월합니다(대법원 94다13046).${fn5}`,
-    formal: `\n\n실손의료보험 표준약관상 면책 사항에 카티스템 관련 제외 조항이 없으며${fn6}, 약관규제법 제5조 제2항에 의거 불명확한 약관은 피보험자에게 유리하게 해석되어야 합니다.${fn4} 또한 주치의의 직접 진찰 소견이 보험사 자문의의 서류 심사보다 법적으로 우선합니다.${fn5}`,
-    concise: `\n\n약관 면책 사항에 카티스템 제외 조항 없음${fn6}. 불명확 시 고객 유리 해석 원칙 적용${fn4}. 주치의 직접 소견이 자문의 서류 심사보다 우선${fn5}.`,
-    detailed: `\n\n귀사의 거절 사유에 대해 아래와 같이 반박합니다.\n\n첫째, 실손의료보험 표준약관은 포괄주의(negative list) 방식을 채택하고 있어, '보상하지 않는 사항'에 명시적으로 열거되지 않은 치료 목적의 의료비는 모두 보상 대상입니다. 약관의 면책 사항 전체를 확인한 결과, 카티스템이나 줄기세포 치료를 특정하여 배제하는 조항은 존재하지 않습니다.${fn6}\n\n둘째, 약관규제법 제5조 제2항은 "약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석하여야 한다"고 명시하고 있으며${fn4}, 같은 법 제6조는 불공정한 약관 조항의 무효를${fn9}, 제3조는 설명의무 위반 시 해당 약관 내용을 계약의 내용으로 주장할 수 없음을 규정하고 있습니다.${fn10}\n\n셋째, 저를 직접 진찰하고 관절경으로 연골 상태를 확인한 담당 전문의의 의학적 판단은, 환자를 한 번도 진찰하지 않고 서류만으로 의견을 제시한 보험사 측 자문의의 판단보다 법적으로 높은 증거력을 가집니다. 이는 대법원 94다13046 판결${fn5}, 의정부지방법원 판결${fn7}, 부산지방법원 판결${fn8}에서 일관되게 확인된 원칙입니다.`
+    general: `\n\n실손의료보험 표준약관은 포괄주의(negative list) 방식을 채택하고 있어, '보상하지 않는 사항'에 명시되지 않은 치료 목적의 의료비는 보상 대상입니다. 카티스템을 특정하여 배제하는 면책 조항은 존재하지 않습니다.${fn6} 면책사유가 있다는 점은 보험사가 증명하여야 합니다.${fn14}\n\n약관규제법 제5조 제2항은 "약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석하여야 한다"고 규정하고 있습니다.${fn4}\n\n또한 저를 직접 진찰하고 관절경으로 연골 상태를 확인한 담당 전문의의 의학적 판단은, 환자를 진찰하지 않고 서류만으로 의견을 낸 보험사 자문의의 판단보다 그 증명력이 더 높게 평가될 수 있습니다(자유심증주의, 민사소송법 제202조).${fn13} 치료방법의 선택은 의사의 합리적 재량에 속한다는 점도 함께 고려되어야 합니다(대법원 94다13046).${fn5}`,
+    professional: `\n\n귀사의 거절 사유는 다음의 법리에 의해 부당합니다.\n\n첫째, 실손의료보험은 포괄주의(negative list)를 채택하고 있으며, 면책 사항에 카티스템이 명시되어 있지 않습니다.${fn6} 면책사유의 증명책임은 보험자에게 있습니다.${fn14} 둘째, 약관규제법 제5조 제2항의 작성자 불이익의 원칙에 의해, 불명확한 약관은 고객에게 유리하게 해석되어야 합니다.${fn4} 셋째, 담당 전문의의 관절경 기반 직접 소견은 서류 심사에 그친 자문의 의견보다 증명력이 높게 평가될 수 있으며(자유심증주의, 민사소송법 제202조)${fn13}, 치료방법 선택은 의사의 합리적 재량에 속합니다(대법원 94다13046).${fn5}`,
+    formal: `\n\n실손의료보험 표준약관상 면책 사항에 카티스템 관련 제외 조항이 없으며${fn6}, 면책사유의 증명책임은 보험자에게 있습니다.${fn14} 약관규제법 제5조 제2항에 의거 불명확한 약관은 피보험자에게 유리하게 해석되어야 합니다.${fn4} 또한 주치의의 직접 진찰 소견은 서류 심사 자문의 의견보다 그 증명력이 높게 평가될 수 있습니다(자유심증주의, 민사소송법 제202조).${fn13}`,
+    concise: `\n\n약관 면책 사항에 카티스템 제외 조항 없음${fn6}, 면책사유 증명책임은 보험사${fn14}. 불명확 시 고객 유리 해석 원칙 적용${fn4}. 주치의 직접 소견은 서류 자문보다 증명력이 높게 평가될 수 있음(민소법 §202)${fn13}.`,
+    detailed: `\n\n귀사의 거절 사유에 대해 아래와 같이 반박합니다.\n\n첫째, 실손의료보험 표준약관은 포괄주의(negative list) 방식을 채택하고 있어, '보상하지 않는 사항'에 명시적으로 열거되지 않은 치료 목적의 의료비는 모두 보상 대상입니다. 약관의 면책 사항 전체를 확인한 결과, 카티스템이나 줄기세포 치료를 특정하여 배제하는 조항은 존재하지 않습니다.${fn6} 나아가 면책사유가 존재한다는 점에 대한 증명책임은 보험자에게 있습니다.${fn14}\n\n둘째, 약관규제법 제5조 제2항은 "약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석하여야 한다"고 명시하고 있으며${fn4}, 같은 법 제6조는 불공정한 약관 조항의 무효를${fn9}, 제3조는 설명의무 위반 시 해당 약관 내용을 계약의 내용으로 주장할 수 없음을 규정하고 있습니다.${fn10}\n\n셋째, 저를 직접 진찰하고 관절경으로 연골 상태를 확인한 담당 전문의의 의학적 판단은, 환자를 한 번도 진찰하지 않고 서류만으로 의견을 제시한 보험사 측 자문의의 판단보다 그 증명력이 높게 평가될 수 있습니다. 증거의 증명력은 법관이 자유로운 심증으로 판단하며(자유심증주의, 민사소송법 제202조)${fn13}, 치료방법의 선택은 의사의 합리적 재량에 속한다는 것이 판례의 태도입니다(대법원 94다13046).${fn5} 하급심에서도 직접 진료한 의사의 판단을 서류 자문보다 신뢰한 사례들이 보고되어 있습니다(예: 의정부지법·부산지법의 유사 취지 하급심 사례 — 인용 시 사건번호·선고일 확인 필요).${fn7}${fn8}`
   };
 
   // ── 스타일별 법적 근거 섹션 ──
@@ -1072,7 +1166,7 @@ function handleGenerate(){
     </div>
     <div style="padding:28px">
       <div id="genContent-appeal">
-        <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:#92400e;line-height:1.6">💡 아래 문서를 직접 클릭하여 내용을 수정할 수 있습니다. 수정 후 다운로드하시면 수정된 내용이 반영됩니다. <strong>본 문서는 초안이므로 반드시 담당 전문의와 상의 후 제출하십시오.</strong></div>
+        <div class="draft-warn"><span style="font-size:16px">📝</span><div>아래 문서를 직접 클릭하여 내용을 수정할 수 있고, 수정 후 다운로드하면 반영됩니다. <strong>본 문서는 자동 생성된 초안</strong>이므로, 사실관계(임상 정보·금액·날짜)를 본인 서류와 대조하고 <strong>제출 전 반드시 담당 전문의(의학적 내용)와 필요시 변호사·금융감독원 1332(법률·약관 해석)의 확인</strong>을 받으십시오. 환자별 사정에 맞게 문장을 다듬어 제출하는 것이 좋습니다.</div></div>
         <div class="appeal-letter" id="appealContent" contenteditable="true" style="cursor:text;outline:none"><h3>이의신청서</h3>${escapeHtml(appeal)}</div>
       </div>
       <div id="genContent-ref" class="hidden">
@@ -1299,6 +1393,7 @@ function renderInsurance(){
     <div class="card">
       <div class="card-title">💰 실손보험 세대별 카티스템 보상 구조 상세 안내</div>
       <div class="card-desc">실손보험은 가입 시기에 따라 1~5세대로 나뉘며, 세대별로 보장 구조가 크게 다릅니다. 본인의 보험 가입 시기를 반드시 확인하십시오.</div>
+      <div class="info-yellow info-box" style="margin-top:4px">⚠️ <strong>실제 보상액은 '세대'보다 '입원 vs 통원'과 '연간·회당 한도'에 더 크게 좌우됩니다.</strong> 통원(외래)으로 처리되면 회당 한도(보통 20만~30만 원)에 막혀, 세대와 무관하게 고가의 카티스템 비용 대부분이 보상되지 않을 수 있습니다. 입원 여부는 <strong>의학적 필요</strong>에 따라 담당의가 판단할 사항이며(보상 목적의 임의 입원은 부적절), 입원으로 시행된 경우 진료기록·영수증에 입원 사실이 정확히 기재되었는지 확인하십시오. 아래 수치는 이해를 돕기 위한 <strong>개략적 예시</strong>이며, 정확한 자기부담률·한도는 반드시 본인 약관으로 확인하시기 바랍니다.</div>
     </div>
 
     <div class="card">
@@ -1329,7 +1424,8 @@ function renderInsurance(){
 
     <div class="card" style="border-left:4px solid #e74c3c">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="background:#e74c3c;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:8px">5세대</span><span style="font-size:16px;font-weight:800">2024~ 가입</span><span style="background:#fadbd8;color:#922b21;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">보상 대폭 축소</span></div>
-      <div style="font-size:13px;color:#444;line-height:1.8"><strong>보장:</strong> 비급여 <strong>50%</strong>, 입원 <strong>회당 한도 300만 원</strong>.<br><strong>예시:</strong> 1,500만 원 → 50%=750만 원이나, 한도 적용 → <strong style="color:#c0392b">실제 약 300만 원</strong>.</div>
+      <div style="font-size:13px;color:#444;line-height:1.8"><strong>보장:</strong> 비급여 자기부담 대폭 강화(중증·비중증 차등) 방향. 흔히 인용되는 '비급여 50%·회당 한도'는 <strong>제도 설계가 확정·시행되기 전의 추정치</strong>일 수 있으므로 수치 자체를 단정하지 마십시오.<br><strong>예시(가정):</strong> 자기부담·한도 강화로 1,500만 원 청구 시 실수령이 크게 줄 수 있음.</div>
+      <div class="filter-warn" style="margin-top:8px">⚠ 5세대(개혁 실손)의 구체적 보장률·한도는 시점에 따라 변동·미확정일 수 있습니다. <strong>가입한(또는 가입 예정인) 약관 원문과 보험사 고지로 반드시 확인</strong>하십시오.</div>
       <div style="background:#fff5f5;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;color:#922b21;line-height:1.6"><strong>대응:</strong> 수술 전 보험사에 보상 예상액을 서면 확인. 삭감(한도 적용)은 이의신청보다 약관 해석 문의가 적합.</div>
     </div>
 
@@ -1409,13 +1505,68 @@ function renderSources(){
   </div>`;
 }
 
+// ─── 자동 저장(localStorage, 이 기기에만 저장) ───
+const FORM_FIELDS=['f_name','f_insurer','f_policy','f_surgDate','f_hospital','f_surgeon','f_denialDate','f_amount','f_icrs','f_kl','f_defect','f_age','f_denialReason'];
+let autosaveTimer=null;
+function saveDraft(){
+  try{
+    const data={style:selectedStyle,denials:selectedDenials,fn:!!document.getElementById('includeFootnotes')?.checked};
+    FORM_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)data[id]=el.value;});
+    localStorage.setItem('cartistem_draft',JSON.stringify(data));
+    const pill=document.getElementById('autosavePill');
+    if(pill){pill.style.display='inline-flex';pill.textContent='💾 자동 저장됨';
+      clearTimeout(autosaveTimer);autosaveTimer=setTimeout(()=>{pill.textContent='💾 저장됨 · 이 기기에만 보관';},1200);}
+  }catch(e){}
+}
+function loadDraft(){
+  try{
+    const raw=localStorage.getItem('cartistem_draft');if(!raw)return;
+    const data=JSON.parse(raw);
+    FORM_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el&&data[id]!=null)el.value=data[id];});
+    if(Array.isArray(data.denials))selectedDenials=data.denials.slice();
+    if(data.style){selectedStyle=data.style;
+      document.querySelectorAll('.style-btn').forEach(b=>b.classList.toggle('active',b.dataset.style===data.style));}
+    if(typeof data.fn==='boolean'){const f=document.getElementById('includeFootnotes');if(f)f.checked=data.fn;}
+    const pill=document.getElementById('autosavePill');if(pill){pill.style.display='inline-flex';pill.textContent='💾 이전 입력 불러옴';}
+  }catch(e){}
+}
+// ─── 진행 단계 표시 ───
+function updateProgress(){
+  const rail=document.getElementById('progressRail');if(!rail)return;
+  const v=id=>(document.getElementById(id)?.value||'').trim();
+  const s1=!!(v('f_name')&&v('f_insurer'));
+  const s2=!!(v('f_denialReason')||selectedDenials.length>0);
+  const steps=rail.querySelectorAll('.pstep'), lines=rail.querySelectorAll('.pline');
+  const setStep=(i,done,active)=>{steps[i].classList.toggle('done',done);steps[i].classList.toggle('active',active);};
+  setStep(0,s1,!s1);
+  setStep(1,s2,s1&&!s2);
+  setStep(2,false,s1&&s2);
+  lines[0]&&lines[0].classList.toggle('fill',s1);
+  lines[1]&&lines[1].classList.toggle('fill',s2);
+}
+// ─── 스티키 탭 스크롤 음영 ───
+function initTabShadow(){
+  const tabs=document.getElementById('tabBar');if(!tabs)return;
+  const onScroll=()=>tabs.classList.toggle('scrolled',window.scrollY>tabs.offsetTop+4);
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+}
+
 // ─── INIT ───
 document.addEventListener('DOMContentLoaded',function(){
+  loadDraft();
   renderCaseCheckboxes();
   const sd=document.getElementById('styleDesc');
   if(sd) sd.innerHTML=STYLE_DESC[selectedStyle];
+  FORM_FIELDS.forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const ev=el.tagName==='SELECT'?'change':'input';
+    el.addEventListener(ev,()=>{saveDraft();updateProgress();});
+  });
+  document.getElementById('includeFootnotes')?.addEventListener('change',saveDraft);
   document.getElementById('f_denialReason').addEventListener('input',updateGenButton);
+  initTabShadow();
   updateGenButton();
+  updateProgress();
 });
 </script>
 </body>
