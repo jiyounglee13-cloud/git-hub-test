@@ -337,6 +337,10 @@ input[type=checkbox]#includeFootnotes{width:20px;height:20px}
 .progress-rail .pline.fill{background:linear-gradient(90deg,var(--ok),var(--brand))}
 .autosave-pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#15775A;
   background:var(--ok-soft);border:1px solid #9FDCBC;border-radius:var(--r-pill);padding:3px 11px}
+.reset-btn{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;color:var(--danger);
+  background:#FDF1EF;border:1px solid #EFC9C3;border-radius:var(--r-pill);padding:4px 11px;cursor:pointer;font-family:inherit;
+  transition:all .15s var(--ease);white-space:nowrap}
+.reset-btn:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
 /* 용어 도움말 툴팁(터치 지원) */
 .help{position:relative;display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:5px;
   border-radius:var(--r-pill);background:#E3E9F3;color:#5A6B80;font-size:11px;font-weight:800;cursor:pointer;user-select:none;vertical-align:middle}
@@ -506,7 +510,10 @@ table.data-table td,table.data-table th{font-size:13px}
       <div class="pstep" data-step="2"><span class="pdot">2</span><span class="plabel">거절 사유</span></div>
       <div class="pline"></div>
       <div class="pstep" data-step="3"><span class="pdot">3</span><span class="plabel">문체·생성</span></div>
-      <div style="flex:0 0 auto;margin-left:10px"><span class="autosave-pill" id="autosavePill" style="display:none">💾 자동 저장됨</span></div>
+      <div style="flex:0 0 auto;margin-left:10px;display:flex;align-items:center;gap:8px">
+        <span class="autosave-pill" id="autosavePill" style="display:none">💾 임시 저장됨</span>
+        <button type="button" class="reset-btn" onclick="resetCase()">🗑 입력 초기화</button>
+      </div>
     </div>
   </div>
   <!-- 환자 정보 -->
@@ -619,7 +626,7 @@ table.data-table td,table.data-table th{font-size:13px}
   <!-- 생성 결과 -->
   <div id="generatedArea" class="hidden"></div>
   <div class="privacy-notice" id="privacyNotice" style="display:none">
-    ⚠️ <strong>개인정보 보호 안내:</strong> 다운로드한 파일에는 입력하신 개인정보(성명, 증권번호 등)가 포함되어 있습니다. 보험사 제출 후에는 파일을 삭제하시기 바랍니다. 본 도구는 모든 데이터를 사용자의 브라우저에서만 처리하며, 외부 서버로 전송하지 않습니다.
+    ⚠️ <strong>개인정보 보호 안내:</strong> 입력하신 정보는 외부 서버로 전송되지 않으며, <strong>현재 사용 중인 동안에만 이 브라우저에 임시 보관</strong>됩니다. 탭이나 브라우저를 닫고 <strong>다시 열면 환자 정보는 자동으로 모두 삭제</strong>되어 남지 않습니다. 즉시 비우려면 상단의 <strong>‘🗑 입력 초기화’</strong>를 누르세요. 한편 <strong>다운로드·인쇄한 파일</strong>에는 입력하신 개인정보(성명, 증권번호 등)가 포함되므로, 보험사 제출 후에는 파일을 안전하게 삭제하시기 바랍니다.
   </div>
 </div>
 
@@ -1586,30 +1593,53 @@ function renderSources(){
   </div>`;
 }
 
-// ─── 자동 저장(localStorage, 이 기기에만 저장) ───
+// ─── 자동 저장(세션 한정: 다시 열면 자동 삭제 — 환자 정보 미보존) ───
 const FORM_FIELDS=['f_name','f_insurer','f_policy','f_surgDate','f_hospital','f_surgeon','f_denialDate','f_amount','f_icrs','f_kl','f_defect','f_age','f_denialReason'];
 let autosaveTimer=null;
 function saveDraft(){
   try{
     const data={style:selectedStyle,denials:selectedDenials,fn:!!document.getElementById('includeFootnotes')?.checked};
     FORM_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)data[id]=el.value;});
-    localStorage.setItem('cartistem_draft',JSON.stringify(data));
+    // sessionStorage: 현재 탭 사용 중에만 임시 보관. 탭/브라우저를 닫고 다시 열면 사라짐.
+    sessionStorage.setItem('cartistem_draft',JSON.stringify(data));
     const pill=document.getElementById('autosavePill');
-    if(pill){pill.style.display='inline-flex';pill.textContent='💾 자동 저장됨';
-      clearTimeout(autosaveTimer);autosaveTimer=setTimeout(()=>{pill.textContent='💾 저장됨 · 이 기기에만 보관';},1200);}
+    if(pill){pill.style.display='inline-flex';pill.textContent='💾 임시 저장됨';
+      clearTimeout(autosaveTimer);autosaveTimer=setTimeout(()=>{pill.textContent='💾 사용 중에만 임시 저장 · 다시 열면 삭제';},1200);}
   }catch(e){}
 }
 function loadDraft(){
   try{
-    const raw=localStorage.getItem('cartistem_draft');if(!raw)return;
+    // 과거 버전이 localStorage에 영구 저장한 환자 정보가 있으면 즉시 삭제(개인정보 잔존 방지)
+    try{localStorage.removeItem('cartistem_draft');}catch(e){}
+    const raw=sessionStorage.getItem('cartistem_draft');if(!raw)return;
     const data=JSON.parse(raw);
     FORM_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el&&data[id]!=null)el.value=data[id];});
     if(Array.isArray(data.denials))selectedDenials=data.denials.slice();
     if(data.style){selectedStyle=data.style;
       document.querySelectorAll('.style-btn').forEach(b=>b.classList.toggle('active',b.dataset.style===data.style));}
     if(typeof data.fn==='boolean'){const f=document.getElementById('includeFootnotes');if(f)f.checked=data.fn;}
-    const pill=document.getElementById('autosavePill');if(pill){pill.style.display='inline-flex';pill.textContent='💾 이전 입력 불러옴';}
+    const pill=document.getElementById('autosavePill');if(pill){pill.style.display='inline-flex';pill.textContent='💾 작성 중이던 내용 복원';}
   }catch(e){}
+}
+// ─── 입력 초기화(환자 정보 즉시 삭제) ───
+function resetCase(){
+  if(!confirm('입력하신 환자 정보와 거절 사유, 생성된 이의신청서를 모두 삭제하고 처음 상태로 되돌립니다.\n계속하시겠습니까?'))return;
+  try{sessionStorage.removeItem('cartistem_draft');localStorage.removeItem('cartistem_draft');}catch(e){}
+  FORM_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  selectedDenials=[];
+  selectedStyle='general';
+  document.querySelectorAll('.style-btn').forEach(b=>b.classList.toggle('active',b.dataset.style==='general'));
+  const sd=document.getElementById('styleDesc');if(sd)sd.innerHTML=STYLE_DESC['general'];
+  const f=document.getElementById('includeFootnotes');if(f)f.checked=false;
+  const gen=document.getElementById('generatedArea');if(gen){gen.classList.add('hidden');gen.innerHTML='';}
+  const pn=document.getElementById('privacyNotice');if(pn)pn.style.display='none';
+  const cf=document.getElementById('clinicalFilterResult');if(cf)cf.innerHTML='';
+  const as=document.getElementById('autoSuggest');if(as)as.innerHTML='';
+  const pill=document.getElementById('autosavePill');if(pill)pill.style.display='none';
+  renderCaseCheckboxes();
+  updateGenButton();
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 // ─── 진행 단계 표시 ───
 function updateProgress(){
