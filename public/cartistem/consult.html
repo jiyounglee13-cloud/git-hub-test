@@ -980,7 +980,6 @@ function faqHTML(f, openFirst){
     +'<div class="qt"><span class="ctag">'+(CATLABEL[f.cat]||'')+'</span> '+hot+'<div class="qx">'+f.q+'</div></div>'
     +'<div class="ar">›</div></summary>'
     +'<div class="ans">'+f.a+'</div>'+note
-    +'<div class="copyrow"><button class="copy" data-n="'+f.n+'">📋 환자에게 보낼 답변 복사</button></div>'
     +'</details></article>';
 }
 
@@ -1106,7 +1105,7 @@ function buildFAQ(){
   var chips='<div class="filters" data-scope="faq"><span class="chip b" data-f="all" data-active="true">전체</span>'
     + faqCats.map(function(c){return '<span class="chip b" data-f="'+c+'">'+CATLABEL[c]+'</span>';}).join('') + '</div>';
   var cards=FAQ.map(function(f,i){return faqHTML(f,false);}).join('');
-  document.getElementById('panel-faq').innerHTML='<div class="stagebar pt"><span class="sb-ic">🧭</span><span class="sb-t"><b>결심 후 · 실무 안내 단계</b> — 치료를 결정한 환자에게 전달하는 실무 답변입니다(절차·일정·청구 등). 효능 단정 등 광고 규제 기준은 단계와 무관하게 동일하게 적용됩니다.</span></div><p class="modehint">환자에게 보여주거나 카톡으로 보낼 수 있는 답변입니다. 보수 정리(의료광고법) 버전 · 📋 복사 가능.</p>'+chips+cards+'<div class="empty" id="faqEmpty">검색 결과가 없습니다.</div>';
+  document.getElementById('panel-faq').innerHTML='<div class="stagebar pt"><span class="sb-ic">🧭</span><span class="sb-t"><b>결심 후 · 실무 안내 단계</b> — 치료를 결정한 환자에게 전달하는 실무 답변입니다(절차·일정·청구 등). 효능 단정 등 광고 규제 기준은 단계와 무관하게 동일하게 적용됩니다.</span></div><p class="modehint">환자에게 보여줄 수 있는 답변입니다. 보수 정리(의료광고법) 버전.</p>'+chips+cards+'<div class="empty" id="faqEmpty">검색 결과가 없습니다.</div>';
 }
 
 /* ===== 통합검색 패널 ===== */
@@ -1420,15 +1419,23 @@ function syncTree(name){
   });
   document.querySelectorAll('#treeNav .trow').forEach(function(r){ r.classList.toggle('cur', r.getAttribute('data-tab')===name); });
 }
+/* 고정 헤더에 가려지지 않도록 헤더 높이만큼 띄워서 스크롤 */
+function scrollToEl(el){
+  if(!el) return;
+  var hd=document.querySelector('header');
+  var off=(hd?hd.getBoundingClientRect().height:0)+16;
+  var y=el.getBoundingClientRect().top + window.pageYOffset - off;
+  window.scrollTo({top:(y<0?0:y), behavior:'smooth'});
+}
 function treeNav(act){
   if(!act)return; var k=act[0];
-  function S(sel){var el=document.querySelector(sel);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
-  if(k==='scroll'){showTab('product');setTimeout(function(){S(act[1]);},40);}
+  function S(sel){scrollToEl(document.querySelector(sel));}
+  if(k==='scroll'){showTab('product');setTimeout(function(){S(act[1]);},70);}
   else if(k==='tab'){showTab(act[1]);}
-  else if(k==='pacc'){showTab('product');setTimeout(function(){var l=document.querySelectorAll('#panel-product .pacc'),el=l[act[1]];if(el){el.open=true;el.scrollIntoView({behavior:'smooth',block:'start'});}},40);}
-  else if(k==='staff'){showTab('staff');setTimeout(function(){S('#panel-staff .sec[data-sec="'+act[1]+'"]');},40);}
+  else if(k==='pacc'){showTab('product');setTimeout(function(){var l=document.querySelectorAll('#panel-product .pacc'),el=l[act[1]];if(el){el.open=true;setTimeout(function(){scrollToEl(el);},30);}},70);}
+  else if(k==='staff'){showTab('staff');setTimeout(function(){S('#panel-staff .sec[data-sec="'+act[1]+'"]');},70);}
   else if(k==='faqcat'){showTab('faq');var c=document.querySelector('#panel-faq .filters .chip[data-f="'+act[1]+'"]');if(c)c.click();}
-  else if(k==='faq'){showTab('faq');var a=document.querySelector('#panel-faq .filters .chip[data-f="all"]');if(a)a.click();setTimeout(function(){var el=document.getElementById('faq-'+act[1]);if(el){var d=el.querySelector('details');if(d)d.open=true;el.scrollIntoView({behavior:'smooth',block:'start'});}},40);}
+  else if(k==='faq'){showTab('faq');var a=document.querySelector('#panel-faq .filters .chip[data-f="all"]');if(a)a.click();setTimeout(function(){var el=document.getElementById('faq-'+act[1]);if(el){var d=el.querySelector('details');if(d)d.open=true;setTimeout(function(){scrollToEl(el);},30);}},70);}
   else if(k==='denial'){showTab('denial');var t=document.querySelector('#panel-denial .instile[data-view="'+act[1]+'"]');if(t)t.click();}
   else if(k==='material'){var a=document.querySelector('a[href="'+act[1]+'"]');if(a)a.click();else location.href=act[1];}
 }
