@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#15538a">
+<meta name="data-baseline" content="2026.6">
+<meta name="app-version" content="자료기준일 2026.6 · 사내 교육용">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -507,6 +509,24 @@ header:not(.hero){ background:rgba(251,250,248,.82)!important; border-bottom:1px
   header .wrap{max-width:1000px}
 }
 @media print{ .treebar,.treebackdrop,.menubtn{display:none!important} body{padding-left:0!important} }
+
+/* ===== 즐겨찾기 별 · 자료기준일 푸터 · 도움말 카드 ===== */
+.faq summary{align-items:flex-start}
+.faq .favbtn{flex:none;border:0;background:transparent;color:#cfd2d7;font-size:18px;line-height:1;cursor:pointer;padding:2px 4px 0;align-self:flex-start}
+.faq .favbtn.on{color:var(--accent-bar)}
+.faq .favbtn:hover{color:var(--accent-bar)}
+.appftr{max-width:780px;margin:32px auto 6px;padding:14px 20px 0;border-top:1px solid var(--line);font-size:11px;color:var(--faint);line-height:1.6;text-align:center}
+.appftr b{color:var(--sub)}
+.helpwrap{position:fixed;inset:0;z-index:120;background:rgba(16,24,40,.5);display:none;align-items:center;justify-content:center;padding:18px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.helpwrap.show{display:flex}
+.helpcard{position:relative;max-width:460px;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 60px -20px rgba(16,24,40,.5);padding:22px 22px 18px}
+.helpcard .helpx{position:absolute;right:12px;top:12px;width:30px;height:30px;border:0;border-radius:8px;background:#efe9df;color:var(--ink);font-size:14px;cursor:pointer}
+.helpcard .hh{font-family:'Noto Serif KR','Nanum Myeongjo',serif;font-size:19px;font-weight:600;margin-bottom:13px}
+.helpcard .hlist{list-style:none;display:grid;gap:9px;margin:0;padding:0}
+.helpcard .hlist li{font-size:13.5px;color:#3c4651;line-height:1.6}
+.helpcard .hlist b{color:var(--brand)}
+.helpcard .hnote{margin-top:13px;font-size:12px;color:#7d2b2b;background:var(--no-soft);border:1px solid #f4d3d3;border-radius:10px;padding:9px 12px;line-height:1.5}
+.helpcard .hchk{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--sub);margin-top:12px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -527,6 +547,7 @@ header:not(.hero){ background:rgba(251,250,248,.82)!important; border-bottom:1px
       <span class="edumark">사내 교육용</span>
       <span class="tag" id="tagLabel">상담원 모드</span>
       <div class="tools">
+        <button id="helpBtn" class="tbtn" title="사용 도움말" onclick="openHelp()">❓ 도움말</button>
         <button id="fontBtn" class="tbtn" title="글자 크기">가＋</button>
         <button id="printBtn" class="tbtn" title="인쇄">🖨 인쇄</button>
       </div>
@@ -546,7 +567,25 @@ header:not(.hero){ background:rgba(251,250,248,.82)!important; border-bottom:1px
   <section class="panel" id="panel-ptmat"></section>
   <section class="panel" id="panel-search"></section>
   <section class="panel" id="panel-denial"></section>
+  <footer class="appftr">카티스템 상담 자료 · <b>자료기준일 2026.6</b> · 사내 교육용 — 효과·보장 단정 금지, 적합성은 담당 의사 판단</footer>
 </main>
+
+<!-- 30초 사용 가이드(온보딩) -->
+<div class="helpwrap" id="helpWrap" onclick="if(event.target===this)closeHelp()">
+  <div class="helpcard">
+    <button class="helpx" aria-label="닫기" onclick="closeHelp()">✕</button>
+    <div class="hh">⏱️ 30초 사용 가이드</div>
+    <ul class="hlist">
+      <li><b>좌측 트리 = 목차</b> — 대주제 클릭 → 중·소주제로 펼쳐 원하는 자료로 바로 이동(PC는 항상 표시, 모바일은 ☰).</li>
+      <li><b>📋 복사 = 환자 전달</b> — 상담실 FAQ 답변을 복사해 카톡/문자로 보낼 수 있어요.</li>
+      <li><b>🖼️ 환자자료 = 화면 공유</b> — 작용기전·생산·임상사례·실손 자료를 환자에게 보여주며 설명.</li>
+      <li><b>⭐ 즐겨찾기</b> — 자주 쓰는 FAQ 옆 별(★)을 눌러 고정, 상단 ‘⭐ 즐겨찾기’로 모아보기.</li>
+      <li><b>단축키 /</b> — 어디서든 ‘/’ 키로 검색창 포커스. <b>가＋</b> 글자크기 · <b>뒤로가기</b>로 이전 화면.</li>
+    </ul>
+    <div class="hnote">⚠️ 효과·완치·보장은 단정하지 않고, 적응증·예후는 담당 의사가 판단합니다.</div>
+    <label class="hchk"><input type="checkbox" id="helpDont"> 다음부터 자동으로 열지 않기</label>
+  </div>
+</div>
 
 <nav class="tabbar">
   <button data-tab="product" class="p" data-active="true"><span class="ic"><svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="8.5" width="19" height="7" rx="3.5"/><line x1="12" y1="8.5" x2="12" y2="15.5"/></svg></span>제품정보<span class="tsub">카티스템</span></button>
@@ -978,6 +1017,7 @@ function faqHTML(f, openFirst){
     +'<details'+(openFirst?' open':'')+'><summary>'
     +'<div class="num">'+f.n+'</div>'
     +'<div class="qt"><span class="ctag">'+(CATLABEL[f.cat]||'')+'</span> '+hot+'<div class="qx">'+f.q+'</div></div>'
+    +'<button class="favbtn'+(isFav(f.n)?' on':'')+'" data-n="'+f.n+'" aria-label="즐겨찾기" title="자주 쓰는 답변 고정">'+(isFav(f.n)?'★':'☆')+'</button>'
     +'<div class="ar">›</div></summary>'
     +'<div class="ans">'+f.a+'</div>'+note
     +'<div class="copyrow"><button class="copy" data-n="'+f.n+'">📋 환자에게 보낼 답변 복사</button></div>'
@@ -1103,7 +1143,7 @@ function buildDenial(){
 function buildFAQ(){
   var cats=['all'].concat(Object.keys(CATLABEL));
   var faqCats=Object.keys(CATLABEL).filter(function(c){return FAQ.some(function(f){return f.cat===c;});});
-  var chips='<div class="filters" data-scope="faq"><span class="chip b" data-f="all" data-active="true">전체</span>'
+  var chips='<div class="filters" data-scope="faq"><span class="chip b" data-f="all" data-active="true">전체</span><span class="chip b" data-f="fav">⭐ 즐겨찾기</span>'
     + faqCats.map(function(c){return '<span class="chip b" data-f="'+c+'">'+CATLABEL[c]+'</span>';}).join('') + '</div>';
   var cards=FAQ.map(function(f,i){return faqHTML(f,false);}).join('');
   document.getElementById('panel-faq').innerHTML='<div class="stagebar pt"><span class="sb-ic">🧭</span><span class="sb-t"><b>결심 후 · 실무 안내 단계</b> — 치료를 결정한 환자에게 전달하는 실무 답변입니다(절차·일정·청구 등). 효능 단정 등 광고 규제 기준은 단계와 무관하게 동일하게 적용됩니다.</span></div><p class="modehint">환자에게 보여주거나 보낼 수 있는 답변입니다. 보수 정리(의료광고법) 버전 · 📋 복사 가능.</p>'+chips+cards+'<div class="empty" id="faqEmpty">검색 결과가 없습니다.</div>';
@@ -1197,7 +1237,12 @@ document.addEventListener('click',function(e){
     document.querySelectorAll('#panel-staff .sec').forEach(function(s){s.classList.toggle('hide', !(f==='all'||s.getAttribute('data-sec')===f));});
     document.querySelectorAll('#panel-staff .appx').forEach(function(a){a.classList.toggle('hide', f!=='all');});
   } else if(scope==='faq'){
-    document.querySelectorAll('#panel-faq .faq').forEach(function(c){c.style.display=(f==='all'||c.getAttribute('data-cat')===f)?'':'none';});
+    var _fav=getFav();
+    document.querySelectorAll('#panel-faq .faq').forEach(function(c){
+      var nn=parseInt(String(c.id||'').replace('faq-',''),10);
+      var show=(f==='all')?true:(f==='fav'?_fav.indexOf(nn)>=0:c.getAttribute('data-cat')===f);
+      c.style.display=show?'':'none';
+    });
   }
 });
 
@@ -1208,6 +1253,32 @@ document.addEventListener('click',function(e){
   document.querySelectorAll('#panel-denial .instile').forEach(function(t){t.classList.toggle('active', t===b);});
   document.querySelectorAll('#panel-denial .insview').forEach(function(p){p.classList.toggle('active', p.id===('ins-'+v));});
   window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* ===== 즐겨찾기(FAQ 고정) · 도움말 · 검색 단축키 ===== */
+function getFav(){try{return JSON.parse(localStorage.getItem('catiFavFAQ')||'[]');}catch(e){return [];}}
+function setFav(a){try{localStorage.setItem('catiFavFAQ',JSON.stringify(a));}catch(e){}}
+function isFav(n){return getFav().indexOf(parseInt(n,10))>=0;}
+function toggleFav(n){n=parseInt(n,10);var a=getFav();var i=a.indexOf(n);if(i>=0)a.splice(i,1);else a.push(n);setFav(a);return i<0;}
+document.addEventListener('click',function(e){
+  var fb=e.target.closest&&e.target.closest('.favbtn'); if(!fb) return;
+  e.preventDefault(); e.stopPropagation();
+  var n=fb.getAttribute('data-n'); var on=toggleFav(n);
+  document.querySelectorAll('.favbtn[data-n="'+n+'"]').forEach(function(x){x.classList.toggle('on',on);x.textContent=on?'★':'☆';});
+  var act=document.querySelector('#panel-faq .filters .chip[data-active="true"]');
+  if(act && act.getAttribute('data-f')==='fav'){
+    var _fav=getFav();
+    document.querySelectorAll('#panel-faq .faq').forEach(function(c){var nn=parseInt(String(c.id||'').replace('faq-',''),10);c.style.display=_fav.indexOf(nn)>=0?'':'none';});
+  }
+});
+/* 도움말(30초 가이드) */
+function openHelp(){var w=document.getElementById('helpWrap'); if(w)w.classList.add('show');}
+function closeHelp(){var w=document.getElementById('helpWrap'); if(w)w.classList.remove('show'); var d=document.getElementById('helpDont'); if(d&&d.checked){try{localStorage.setItem('catiHelpSeen','1');}catch(e){}}}
+try{ if(!localStorage.getItem('catiHelpSeen')){ window.addEventListener('load',function(){setTimeout(openHelp,500);}); } }catch(e){}
+/* 검색 단축키 '/' (입력 중이 아닐 때) */
+document.addEventListener('keydown',function(e){
+  if(e.key==='/' && !/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'')){ var g=document.getElementById('gsearch'); if(g){e.preventDefault();g.focus();} }
+  else if(e.key==='Escape'){ closeHelp(); }
 });
 
 /* ===== 복사(환자 FAQ 공유) ===== */
