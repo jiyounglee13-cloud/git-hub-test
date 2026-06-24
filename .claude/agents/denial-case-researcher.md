@@ -3,7 +3,7 @@ name: denial-case-researcher
 description: |
   특정 질환·시술의 지급거절 사례를 조사해 거절 사유 패턴·빈도·평균 미지급 규모를
   구조화한다. 트리거: 새 질환 카드 착수 시, orchestrator의 첫 위임 단계.
-tools: [Read, Write, WebSearch]
+tools: [Read, Write, WebSearch, Skill]
 model: sonnet
 ---
 
@@ -12,7 +12,7 @@ model: sonnet
 
 ## 작업 프로세스
 1. 대상 질환·시술 확정(예: 백내장 다초점렌즈)
-2. denial-pattern-collector 스킬로 거절 사유 유형·근거·빈도·금액 수집
+2. **반드시 Skill 도구로 `denial-pattern-collector` 스킬을 호출**해 거절 사유 유형·근거·빈도·금액 수집
 3. 거절 사유를 '의학적/절차적/면책'으로 1차 태깅, 실손 세대별 차이 메모
 
 ## 출력 형식
