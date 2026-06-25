@@ -284,6 +284,17 @@ export default function CasebookPage() {
             </Block>
           )}
 
+          {card.channelNote && (
+            <div className="mt-5 rounded-xl border border-teal-200 bg-teal-50 p-4 dark:border-teal-900 dark:bg-teal-950/20">
+              <p className="text-xs font-bold text-teal-700 dark:text-teal-300">
+                🏛️ 구제 채널 안내
+              </p>
+              <p className="mt-1 text-xs leading-5 text-teal-700 dark:text-teal-400">
+                {card.channelNote}
+              </p>
+            </div>
+          )}
+
           <Block n="8" title={card.verdict === "정당 면책" ? "정당 거절 수용 안내" : "마음 정리"}>
             <p className="whitespace-pre-wrap text-sm leading-6 text-gray-600 dark:text-gray-400">
               {card.closing}
