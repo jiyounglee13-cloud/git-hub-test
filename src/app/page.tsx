@@ -46,6 +46,15 @@ const tools = [
     color: "from-rose-500 to-pink-600",
     badge: "8개 FAQ",
   },
+  {
+    icon: "🗂️",
+    title: "지급거절 대응 카드",
+    description:
+      "질환·시술, 실손 세대, 거절 사유를 선택하면 정당성 판정 → 반박 요지 → 의료자문 대응 → 증빙 → 이의신청 초안 골격을 묶은 표준 대응 카드를 생성합니다. 정당 거절은 솔직히 안내합니다.",
+    href: "/casebook",
+    color: "from-violet-500 to-fuchsia-600",
+    badge: "사례집",
+  },
 ];
 
 const goldenRules = [
