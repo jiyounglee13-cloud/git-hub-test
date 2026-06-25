@@ -244,6 +244,18 @@ export const procedures: Procedure[] = [
     reasonIds: ["admission", "necessity", "advisory", "causation", "disclosure"],
   },
   {
+    id: "eswt",
+    label: "체외충격파 치료",
+    generationNote:
+      "도수치료 풍선효과 항목. 금감원 분쟁조정기준: 7개 관절(어깨·팔꿈치·고관절·슬관절·발목·족저근막·척추), 연 최대 12회·부위당 최대 6회.",
+    patterns: [
+      { 유형: "절차적", 설명: "인정 부위·횟수 초과(연 12회/부위당 6회)" },
+      { 유형: "의학적", 설명: "치료 필요성·효과 불인정" },
+      { 유형: "의학적", 설명: "의료자문 개입 기반 부지급" },
+    ],
+    reasonIds: ["count_over", "necessity", "advisory", "causation", "disclosure"],
+  },
+  {
     id: "nutrient",
     label: "영양주사",
     generationNote: "치료 목적 입증이 없으면 대부분 보장 제외.",

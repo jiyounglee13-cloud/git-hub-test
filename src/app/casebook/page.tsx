@@ -6,9 +6,14 @@ import {
   generations,
   denialReasons,
   buildCard,
+  denialStats,
+  resolutionStats,
+  litigationFeeCap,
   type AdvisoryStage,
   type DenialStatus,
 } from "@/lib/casebook-data";
+
+const won = (n: number) => n.toLocaleString("ko-KR");
 
 const verdictStyle: Record<string, string> = {
   "정당 면책": "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
@@ -23,6 +28,9 @@ export default function CasebookPage() {
   const [stage, setStage] = useState<AdvisoryStage>("동의 후");
   const [status, setStatus] = useState<DenialStatus>("부지급");
   const [submitted, setSubmitted] = useState(false);
+  const [claimAmount, setClaimAmount] = useState(30_000_000);
+
+  const feeCap = litigationFeeCap(Math.max(0, claimAmount));
 
   const proc = procedures.find((p) => p.id === procId);
   const availableReasons = useMemo(
@@ -306,6 +314,106 @@ export default function CasebookPage() {
           </div>
         </section>
       )}
+
+      {/* ① 거절 사유 통계 + 구제 단계별 인용률 */}
+      <section className="mt-12">
+        <h2 className="text-lg font-bold">📊 거절·구제 통계</h2>
+        <p className="mt-1 text-xs text-gray-500">
+          한국소비자원(2021.1~2024.9, n=1,016) · 금융감독원·국정감사 자료. 단정이 아닌
+          현상·추이로만 참고하세요.
+        </p>
+
+        <div className="mt-4 grid gap-6 sm:grid-cols-2">
+          <div className="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+            <p className="mb-3 text-sm font-bold">거절 사유별 비중</p>
+            <div className="space-y-2">
+              {denialStats.map((d) => (
+                <div key={d.label}>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600 dark:text-gray-400">{d.label}</span>
+                    <span className="font-semibold">{d.share}%</span>
+                  </div>
+                  <div className="mt-1 h-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                    <div
+                      className="h-2 rounded-full bg-amber-500"
+                      style={{ width: `${d.share}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+            <p className="mb-3 text-sm font-bold">구제 단계별 인용/승소율</p>
+            <table className="w-full text-xs">
+              <tbody>
+                {resolutionStats.map((r) => (
+                  <tr key={r.stage} className="border-b border-gray-100 last:border-0 dark:border-gray-800">
+                    <td className="py-1.5 pr-2 text-gray-600 dark:text-gray-400">
+                      {r.stage}
+                      {r.note && (
+                        <span className="block text-[10px] text-gray-400">{r.note}</span>
+                      )}
+                    </td>
+                    <td className="py-1.5 text-right font-bold whitespace-nowrap">{r.rate}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mt-2 text-[10px] leading-4 text-gray-400">
+              ※ 소비자원 합의율은 난건만 모이는 후단 사례라 낮게 보이는 통계적 착시.
+              금감원 분쟁조정이 가장 기대가치 높은 채널.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ② 민사소송 패소 리스크 계산 */}
+      <section className="mt-10">
+        <h2 className="text-lg font-bold">⚖️ 민사소송 패소 리스크 계산</h2>
+        <p className="mt-1 text-xs text-gray-500">
+          소송은 최후 수단입니다. 전부 패소 시 부담을 미리 가늠해 기대치를 조정하세요.
+        </p>
+
+        <div className="mt-4 rounded-xl border border-gray-200 p-5 dark:border-gray-800">
+          <label className="block text-sm font-bold">청구 금액(소가)</label>
+          <div className="mt-2 flex items-center gap-3">
+            <input
+              type="number"
+              min={0}
+              step={1_000_000}
+              value={claimAmount}
+              onChange={(e) => setClaimAmount(Number(e.target.value))}
+              className="w-48 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900"
+            />
+            <span className="text-sm text-gray-500">원 ({won(claimAmount)}원)</span>
+          </div>
+
+          <div className="mt-4 rounded-lg bg-red-50 p-4 dark:bg-red-950/20">
+            <p className="text-xs font-semibold text-red-700 dark:text-red-400">
+              전부 패소 시 상대방에게 물어줄 변호사보수 상한
+            </p>
+            <p className="mt-1 text-2xl font-bold text-red-700 dark:text-red-400">
+              약 {won(Math.round(feeCap))}원
+            </p>
+            <p className="mt-1 text-[11px] text-red-600/80 dark:text-red-400/80">
+              대법원 「변호사보수의 소송비용 산입에 관한 규칙」 상한 기준
+            </p>
+          </div>
+
+          <ul className="mt-3 space-y-1 text-xs text-gray-500">
+            <li>+ 본인 변호사 선임료(별도)</li>
+            <li>+ 상대방 인지대·송달료</li>
+            <li>+ 진료기록감정료 예납 약 50만~100만원</li>
+            <li>+ 항소(2심)·상고(3심) 시 심급마다 누적</li>
+          </ul>
+          <p className="mt-3 text-[11px] leading-4 text-gray-400">
+            ※ 일부 승소 시 법원 안분 비율로 분담. 본 계산은 상한 기준 참고치이며 실제
+            확정액은 법원 결정에 따릅니다.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
