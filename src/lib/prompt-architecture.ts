@@ -46,8 +46,8 @@ export interface RagPrecedent {
   id: string;
   /** 사건명 or 분쟁조정 번호 */
   citation: string;
-  /** 선고·결정일 */
-  date: string;
+  /** 선고·결정일 (ISO). 정확한 선고일이 확인된 경우에만 채운다 — 임의값 금지 */
+  date?: string;
   /** 관련 시술 id (casebook-data.ts procedures 참조) */
   procedureIds: string[];
   /** 관련 거절 사유 id (casebook-data.ts denialReasons 참조) */
@@ -75,9 +75,10 @@ export const ragPrecedents: RagPrecedent[] = [
   },
   // 백내장 — 광주지법: 기저질환+개별 입원 지시 → 예외 인정
   {
-    id: "gwangju-2026-cataract",
-    citation: "광주지방법원 2026 항소심 (홍채섬모체염 기저질환)",
-    date: "2026-01-01",
+    id: "gwangju-cataract-iritis",
+    citation:
+      "광주지방법원 항소심 (홍채섬모체염 기저질환) — 사건번호 미확인, 제출 전 출처 직접 검증 필요",
+    // 정확한 선고일·사건번호 미확인: date 생략
     procedureIds: ["cataract"],
     denialReasonIds: ["admission"],
     holding:
@@ -89,7 +90,7 @@ export const ragPrecedents: RagPrecedent[] = [
   {
     id: "jeonju-2022na23007",
     citation: "전주지방법원 2022나23007 (대법원 확정)",
-    date: "2022-01-01",
+    // 정확한 선고일 미확인: date 생략
     procedureIds: ["manual"],
     denialReasonIds: ["count_over", "necessity"],
     holding:
@@ -101,7 +102,7 @@ export const ragPrecedents: RagPrecedent[] = [
   {
     id: "scourt-2024gadan55065",
     citation: "서울중앙지방법원 2024가단55065 (2026.1. 확정)",
-    date: "2026-01-01",
+    date: "2026-01",
     procedureIds: ["bmac"],
     denialReasonIds: ["admission", "necessity"],
     holding:
@@ -113,7 +114,7 @@ export const ragPrecedents: RagPrecedent[] = [
   {
     id: "sc-2021da234368",
     citation: "대법원 2021다234368",
-    date: "2021-01-01",
+    // 정확한 선고일 미확인: date 생략
     procedureIds: ["manual", "bmac", "cataract", "eswt"],
     denialReasonIds: ["advisory", "necessity"],
     holding:
@@ -145,6 +146,9 @@ export const ragPrecedents: RagPrecedent[] = [
     keyFactor: "실제 납부 금액과 감면 전 금액의 차이",
     favorConsumer: false,
   },
+  // 주의: 거절 사유 'riskshare'(위험분담제 환급)는 이득금지 원칙상 배제 대상이나,
+  // 공표된 확정 판례번호를 확인하지 못해 별도 RagPrecedent 항목을 추가하지 않는다.
+  // 대신 guardrailRules의 '위험분담제' 규칙으로 사용자 안내를 처리한다(허구 판례 창작 금지).
 ];
 
 // ---------------------------------------------------------------------------
@@ -229,8 +233,9 @@ export function detectGuardrail(userInput: string): GuardrailRule | null {
 export const ADVISORY_DEFENSE_KEYWORDS = [
   "의료자문",
   "자문 결과",
+  "자문의",
   "제3의 의료기관",
-  "서면 심사",
+  "서면 의료자문", // '서면 심사'는 의료자문과 무관한 통지서에도 흔해 오탐 우려가 있어 좁힘
   "외부 자문",
 ];
 
