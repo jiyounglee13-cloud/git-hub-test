@@ -8,7 +8,10 @@ import {
   buildCard,
   denialStats,
   resolutionStats,
+  claimantAgeStats,
   litigationFeeCap,
+  checkGuideline,
+  COMPLIANCE_NOTICE,
   type AdvisoryStage,
   type DenialStatus,
 } from "@/lib/casebook-data";
@@ -29,6 +32,8 @@ export default function CasebookPage() {
   const [status, setStatus] = useState<DenialStatus>("부지급");
   const [submitted, setSubmitted] = useState(false);
   const [claimAmount, setClaimAmount] = useState(30_000_000);
+  const [annualCount, setAnnualCount] = useState(0);
+  const [perSiteCount, setPerSiteCount] = useState(0);
 
   const feeCap = litigationFeeCap(Math.max(0, claimAmount));
 
@@ -194,6 +199,75 @@ export default function CasebookPage() {
                 <option value="부지급">부지급</option>
               </select>
             </div>
+          </div>
+        )}
+
+        {proc?.guideline && (
+          <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-4 dark:border-teal-900 dark:bg-teal-950/20">
+            <p className="text-sm font-bold text-teal-800 dark:text-teal-300">
+              📐 인정 횟수 가이드라인 충족도 ({proc.guideline.source})
+            </p>
+            {proc.guideline.appliesNote && (
+              <p className="mt-1 text-[11px] text-teal-600 dark:text-teal-400">
+                {proc.guideline.appliesNote}
+              </p>
+            )}
+            <div className="mt-3 flex flex-wrap gap-3">
+              <label className="text-xs">
+                <span className="mb-1 block font-semibold text-gray-600 dark:text-gray-400">
+                  연간 시행 횟수
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  value={annualCount}
+                  onChange={(e) => setAnnualCount(Number(e.target.value))}
+                  className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900"
+                />
+              </label>
+              {proc.guideline.perSiteMax !== undefined && (
+                <label className="text-xs">
+                  <span className="mb-1 block font-semibold text-gray-600 dark:text-gray-400">
+                    부위당 최대 횟수
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={perSiteCount}
+                    onChange={(e) => setPerSiteCount(Number(e.target.value))}
+                    className="w-28 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900"
+                  />
+                </label>
+              )}
+            </div>
+            {annualCount > 0 &&
+              (() => {
+                const result = checkGuideline(
+                  proc.guideline!,
+                  annualCount,
+                  proc.guideline!.perSiteMax !== undefined ? perSiteCount : undefined
+                );
+                return (
+                  <div
+                    className={`mt-3 rounded-lg p-3 text-xs ${
+                      result.status === "충족"
+                        ? "bg-green-100 text-green-800 dark:bg-green-950/40 dark:text-green-300"
+                        : "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
+                    }`}
+                  >
+                    <p className="font-bold">
+                      {result.status === "충족"
+                        ? "✅ 가이드라인 충족 — 인용 가능성에 유리"
+                        : "⚠️ 한도 초과 — 초과분은 인과관계·치료효과 소명 필요"}
+                    </p>
+                    <ul className="mt-1 space-y-0.5">
+                      {result.messages.map((m) => (
+                        <li key={m}>· {m}</li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })()}
           </div>
         )}
 
@@ -367,6 +441,28 @@ export default function CasebookPage() {
             </p>
           </div>
         </div>
+
+        <div className="mt-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+          <p className="mb-3 text-sm font-bold">
+            피해구제 신청자 연령 분포{" "}
+            <span className="font-normal text-gray-400">(40~60대 74.4%)</span>
+          </p>
+          <div className="flex items-end gap-3">
+            {claimantAgeStats.map((a) => (
+              <div key={a.label} className="flex flex-1 flex-col items-center">
+                <span className="text-xs font-semibold">{a.share}%</span>
+                <div
+                  className="mt-1 w-full rounded-t bg-indigo-400"
+                  style={{ height: `${a.share * 2}px` }}
+                />
+                <span className="mt-1 text-[10px] text-gray-500">{a.label}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2 text-[10px] text-gray-400">
+            중장년층이 정보 비대칭의 주 피해자. 분쟁 다발 3종의 72.0%가 의원급 발생.
+          </p>
+        </div>
       </section>
 
       {/* ② 민사소송 패소 리스크 계산 */}
@@ -413,6 +509,14 @@ export default function CasebookPage() {
             확정액은 법원 결정에 따릅니다.
           </p>
         </div>
+      </section>
+
+      {/* 변호사법 준수 고지 (2026 대법원 로폼 판결 기준) */}
+      <section className="mt-10 rounded-xl border border-gray-300 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800/50">
+        <p className="text-sm font-bold">⚖️ 변호사법 준수 고지</p>
+        <p className="mt-2 text-xs leading-5 text-gray-600 dark:text-gray-400">
+          {COMPLIANCE_NOTICE}
+        </p>
       </section>
     </div>
   );

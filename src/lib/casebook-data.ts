@@ -50,7 +50,8 @@ export const denialReasons: DenialReason[] = [
     verdict: "다툼가능",
     issue: "치료 필요성",
     clausePoint: "약관상 치료 목적 비급여의 보장 범위·제외 조항 확인",
-    proArg: "치료 목적·반응·기능 호전을 객관적 기록으로 소명하면 조정 인정 여지",
+    proArg:
+      "주치의의 임상적 판단은 특별히 부당하다고 볼 객관적 사정이 없는 한 존중되어야 함(대법원 2021다234368). 치료 목적·반응·기능 호전을 객관적 기록으로 소명하면 조정 인정 여지",
     conArg: "증상 호전 없이 장기 반복되었다면 '유지치료'로 볼 여지가 있음",
   },
   {
@@ -186,6 +187,14 @@ export const denialReasons: DenialReason[] = [
   },
 ];
 
+/** 금감원/약관 인정 횟수 가이드라인 */
+export interface Guideline {
+  source: string;
+  annualMax: number;
+  perSiteMax?: number;
+  appliesNote?: string;
+}
+
 /** 시술·질환 */
 export interface Procedure {
   id: string;
@@ -194,6 +203,8 @@ export interface Procedure {
   patterns: { 유형: string; 설명: string }[];
   /** 이 시술에서 흔한 거절 사유 id */
   reasonIds: string[];
+  /** 인정 횟수 가이드라인(있으면 충족도 스코어링) */
+  guideline?: Guideline;
 }
 
 export const procedures: Procedure[] = [
@@ -207,6 +218,11 @@ export const procedures: Procedure[] = [
       { 유형: "의학적", 설명: "의료자문 개입 기반 부지급" },
     ],
     reasonIds: ["advisory", "count_over", "necessity", "causation", "disclosure"],
+    guideline: {
+      source: "4세대 3대 비급여 특약",
+      annualMax: 50,
+      appliesNote: "4세대(2021.7~)에 적용. 1~3세대는 도수치료 횟수 제한 조항이 없는 경우가 많음",
+    },
   },
   {
     id: "cataract",
@@ -254,6 +270,12 @@ export const procedures: Procedure[] = [
       { 유형: "의학적", 설명: "의료자문 개입 기반 부지급" },
     ],
     reasonIds: ["count_over", "necessity", "advisory", "causation", "disclosure"],
+    guideline: {
+      source: "금감원 분쟁조정기준",
+      annualMax: 12,
+      perSiteMax: 6,
+      appliesNote: "7개 관절(어깨·팔꿈치·고관절·슬관절·발목·족저근막·척추) 대상",
+    },
   },
   {
     id: "nutrient",
@@ -515,4 +537,44 @@ export function litigationFeeCap(소가: number): number {
   if (소가 <= 50_000_000) return 2_000_000 + (소가 - 20_000_000) * 0.08;
   if (소가 <= 100_000_000) return 4_400_000 + (소가 - 50_000_000) * 0.06;
   return 7_400_000 + (소가 - 100_000_000) * 0.04;
+}
+
+/** 피해구제 신청자 연령 분포 (한국소비자원) */
+export const claimantAgeStats = [
+  { label: "40대", share: 22.0 },
+  { label: "50대", share: 29.1 },
+  { label: "60대", share: 23.3 },
+  { label: "기타 연령", share: 25.6 },
+];
+
+/**
+ * 변호사법 준수 고지 (2026.2 대법원 로폼 판결 기준).
+ * 본 앱은 규칙 기반 슬롯필링 보조 도구이며, 생성형 AI의 법률 추론·창작을 배제한다.
+ */
+export const COMPLIANCE_NOTICE =
+  "본 도구는 전문가가 사전 검수한 규칙 기반 서식에 사용자가 사실관계를 채워 넣는 '문서 작성 보조 도구'입니다(2026.2 대법원 로폼 판결상 적법한 슬롯필링 구조). 변호사법 준수를 위해 ① 보험금 청구를 대리하지 않고 ② 성공보수·수수료를 받지 않으며 ③ 완성된 초안은 사용자 본인이 직접 본인 명의로 보험사·금융감독원에 제출합니다. 생성형 AI가 맥락을 자의적으로 판단해 법률문서를 창작하지 않습니다.";
+
+/** 금감원 가이드라인 충족도 스코어링 */
+export function checkGuideline(
+  g: Guideline,
+  annualCount: number,
+  perSiteCount?: number
+): { status: "충족" | "초과"; messages: string[] } {
+  const messages: string[] = [];
+  let exceeded = false;
+  if (annualCount > g.annualMax) {
+    exceeded = true;
+    messages.push(`연간 ${annualCount}회 > 인정 한도 ${g.annualMax}회 (초과분은 소명 필요)`);
+  } else {
+    messages.push(`연간 ${annualCount}회 ≤ 인정 한도 ${g.annualMax}회 (가이드라인 충족)`);
+  }
+  if (g.perSiteMax !== undefined && perSiteCount !== undefined) {
+    if (perSiteCount > g.perSiteMax) {
+      exceeded = true;
+      messages.push(`부위당 ${perSiteCount}회 > 한도 ${g.perSiteMax}회 (초과분은 소명 필요)`);
+    } else {
+      messages.push(`부위당 ${perSiteCount}회 ≤ 한도 ${g.perSiteMax}회 (충족)`);
+    }
+  }
+  return { status: exceeded ? "초과" : "충족", messages };
 }
