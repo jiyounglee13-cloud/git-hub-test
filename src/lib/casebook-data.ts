@@ -376,6 +376,8 @@ export interface CardInput {
   reasonIds: string[];
   advisoryStage?: AdvisoryStage;
   denialStatus?: DenialStatus;
+  /** 가이드라인 충족도 결과(있으면 카드에 반영) */
+  guideline?: { status: "충족" | "초과"; messages: string[] };
 }
 
 export interface CasebookCard {
@@ -392,8 +394,12 @@ export interface CasebookCard {
   evidence?: { issue: string; docs: string[]; method: string; script: string }[];
   /** 환자 행동 단계 */
   actions: string[];
-  /** 이의신청 초안 골격 */
+  /** 이의신청 초안 골격(요약) */
   appealDraft?: string[];
+  /** 이의신청서 전문(슬롯필링 서식, 본인 제출용) */
+  appealLetter?: string;
+  /** 가이드라인 충족도 */
+  guidelineNote?: { status: "충족" | "초과"; messages: string[] };
   /** 구제 채널 안내(근거 통계) */
   channelNote?: string;
   /** 마음 정리 / 수용 안내 */
@@ -409,6 +415,65 @@ export function resolveVerdict(reasons: DenialReason[]): Verdict {
   if (reasons.some((r) => r.verdict === "사기위험")) return "사기위험";
   if (reasons.some((r) => r.verdict === "다툼가능")) return "다툼가능";
   return "정당 면책";
+}
+
+/**
+ * 이의신청서 전문(슬롯필링 서식)을 결정론적으로 조립한다.
+ * 전문가가 사전 검수한 고정 문안 + 사용자 빈칸(________) 구조로,
+ * 생성형 AI의 자유 창작이 아닌 규칙 기반 슬롯필링이다(2026 대법원 로폼 판결상 적법).
+ */
+function buildAppealLetter(p: {
+  procLabel: string;
+  genLabel: string;
+  denialReasonLabels: string[];
+  reasonGrounds: { label: string; clausePoint?: string; proArg?: string }[];
+  docs: string[];
+  hasAdvisory: boolean;
+}): string {
+  const today = new Date().toISOString().slice(0, 10);
+  const grounds = p.reasonGrounds
+    .map(
+      (g, i) =>
+        `   ${i + 1}) ${g.label}\n` +
+        (g.clausePoint ? `      - 약관 검토: ${g.clausePoint}\n` : "") +
+        (g.proArg ? `      - 반박 근거: ${g.proArg}\n` : "")
+    )
+    .join("");
+  const docsList = p.docs.map((d) => `   - ${d}`).join("\n");
+  const advisoryClause = p.hasAdvisory
+    ? "\n4. 의료자문 관련 요청\n" +
+      "   의료자문은 법적 의무가 아닌 협조 요청이며, 자문 결과만으로 한 부지급에 동의할 수 없습니다.\n" +
+      "   필요 시 보험회사·계약자·제3의 의사가 합의하여 선정하는 '동시감정'(비용 보험회사 부담)을 요구합니다.\n"
+    : "";
+  const advisoryAlt = p.hasAdvisory ? " / (불가 시) 합의된 제3 의사 재감정 또는 금융감독원 분쟁조정" : " / (불가 시) 금융감독원 분쟁조정";
+
+  return `[실손의료보험금 부지급 결정에 대한 이의신청서]
+
+수신: ________ 보험(주) 보상담당자 귀중
+발신: 성명 ________ (생년월일 ________ / 연락처 ________)
+증권번호: ________
+진료(사고) 내역: ${p.procLabel} (${p.genLabel}) / 진료기간 ________ / 진료기관 ________
+청구일: ________ / 부지급 통보일: ________
+
+1. 부지급 결정 내용
+   귀사는 위 청구 건에 대하여 아래 사유로 보험금 지급을 거절하였습니다.
+   - ${p.denialReasonLabels.join("\n   - ")}
+
+2. 이의 사유
+   본인은 다음 근거로 위 결정에 이의를 제기합니다.
+${grounds}
+3. 입증 자료(첨부)
+${docsList}
+   - 주치의 소견서(거절 사유를 반박하는 상세 소견)
+${advisoryClause}
+${p.hasAdvisory ? "5" : "4"}. 요청 사항
+   - 위 자료를 토대로 재심사하여 부지급분 ________원을 지급하여 주시기 바랍니다.
+   - 본 이의신청에 대한 처리 결과를 서면으로 회신하여 주시기 바랍니다.${advisoryAlt}
+
+${today}
+신청인: ________ (서명 또는 날인)
+
+※ 본 문서는 신청인 본인이 작성·제출하는 참고용 초안입니다. 전문가 확인을 권장합니다.`;
 }
 
 export function buildCard(input: CardInput): CasebookCard {
@@ -488,6 +553,19 @@ export function buildCard(input: CardInput): CasebookCard {
       (hasAdvisory ? " / (불가 시) 합의된 제3 의사 재감정" : ""),
   ];
 
+  const appealLetter = buildAppealLetter({
+    procLabel: proc.label,
+    genLabel: gen.label,
+    denialReasonLabels,
+    reasonGrounds: disputable.map((r) => ({
+      label: r.label,
+      clausePoint: r.clausePoint,
+      proArg: r.proArg,
+    })),
+    docs: Array.from(new Set(evidence.flatMap((e) => e.docs))),
+    hasAdvisory,
+  });
+
   return {
     title,
     verdict,
@@ -501,6 +579,8 @@ export function buildCard(input: CardInput): CasebookCard {
       "미해결 시 금융감독원 분쟁조정 신청",
     ],
     appealDraft,
+    appealLetter,
+    guidelineNote: input.guideline,
     channelNote:
       "민사 소송은 패소 시 상대방 변호사보수·감정료까지 부담(민소법 제98조)하고 소비자 승소율이 낮아 최후 수단으로 둡니다. 대신 금융감독원 분쟁조정을 1순위로 활용하세요 — 제3보험(실손) 인용률이 2023상 18.3% → 2024상 26.9% → 2025상 40.3%로 상승했고, 신청만으로 소멸시효가 중단되며 수락 시 재판상 화해와 동일한 효력을 가집니다.",
     closing:

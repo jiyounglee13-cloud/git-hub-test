@@ -34,6 +34,7 @@ export default function CasebookPage() {
   const [claimAmount, setClaimAmount] = useState(30_000_000);
   const [annualCount, setAnnualCount] = useState(0);
   const [perSiteCount, setPerSiteCount] = useState(0);
+  const [copied, setCopied] = useState(false);
 
   const feeCap = litigationFeeCap(Math.max(0, claimAmount));
 
@@ -46,6 +47,15 @@ export default function CasebookPage() {
     (id) => denialReasons.find((r) => r.id === id)?.involvesAdvisory
   );
 
+  const guidelineResult =
+    proc?.guideline && annualCount > 0
+      ? checkGuideline(
+          proc.guideline,
+          annualCount,
+          proc.guideline.perSiteMax !== undefined ? perSiteCount : undefined
+        )
+      : undefined;
+
   const card =
     submitted && procId && genId && selReasons.length > 0
       ? buildCard({
@@ -54,6 +64,7 @@ export default function CasebookPage() {
           reasonIds: selReasons,
           advisoryStage: stage,
           denialStatus: status,
+          guideline: guidelineResult,
         })
       : null;
 
@@ -65,6 +76,26 @@ export default function CasebookPage() {
   }
 
   const canSubmit = procId && genId && selReasons.length > 0;
+
+  async function copyLetter(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* 클립보드 접근 불가 시 무시 */
+    }
+  }
+
+  function downloadLetter(text: string, name: string) {
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `이의신청서_${name.replace(/[\s/]/g, "_")}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
@@ -240,34 +271,26 @@ export default function CasebookPage() {
                 </label>
               )}
             </div>
-            {annualCount > 0 &&
-              (() => {
-                const result = checkGuideline(
-                  proc.guideline!,
-                  annualCount,
-                  proc.guideline!.perSiteMax !== undefined ? perSiteCount : undefined
-                );
-                return (
-                  <div
-                    className={`mt-3 rounded-lg p-3 text-xs ${
-                      result.status === "충족"
-                        ? "bg-green-100 text-green-800 dark:bg-green-950/40 dark:text-green-300"
-                        : "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
-                    }`}
-                  >
-                    <p className="font-bold">
-                      {result.status === "충족"
-                        ? "✅ 가이드라인 충족 — 인용 가능성에 유리"
-                        : "⚠️ 한도 초과 — 초과분은 인과관계·치료효과 소명 필요"}
-                    </p>
-                    <ul className="mt-1 space-y-0.5">
-                      {result.messages.map((m) => (
-                        <li key={m}>· {m}</li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })()}
+            {guidelineResult && (
+              <div
+                className={`mt-3 rounded-lg p-3 text-xs ${
+                  guidelineResult.status === "충족"
+                    ? "bg-green-100 text-green-800 dark:bg-green-950/40 dark:text-green-300"
+                    : "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
+                }`}
+              >
+                <p className="font-bold">
+                  {guidelineResult.status === "충족"
+                    ? "✅ 가이드라인 충족 — 인용 가능성에 유리"
+                    : "⚠️ 한도 초과 — 초과분은 인과관계·치료효과 소명 필요"}
+                </p>
+                <ul className="mt-1 space-y-0.5">
+                  {guidelineResult.messages.map((m) => (
+                    <li key={m}>· {m}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
 
@@ -303,6 +326,25 @@ export default function CasebookPage() {
           {card.warning && (
             <div className="mt-4 rounded-xl bg-red-50 p-4 text-sm leading-6 text-red-700 dark:bg-red-950/20 dark:text-red-400">
               ⚠️ {card.warning}
+            </div>
+          )}
+
+          {card.guidelineNote && (
+            <div
+              className={`mt-4 rounded-xl p-4 text-sm ${
+                card.guidelineNote.status === "충족"
+                  ? "bg-green-50 text-green-800 dark:bg-green-950/20 dark:text-green-300"
+                  : "bg-amber-50 text-amber-800 dark:bg-amber-950/20 dark:text-amber-300"
+              }`}
+            >
+              <p className="text-xs font-bold">
+                📐 가이드라인 충족도: {card.guidelineNote.status}
+              </p>
+              <ul className="mt-1 text-xs">
+                {card.guidelineNote.messages.map((m) => (
+                  <li key={m}>· {m}</li>
+                ))}
+              </ul>
             </div>
           )}
 
@@ -358,10 +400,24 @@ export default function CasebookPage() {
             </ol>
           </Block>
 
-          {card.appealDraft && (
-            <Block n="7" title="이의신청 초안 골격 (빈칸 포함)">
-              <pre className="whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-xs leading-6 text-gray-600 dark:bg-gray-800/50 dark:text-gray-400">
-                {card.appealDraft.join("\n")}
+          {card.appealLetter && (
+            <Block n="7" title="이의신청서 전문 (빈칸 ________ 직접 채워 본인 명의로 제출)">
+              <div className="mb-2 flex gap-2">
+                <button
+                  onClick={() => copyLetter(card.appealLetter!)}
+                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800"
+                >
+                  {copied ? "✓ 복사됨" : "📋 복사"}
+                </button>
+                <button
+                  onClick={() => downloadLetter(card.appealLetter!, card.title)}
+                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800"
+                >
+                  ⬇ .txt 내려받기
+                </button>
+              </div>
+              <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-xs leading-6 text-gray-600 dark:bg-gray-800/50 dark:text-gray-400">
+                {card.appealLetter}
               </pre>
             </Block>
           )}
