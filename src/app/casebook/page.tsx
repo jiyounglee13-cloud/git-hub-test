@@ -15,6 +15,13 @@ import {
   type AdvisoryStage,
   type DenialStatus,
 } from "@/lib/casebook-data";
+import {
+  detectGuardrail,
+  detectAdvisoryInvolvement,
+  getFavorablePrecedents,
+  getAdversePrecedents,
+  SIMULTANEOUS_APPRAISAL_CLAUSE,
+} from "@/lib/prompt-architecture";
 
 const won = (n: number) => n.toLocaleString("ko-KR");
 
@@ -35,6 +42,16 @@ export default function CasebookPage() {
   const [annualCount, setAnnualCount] = useState(0);
   const [perSiteCount, setPerSiteCount] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [denialNoticeText, setDenialNoticeText] = useState("");
+
+  const guardrailHit = useMemo(
+    () => (denialNoticeText ? detectGuardrail(denialNoticeText) : null),
+    [denialNoticeText]
+  );
+  const advisoryDetected = useMemo(
+    () => (denialNoticeText ? detectAdvisoryInvolvement(denialNoticeText) : false),
+    [denialNoticeText]
+  );
 
   const feeCap = litigationFeeCap(Math.max(0, claimAmount));
 
@@ -294,6 +311,47 @@ export default function CasebookPage() {
           </div>
         )}
 
+        {/* 거절 통지서 텍스트 입력 — 가드레일·의료자문 자동 탐지 */}
+        <div>
+          <label className="mb-2 block text-sm font-bold">
+            거절 통지서 주요 내용{" "}
+            <span className="font-normal text-gray-400">(선택 · 붙여넣기)</span>
+          </label>
+          <textarea
+            rows={4}
+            placeholder="보험사로부터 받은 거절 통지서의 핵심 내용을 붙여넣으면 의료자문 개입 여부와 보상 불가 항목을 자동으로 탐지합니다."
+            value={denialNoticeText}
+            onChange={(e) => {
+              setDenialNoticeText(e.target.value);
+              setSubmitted(false);
+            }}
+            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm leading-6 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-900"
+          />
+          {guardrailHit && (
+            <div className="mt-2 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900 dark:bg-red-950/20">
+              <p className="text-xs font-bold text-red-700 dark:text-red-400">
+                🚫 보상 불가 항목 감지 — 이의신청 실익 없음
+              </p>
+              <p className="mt-1 text-xs leading-5 text-red-600 dark:text-red-400">
+                {guardrailHit.userMessage}
+              </p>
+              <p className="mt-1 text-[10px] text-red-500/70 dark:text-red-400/60">
+                근거: {guardrailHit.reason}
+              </p>
+            </div>
+          )}
+          {!guardrailHit && advisoryDetected && (
+            <div className="mt-2 rounded-xl border border-blue-200 bg-blue-50 p-3 dark:border-blue-900 dark:bg-blue-950/20">
+              <p className="text-xs font-bold text-blue-700 dark:text-blue-400">
+                ⚠️ 의료자문 개입 감지 — 동시감정 요청 문구가 이의신청서에 자동 삽입됩니다
+              </p>
+              <p className="mt-1 text-[10px] leading-5 text-blue-600 dark:text-blue-400">
+                {SIMULTANEOUS_APPRAISAL_CLAUSE}
+              </p>
+            </div>
+          )}
+        </div>
+
         <button
           disabled={!canSubmit}
           onClick={() => setSubmitted(true)}
@@ -384,7 +442,7 @@ export default function CasebookPage() {
                     </p>
                     <p className="mt-1 text-xs text-gray-500">확보: {e.method}</p>
                     <p className="mt-1 text-xs italic text-gray-500">
-                      소견 요청 문안: “{e.script}”
+                      소견 요청 문안: "{e.script}"
                     </p>
                   </div>
                 ))}
@@ -432,6 +490,9 @@ export default function CasebookPage() {
               </p>
             </div>
           )}
+
+          {/* RAG 판례 패널 — prompt-architecture.ts 지식 베이스 연동 */}
+          <RagPrecedentPanel procId={procId} reasonIds={selReasons} />
 
           <Block n="8" title={card.verdict === "정당 면책" ? "정당 거절 수용 안내" : "마음 정리"}>
             <p className="whitespace-pre-wrap text-sm leading-6 text-gray-600 dark:text-gray-400">
@@ -594,6 +655,83 @@ function Block({
         {title}
       </p>
       {children}
+    </div>
+  );
+}
+
+function RagPrecedentPanel({
+  procId,
+  reasonIds,
+}: {
+  procId: string;
+  reasonIds: string[];
+}) {
+  const favorable = getFavorablePrecedents(procId, reasonIds);
+  const adverse = getAdversePrecedents(procId, reasonIds);
+
+  if (favorable.length === 0 && adverse.length === 0) return null;
+
+  return (
+    <div className="mt-5 border-t border-gray-100 pt-4 dark:border-gray-800">
+      <p className="mb-3 text-sm font-bold">
+        <span className="mr-2 text-gray-400">📚</span>관련 판례 (RAG 지식 베이스)
+      </p>
+
+      {favorable.length > 0 && (
+        <div className="mb-3">
+          <p className="mb-2 text-xs font-semibold text-green-700 dark:text-green-400">
+            ✅ 소비자 유리 판례
+          </p>
+          <div className="space-y-2">
+            {favorable.map((p) => (
+              <div
+                key={p.id}
+                className="rounded-lg border border-green-100 bg-green-50/50 p-3 dark:border-green-900/40 dark:bg-green-950/10"
+              >
+                <p className="text-xs font-bold text-green-800 dark:text-green-300">
+                  {p.citation}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-gray-600 dark:text-gray-400">
+                  {p.holding}
+                </p>
+                <p className="mt-1 text-[10px] text-green-600/80 dark:text-green-400/60">
+                  승패 분기: {p.keyFactor}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {adverse.length > 0 && (
+        <div>
+          <p className="mb-2 text-xs font-semibold text-amber-700 dark:text-amber-400">
+            ⚠️ 보험사 유리 판례 (면책 확정 기준)
+          </p>
+          <div className="space-y-2">
+            {adverse.map((p) => (
+              <div
+                key={p.id}
+                className="rounded-lg border border-amber-100 bg-amber-50/50 p-3 dark:border-amber-900/40 dark:bg-amber-950/10"
+              >
+                <p className="text-xs font-bold text-amber-800 dark:text-amber-300">
+                  {p.citation}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-gray-600 dark:text-gray-400">
+                  {p.holding}
+                </p>
+                <p className="mt-1 text-[10px] text-amber-600/80 dark:text-amber-400/60">
+                  판단 기준: {p.keyFactor}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p className="mt-2 text-[10px] text-gray-400">
+        판례는 참고용이며 개별 사안의 결과를 보장하지 않습니다.
+      </p>
     </div>
   );
 }
