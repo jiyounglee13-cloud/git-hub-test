@@ -20,6 +20,18 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## 무릎 OA & HTO 보조 도구 — 별도 독립 앱 `knee-hto-app/`
+
+무릎 X-ray의 K&L 등급 추정과 HTO 교정각·정렬 분석 도구는 이 상담 도구와 **완전히 분리된 독립 Next.js 앱**으로 옮겨졌습니다. 코드·의존성·배포가 독립적입니다.
+
+```bash
+cd knee-hto-app
+npm install
+npm run dev   # → http://localhost:3000
+```
+
+자세한 설명·환경변수·임상 검증 로드맵은 [`knee-hto-app/`](knee-hto-app/) 디렉터리를 참고하세요.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
